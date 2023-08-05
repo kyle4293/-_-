@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "763763852241",
+    "project_id": "k-ricepower",
+    "storage_bucket": "k-ricepower.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763763852241:android:89508a9ef32801c6cf96f0",
+        "android_client_info": {
+          "package_name": "com.example.familyalbum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763763852241-i146u7ct101511v1p2e5dsttbg18d127.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArSv1arsjuvT6lpN1wBAOX2QWc141fvek"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763763852241-i146u7ct101511v1p2e5dsttbg18d127.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
