@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "763763852241-ic1rdvun4tsm6unaieqs5asfuqkdvm8k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.familyalbum",
+            "certificate_hash": "c4ddb576aa5f1636519dd16b8e0dfc80059e68a4"
+          }
+        },
+        {
           "client_id": "763763852241-nd6340cprm7uc53j8dfj4vf69fllr3hv.apps.googleusercontent.com",
           "client_type": 3
         }

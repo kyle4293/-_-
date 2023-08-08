@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".LoginActivity">
+    tools:context=".user.LoginActivity">
 
     <ImageView
         android:src="@drawable/baseline_account_circle_24"
