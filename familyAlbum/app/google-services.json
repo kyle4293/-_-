@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "763763852241",
+    "firebase_url": "https://k-ricepower-default-rtdb.firebaseio.com",
     "project_id": "k-ricepower",
     "storage_bucket": "k-ricepower.appspot.com"
   },
@@ -14,7 +15,7 @@
       },
       "oauth_client": [
         {
-          "client_id": "763763852241-i146u7ct101511v1p2e5dsttbg18d127.apps.googleusercontent.com",
+          "client_id": "763763852241-nd6340cprm7uc53j8dfj4vf69fllr3hv.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
