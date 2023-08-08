@@ -17,7 +17,6 @@ import kotlin.collections.ArrayList
 class ChatFragment : Fragment() {
     private lateinit var messageAdapter: MessageAdapter
     private lateinit var messageList: ArrayList<Message>
-
     private lateinit var binding: FragmentChatBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +43,6 @@ class ChatFragment : Fragment() {
         initLayout()
     }
 
-
     private fun initLayout() {
         binding.chatRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRecyclerView.adapter = messageAdapter
@@ -56,6 +54,7 @@ class ChatFragment : Fragment() {
             sendMessage()
         }
 
+        //enter key event
         binding.messageEdit.setOnKeyListener { v, keyCode, event ->
             if ((keyCode == KeyEvent.KEYCODE_ENTER)) {
                 val keyword: String by lazy {
@@ -75,17 +74,22 @@ class ChatFragment : Fragment() {
         val messageText = binding.messageEdit.text.toString().trim()
         if (messageText.isNotEmpty()) {
             val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-            val message: Message
-            message = Message(messageText, "me", currentTime)
+
+            //message list에 추가.
+            val message = Message(messageText, "me", currentTime)
             messageList.add(message)
             hideKeyboard()
         }
     }
 
     private fun hideKeyboard() {
+        //keyboard 내리기
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(binding.messageEdit.windowToken, 0)
+
+        //message line 비우기
         binding.messageEdit.setText("")
+        //adapter에 notify, 가장 최근 채팅 내역으로 자동 스크롤.
         messageAdapter.notifyItemInserted(messageList.size - 1)
         binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
     }

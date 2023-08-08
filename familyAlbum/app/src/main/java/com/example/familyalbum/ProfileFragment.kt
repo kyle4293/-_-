@@ -1,13 +1,18 @@
 package com.example.familyalbum
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import com.example.familyalbum.databinding.FragmentChatBinding
+import com.example.familyalbum.databinding.FragmentProfileBinding
 
 
 class ProfileFragment : Fragment() {
+    private lateinit var binding: FragmentProfileBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +24,20 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initLayout()
+    }
+
+    private fun initLayout() {
+        binding.imageButton.setOnClickListener {
+            val intent = Intent(context, ProfileModifyActivity::class.java)
+            startActivity(intent)
+        }
     }
 
 }
