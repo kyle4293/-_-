@@ -75,7 +75,7 @@
             android:paddingBottom="13dp">
 
             <TextView
-                android:id="@+id/profile_nickname"
+                android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="이름"

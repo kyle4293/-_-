@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
@@ -62,7 +63,6 @@ class LoginActivity : AppCompatActivity() {
 
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
-                    Log.e(TAG, "111111111111")
 
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account?.idToken)
@@ -107,7 +107,23 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = firebaseAuth.currentUser
                     val name = user?.displayName.toString()
-                    navigateToNextScreen(name)
+                    val email = user?.email.toString()
+
+                    val db = FirebaseFirestore.getInstance()
+                    val userDocRef = db.collection("users").document(user!!.uid)
+                    val userData = hashMapOf(
+                        "email" to email,
+                        "name" to name
+                    )
+                    userDocRef.set(userData)
+                        .addOnCompleteListener { firestoreTask ->
+                            if (firestoreTask.isSuccessful) {
+                                navigateToNextScreen(name)
+                            } else {
+                                Log.e(TAG, "Firestore user data save failed", firestoreTask.exception)
+                                // Handle Firestore user data save failure
+                            }
+                        }
                 } else {
                     Log.e(TAG, "Firebase authentication failed", task.exception)
                     // Handle Firebase authentication failure

@@ -16,6 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 
 class ProfileFragment : Fragment() {
@@ -23,6 +25,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
 
 
     override fun onCreateView(
@@ -36,19 +40,20 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupProfile()
 
-        firebaseAuth = FirebaseAuth.getInstance()
+//        firebaseAuth = FirebaseAuth.getInstance()
 
-        val user = firebaseAuth.currentUser
+//        val user = firebaseAuth.currentUser
+//
+//        val name = user?.displayName
+//        val email = user?.email
+//        val photoUrl = user?.photoUrl
 
-        val name = user?.displayName
-        val email = user?.email
-        val photoUrl = user?.photoUrl
-
-        if (name != null)
-            binding.profileNickname.text = name.toString()
-        if (email != null)
-            binding.profileEmail.text = email.toString()
+//        if (name != null)
+//            binding.profileNickname.text = name.toString()
+//        if (email != null)
+//            binding.profileEmail.text = email.toString()
 
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -65,6 +70,36 @@ class ProfileFragment : Fragment() {
         binding.btnProfileModify.setOnClickListener {
             val intent = Intent(context, ProfileModifyActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun setupProfile() {
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+
+        val currentUser = firebaseAuth.currentUser
+        val uid = currentUser?.uid
+
+        uid?.let { userId ->
+            val userDocRef = firestore.collection("users").document(userId)
+
+            userDocRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userInfo = documentSnapshot.data
+                        val name = userInfo?.get("name") as? String
+                        val email = userInfo?.get("email") as? String
+                        // 다른 필요한 정보도 가져와서 처리
+
+
+                        binding.profileName.text = name
+                        binding.profileEmail.text = email
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // 데이터 가져오기 실패 처리
+                }
         }
     }
 
