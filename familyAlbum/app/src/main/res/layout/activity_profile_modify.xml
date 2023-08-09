@@ -22,18 +22,32 @@
             android:scaleType="centerCrop"
             android:src="@drawable/baseline_account_circle_24"
             app:layout_constraintBottom_toBottomOf="@id/profile_name_textview"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_profile_add"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#8B8B8B" />
+
+        <ImageView
+            android:id="@+id/btn_profile_add"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/baseline_add_24"
+            android:background="@drawable/circle"
+            app:layout_constraintBottom_toBottomOf="@id/profile_name_textview"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profile_imageview"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="#8B8B8B" />
 
         <TextView
             android:id="@+id/profile_name_textview"
+            android:layout_marginTop="50dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="USER NAME"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_imageview" />
@@ -44,7 +58,8 @@
             android:layout_height="wrap_content"
             android:text="USER BIRTH"
             android:textColor="@android:color/darker_gray"
-            android:textSize="16sp"
+            android:textSize="25sp"
+            android:layout_marginTop="50dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profile_name_textview" />

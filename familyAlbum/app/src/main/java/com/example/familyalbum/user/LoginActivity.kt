@@ -4,8 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat.startActivity
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityLoginBinding
@@ -53,12 +55,15 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.e(TAG, result.resultCode.toString())
             if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
                 // Google 로그인 결과 처리
 
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
+                    Log.e(TAG, "111111111111")
+
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account?.idToken)
                 } catch (e: ApiException) {

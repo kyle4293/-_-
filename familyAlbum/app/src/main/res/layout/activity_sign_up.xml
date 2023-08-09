@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:text="닉네임"
+            android:text="이름"
             android:textColor="#0C201E"
             android:textSize="16sp" />
 
@@ -86,7 +86,7 @@
                 android:background="@drawable/chatting_bottom"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:hint="닉네임을 입력해주세요"
+                android:hint="이름을 입력해주세요"
                 android:paddingLeft="20dp"
                 android:textColor="#7F7F7F"
                 android:textSize="16sp" />

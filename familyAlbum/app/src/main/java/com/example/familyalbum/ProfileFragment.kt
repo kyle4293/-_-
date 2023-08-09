@@ -62,7 +62,7 @@ class ProfileFragment : Fragment() {
             signOut()
         }
 
-        binding.imageButton.setOnClickListener {
+        binding.btnProfileModify.setOnClickListener {
             val intent = Intent(context, ProfileModifyActivity::class.java)
             startActivity(intent)
         }
