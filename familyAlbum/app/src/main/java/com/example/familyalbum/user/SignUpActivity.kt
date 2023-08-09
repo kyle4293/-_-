@@ -8,10 +8,12 @@ import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     lateinit var binding: ActivitySignUpBinding
 
@@ -21,6 +23,8 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         firebaseAuth = FirebaseAuth.getInstance()
+        val db = FirebaseFirestore.getInstance()
+
 
         binding.joinBtn.setOnClickListener {
             val email = binding.editTextEmail.text.toString()
@@ -58,7 +62,15 @@ class SignUpActivity : AppCompatActivity() {
                         ?.addOnCompleteListener { updateTask ->
                             if (updateTask.isSuccessful) {
                                 // 사용자 이름 저장 성공
-                                // 회원가입 성공 후 수행할 작업 추가
+                                // Firestore에 사용자 정보 저장
+                                val db = FirebaseFirestore.getInstance()
+                                val userDocRef = db.collection("users").document(user.uid)
+                                val userData = hashMapOf(
+                                    "email" to email,
+                                    "name" to name
+                                )
+                                userDocRef.set(userData)
+
                                 navigateToNextScreen()
                             } else {
                                 // 사용자 이름 저장 실패
