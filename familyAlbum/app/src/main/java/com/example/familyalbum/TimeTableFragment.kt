@@ -10,11 +10,13 @@ import android.widget.TextView
 import com.example.familyalbum.databinding.FragmentChatBinding
 import com.example.familyalbum.databinding.FragmentProfileBinding
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
+import com.example.familyalbum.task.TaskManager
 
 
 class TimeTableFragment : Fragment() {
 
     private lateinit var binding: FragmentTimeTableBinding
+    private lateinit var taskManager: TaskManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -30,6 +32,11 @@ class TimeTableFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //TaskManager 초기화. 사용자Id는 어떻게 얻을지에 따라 달라질 수 있습니다.
+        val currentUserId = "user123"
+        taskManager = TaskManager(currentUserId)
+
         schedule()
     }
 
