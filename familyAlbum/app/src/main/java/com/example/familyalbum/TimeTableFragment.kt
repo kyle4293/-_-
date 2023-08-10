@@ -23,13 +23,14 @@ class TimeTableFragment : Fragment() {
 
     private lateinit var binding: FragmentTimeTableBinding
     private lateinit var database: DatabaseReference
-    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private lateinit var firebaseAuth: FirebaseAuth
     private val firestore = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         database = FirebaseDatabase.getInstance().reference
-        auth
+        firebaseAuth = FirebaseAuth.getInstance()
+
 
         // 더미 데이터 생성 및 저장
 //        val dummyTasks = listOf(
@@ -57,7 +58,7 @@ class TimeTableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val currentUser = auth.currentUser
+        val currentUser = firebaseAuth.currentUser
         currentUser?.let { user ->
             val currentUserId = user.uid
 
