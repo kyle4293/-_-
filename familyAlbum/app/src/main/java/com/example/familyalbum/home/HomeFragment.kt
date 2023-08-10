@@ -34,9 +34,13 @@ class HomeFragment : Fragment() {
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
-            uploadPhoto(uri) // 이미지 업로드 및 갤러리 리스트에 추가
+            val groupId = arguments?.getString(ARG_GROUP_ID)
+            if (!groupId.isNullOrEmpty()) {
+                uploadPhoto(uri, groupId)
+            }
         }
     }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -126,19 +130,23 @@ class HomeFragment : Fragment() {
 
     private fun loadAndDisplayGroupImages(groupId: String) {
         val firestore = FirebaseFirestore.getInstance()
-        val imagesRef = firestore.collection("groups").document(groupId).collection("images")
+        val imagesRef = firestore.collection("groups").document(groupId)
 
         imagesRef.get()
-            .addOnSuccessListener { documents ->
-                val images = documents.mapNotNull { document ->
-                    document.getString("imageUrl")
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val images = document.get("images") as? List<String>
+                    if (images != null) {
+                        galleryAdapter.setGalleryList(images)
+                    }
                 }
-                galleryAdapter.setGalleryList(images)
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리 로직
             }
     }
+
+
 
     private fun init() {
         galleryList = ArrayList()
@@ -191,7 +199,8 @@ class HomeFragment : Fragment() {
         isFabOpen= !isFabOpen
     }
 
-    private fun uploadPhoto(selectedImageUri: Uri) {
+
+    private fun uploadPhoto(selectedImageUri: Uri, groupId: String) {
         val storageRef = FirebaseStorage.getInstance().reference
         val imageRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
 
@@ -199,17 +208,42 @@ class HomeFragment : Fragment() {
             .addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val downloadUrl = uri.toString()
-                    val currentDate =
-                        SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-                    val newPhoto = Gallery(downloadUrl, currentDate)
-                    galleryList.add(newPhoto)
-                    galleryAdapter.notifyItemInserted(galleryList.size - 1)
+                    // 업로드된 사진 정보를 그룹 정보에 저장
+                    updateGroupWithImageInfo(groupId, downloadUrl, currentDate)
                 }
             }
             .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Image upload failed.", Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(requireContext(), "Image upload failed.", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun updateGroupWithImageInfo(groupId: String, imageUrl: String, uploadDate: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val groupRef = firestore.collection("groups").document(groupId)
+
+        groupRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val images = documentSnapshot.get("images") as? List<String> ?: emptyList()
+                    images.toMutableList().apply {
+                        add(imageUrl)
+                    }.let { updatedImages ->
+                        // 업로드된 사진 URL을 그룹 정보에 저장
+                        groupRef.update("images", updatedImages)
+                            .addOnSuccessListener {
+                                // 업데이트 성공 처리
+                            }
+                            .addOnFailureListener { exception ->
+                                // 업데이트 실패 처리
+                            }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 문서 가져오기 실패 처리
+            }
+    }
+
 }
