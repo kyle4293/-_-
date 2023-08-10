@@ -36,6 +36,9 @@
             android:name=".profile.ProfileModifyActivity"
             android:exported="false" />
         <activity
+            android:name=".home.CreateGroupActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"/>
     </application>
