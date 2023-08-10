@@ -1,7 +1,10 @@
 package com.example.familyalbum
 
+import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,11 +12,15 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import com.example.familyalbum.databinding.ActivityProfileModifyBinding
 
 class ProfileModifyActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityProfileModifyBinding
+    var PICK_IMAGE_FROM_ALBUM = 0
+    var photoUri : Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +32,6 @@ class ProfileModifyActivity : AppCompatActivity() {
 
     private fun initLayout() {
         binding.btnProfileAdd.setOnClickListener {
-            Log.e("tag","error!!!!!!")
             //click 시 album 열리고 사진 선택 가능하게.
             cameraAction()
         }
@@ -42,44 +48,34 @@ class ProfileModifyActivity : AppCompatActivity() {
         }
     }
 
-    fun permissionDialog(){
-        val builder = AlertDialog.Builder(this)
-        builder.setMessage("반드시 READ_EXTERNAL_STORAGE 권한이 허용되어야합니다.")
-            .setTitle("권한체크")
-            .setPositiveButton("OK"){
-                    _,_->
-                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            }.setNegativeButton("Cancel"){
-                    dlg, _-> dlg.dismiss()
-            }
-        val dlg = builder.create()
-        dlg.show()
-    }
+//    fun permissionDialog(){
+//        val builder = AlertDialog.Builder(this)
+//        builder.setMessage("반드시 READ_EXTERNAL_STORAGE 권한이 허용되어야합니다.")
+//            .setTitle("권한체크")
+//            .setPositiveButton("OK"){
+//                    _,_->
+//                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+//            }.setNegativeButton("Cancel"){
+//                    dlg, _-> dlg.dismiss()
+//            }
+//        val dlg = builder.create()
+//        dlg.show()
+//    }
 
     fun cameraAction(){
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        //권한체크
-        when{
-            ActivityCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED -> {
-                //퍼미션 허용된 경우
+        var photoPickerIntent = Intent(Intent.ACTION_PICK)
+        photoPickerIntent.type = "image/*"
+        startActivityForResult(photoPickerIntent,PICK_IMAGE_FROM_ALBUM)
+    }
 
-                Log.e("tag","error111111")
-
-                intent.type = "image/*"
-                startActivity(intent)
-            }
-            ActivityCompat.shouldShowRequestPermissionRationale(this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE) ->{
-                //명시적으로 사용자가 거부한 경우
-                permissionDialog() //dialog 띄우기.
-            }
-            else ->{
-                //권한 정보가 없는 경우 -> 권한 요청해야함.
-
-                Log.e("tag","2222222")
-
-                permissionLauncher.launch(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == PICK_IMAGE_FROM_ALBUM){
+            if(resultCode == Activity.RESULT_OK){
+                photoUri = data?.data
+                binding.profileImageview.setImageURI(photoUri)
+            }else{
+                finish()
             }
         }
     }
