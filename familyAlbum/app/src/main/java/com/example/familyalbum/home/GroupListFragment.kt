@@ -1,4 +1,5 @@
 package com.example.familyalbum.home
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,16 +9,22 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.databinding.FragmentGroupListBinding
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class GroupListFragment : Fragment() {
 
     private lateinit var binding: FragmentGroupListBinding
     private lateinit var groupAdapter: GroupAdapter
-    private lateinit var viewModel: CreateGroupViewModel // Add this line
+    private lateinit var viewModel: CreateGroupViewModel
     private val firestore = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
@@ -36,23 +43,41 @@ class GroupListFragment : Fragment() {
     private fun init() {
         val dummyGroupList = ArrayList<Group>()
 
-        viewModel = ViewModelProvider(this).get(CreateGroupViewModel::class.java) // Initialize viewModel
+        viewModel = ViewModelProvider(this).get(CreateGroupViewModel::class.java)
 
-
-        // 파이어베이스에서 그룹 정보 가져오기
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {
-            viewModel.fetchUserGroups(currentUserUid) // Initial fetching
+            viewModel.fetchUserGroups(currentUserUid)
         }
 
         viewModel.userGroups.observe(viewLifecycleOwner, Observer { groups ->
-            // 가져온 그룹 정보로 어댑터 설정
-            groupAdapter = GroupAdapter(groups)
-            binding.groupRecyclerView.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = groupAdapter
+            viewLifecycleOwner.lifecycleScope.launch {
+                val groupListWithNames = groups.map { group ->
+                    val groupId = group.groupId
+                    val groupName = getGroupNameFromFirestore(groupId)
+                    Group(groupId, groupName)
+                }
+
+                groupAdapter = GroupAdapter(groupListWithNames)
+                binding.groupRecyclerView.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = groupAdapter
+                }
             }
         })
+
+        viewModel.groupJoinResult.observe(viewLifecycleOwner, Observer { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "Joined group successfully", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Failed to join group", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+        binding.btnSearchGroup.setOnClickListener {
+            val intent = Intent(requireContext(), SearchGroupActivity::class.java)
+            startActivity(intent)
+        }
 
         binding.btnCreateGroup.setOnClickListener {
             val intent = Intent(requireContext(), CreateGroupActivity::class.java)
@@ -70,5 +95,19 @@ class GroupListFragment : Fragment() {
 
     }
 
-}
+    private suspend fun getGroupNameFromFirestore(groupId: String): String {
+        val groupDocRef = firestore.collection("groups").document(groupId)
 
+        return try {
+            val document = groupDocRef.get().await()
+            if (document.exists()) {
+                val groupName = document.getString("groupName")
+                groupName ?: ""
+            } else {
+                ""
+            }
+        } catch (e: Exception) {
+            ""
+        }
+    }
+}
