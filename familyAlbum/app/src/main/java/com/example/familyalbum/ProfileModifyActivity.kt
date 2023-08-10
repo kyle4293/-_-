@@ -1,5 +1,6 @@
 package com.example.familyalbum
 
+
 import android.content.ContentValues.TAG
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -16,6 +17,7 @@ import java.io.IOException
 class ProfileModifyActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityProfileModifyBinding
+
     private var imageUri: Uri? = null
     private lateinit var firebaseAuth: FirebaseAuth
     private val imagePickerLauncher =
@@ -42,14 +44,14 @@ class ProfileModifyActivity : AppCompatActivity() {
 
         // "프로필 추가" 버튼 클릭 시 이미지 선택 및 프로필 업데이트 처리
         binding.btnProfileAdd.setOnClickListener {
-            openGallery() // 이미지 선택
-        }
+            openGallery() // 이미지 선택        }
 
         // "프로필 저장" 버튼 클릭 시 프로필 이미지 업로드 및 Firestore 업데이트 처리
         binding.modifyBtn.setOnClickListener {
             saveProfileImage()
         }
     }
+
 
     private fun openGallery() {
         imagePickerLauncher.launch("image/*")
