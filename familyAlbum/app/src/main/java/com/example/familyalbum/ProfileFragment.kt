@@ -21,12 +21,10 @@ import com.google.firebase.storage.FirebaseStorage
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
-
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
