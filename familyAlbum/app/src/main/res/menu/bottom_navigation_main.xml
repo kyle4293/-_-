@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_tip"
+        android:icon="@drawable/baseline_lightbulb_24"
+        android:enabled="true"
+        android:title="TIP"/>
+
+    <item
+        android:id="@+id/menu_chat"
+        android:icon="@drawable/baseline_chat_24"
+        android:enabled="true"
+        android:title="CHAT"/>
+
+    <item
+        android:id="@+id/menu_home"
+        android:icon="@drawable/baseline_home_24"
+        android:enabled="true"
+        android:title="HOME"/>
+
+    <item
+        android:id="@+id/menu_table"
+        android:icon="@drawable/baseline_access_time_filled_24"
+        android:enabled="true"
+        android:title="TIMETABLE"/>
+
+    <item
+        android:id="@+id/menu_profile"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:enabled="true"
+        android:title="PROFILE"/>
+</menu>
