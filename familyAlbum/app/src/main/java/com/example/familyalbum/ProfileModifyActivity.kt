@@ -40,8 +40,13 @@ class ProfileModifyActivity : AppCompatActivity() {
 
         firebaseAuth = FirebaseAuth.getInstance()
 
+        // "프로필 추가" 버튼 클릭 시 이미지 선택 및 프로필 업데이트 처리
         binding.btnProfileAdd.setOnClickListener {
-            openGallery()
+            openGallery() // 이미지 선택
+        }
+
+        // "프로필 저장" 버튼 클릭 시 프로필 이미지 업로드 및 Firestore 업데이트 처리
+        binding.modifyBtn.setOnClickListener {
             saveProfileImage()
         }
     }
