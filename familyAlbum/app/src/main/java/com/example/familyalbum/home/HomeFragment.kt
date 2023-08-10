@@ -1,13 +1,11 @@
-package com.example.familyalbum
+package com.example.familyalbum.home
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.familyalbum.databinding.FragmentChatBinding
 import com.example.familyalbum.databinding.FragmentHomeBinding
 
 

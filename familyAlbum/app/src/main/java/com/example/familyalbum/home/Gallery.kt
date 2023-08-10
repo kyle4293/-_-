@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.home
 
 data class Gallery(
     var imgsrc: String?,

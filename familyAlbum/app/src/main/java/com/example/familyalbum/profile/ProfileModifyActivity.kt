@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.profile
 
 
 import android.content.ContentValues.TAG
@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityProfileModifyBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

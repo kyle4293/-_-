@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.timeTable
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import com.example.familyalbum.databinding.FragmentChatBinding
-import com.example.familyalbum.databinding.FragmentProfileBinding
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 
 

@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.tip
 
 data class Tip(var title: String?,
                var content: String?,

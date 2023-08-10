@@ -1,4 +1,4 @@
-package com.example.familyalbum.user
+package com.example.familyalbum.login
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivitySignUpBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest

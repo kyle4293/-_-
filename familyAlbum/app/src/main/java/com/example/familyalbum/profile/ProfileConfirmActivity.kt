@@ -1,16 +1,10 @@
-package com.example.familyalbum
+package com.example.familyalbum.profile
 
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Glide.init
 import com.example.familyalbum.databinding.ActivityProfileConfirmBinding
-import com.example.familyalbum.databinding.ActivityProfileModifyBinding
-import com.google.android.play.integrity.internal.t
 
 class ProfileConfirmActivity : AppCompatActivity() {
 

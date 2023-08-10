@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.profile
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -9,8 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentProfileBinding
-import com.example.familyalbum.user.LoginActivity
+import com.example.familyalbum.login.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions

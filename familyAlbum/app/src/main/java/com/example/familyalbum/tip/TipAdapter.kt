@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.tip
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,12 +12,12 @@ class TipAdapter(val tipList: ArrayList<Tip>): RecyclerView.Adapter<TipAdapter.V
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TipAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = TipBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: TipAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val tip = tipList[position]
         holder.binding.tipTitle.text = tip.title
         holder.binding.tipContent.text = tip.content

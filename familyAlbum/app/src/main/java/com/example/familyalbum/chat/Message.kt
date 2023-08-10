@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.chat
 
 data class Message(
     var message: String?,
