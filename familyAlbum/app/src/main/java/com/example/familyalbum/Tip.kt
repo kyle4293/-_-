@@ -2,8 +2,9 @@ package com.example.familyalbum
 
 data class Tip(var title: String?,
                var content: String?,
-               var heart: Int?
+               var user: String?,
+               var tag: String?
 ){
-    constructor(): this("","",0)
+    constructor(): this("","","","")
 }
 

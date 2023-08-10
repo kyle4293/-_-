@@ -33,8 +33,6 @@ class TipFragment : Fragment() {
 
     private fun init() {
         tipList = ArrayList()
-        tipList.add(Tip("제목1","내용1",3))
-        tipList.add(Tip("제목2","내용2",4))
         tipAdapter = TipAdapter(tipList)
         initLayout()
     }
@@ -43,5 +41,12 @@ class TipFragment : Fragment() {
         binding.tipRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.tipRecyclerView.adapter = tipAdapter
 
+        //db에서 받아
+        tipList.clear()
+        tipList.add(Tip("제목1","내용1","",""))
+        tipList.add(Tip("제목2","내용2","",""))
+        //notifi
+
+        
     }
 }

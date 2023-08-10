@@ -34,6 +34,7 @@ class TimeTableFragment : Fragment() {
     }
 
     fun schedule() {
+
         val parentView = binding.monView // db에 따라 다르게
 
         // 사용자 정의 레이아웃을 인플레이션
