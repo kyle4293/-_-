@@ -8,9 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.familyalbum.databinding.FragmentChatBinding
 import com.example.familyalbum.databinding.FragmentProfileBinding
 import com.example.familyalbum.user.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -73,20 +71,13 @@ class ProfileFragment : Fragment() {
 
             userDocRef.get()
                 .addOnSuccessListener { documentSnapshot ->
-
                     if (documentSnapshot.exists()) {
-
                         val userInfo = documentSnapshot.data
                         val name = userInfo?.get("name") as? String
                         val email = userInfo?.get("email") as? String
 
                         val profileImageUrl = userInfo?.get("profileImageUrl") as? String
                         profileImageUrl?.let {
-                            Log.e(TAG, "001")
-                            Log.e(TAG, profileImageUrl)
-
-
-
                             // Use Glide to load and display profile image
                             Glide.with(requireContext())
                                 .load(profileImageUrl)
@@ -102,9 +93,11 @@ class ProfileFragment : Fragment() {
                 }
                 .addOnFailureListener { exception ->
                     Log.e(TAG, "데이터 처리 failed", exception)
-               }
+                }
         }
     }
+
+
 
     private fun signOut() {
         // Firebase 로그아웃
