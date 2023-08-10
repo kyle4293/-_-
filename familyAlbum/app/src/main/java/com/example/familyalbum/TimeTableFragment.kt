@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
+import com.example.familyalbum.user.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -16,19 +17,33 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.example.familyalbum.user.User
 
 
 class TimeTableFragment : Fragment() {
 
     private lateinit var binding: FragmentTimeTableBinding
     private lateinit var database: DatabaseReference
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
+    private val firestore = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         database = FirebaseDatabase.getInstance().reference
+        auth
+
+        // 더미 데이터 생성 및 저장
+//        val dummyTasks = listOf(
+//            Task("Beomjun Kim", "과제1", "강의실A", "Mon", "1000", "1200"),
+//            Task("Beomjun Kim", "미팅", "회의실B", "Tue", "1400", "1600"),
+//            Task("Beomjun Kim", "운동", "체육관", "Wed", "1700", "1800")
+//        )
+//
+//        for (task in dummyTasks) {
+//            val key = database.child("tasks").push().key
+//            key?.let {
+//                database.child("tasks").child(key).setValue(task)
+//            }
+//        }
     }
 
     override fun onCreateView(
@@ -44,39 +59,37 @@ class TimeTableFragment : Fragment() {
 
         val currentUser = auth.currentUser
         currentUser?.let { user ->
-            val currentuserName = user.uid
+            val currentUserId = user.uid
 
-            //사용자 정보 가져오기
-            loadUser(currentuserName) { userInfo ->
-                //사용자 정보를 가져왔으면 Task 정보 가져오기 =
-                userInfo?.let { user ->
-                    loadTasksForUser(user.userName) { taskList ->
-                        // Task 모델들을 이용하여 시간표에 표시하는 로직
-                        schedule(taskList)
-                    }
+            loadCurrentUser(currentUserId) { loadedUser ->
+                loadTasksForCurrentUser(loadedUser.name) { taskList ->
+                    //Task 모델들을 이용하여 시간표에 표시하는 로직
+                    schedule(taskList)
                 }
             }
         }
     }
 
-    private fun loadUser(userName: String, callback: (User?) -> Unit) {
-        val userRef = firestore.collection("users").document(userName)
-        userRef.get().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val document = task.result
-                if (document.exists()) {
-                    val user = document.toObject(User::class.java)
-                    callback(user)
-                } else {
-                    callback(null)
+    private fun loadCurrentUser(userId: String, callback: (User) -> Unit) {
+        val userRef = firestore.collection("users").document(userId)
+        userRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val loadedUser = documentSnapshot.toObject(User::class.java)
+                loadedUser?.let {
+                    callback(it)
                 }
             } else {
-                callback(null)
+                // 사용자 정보가 없을 경우에 대한 처리
+                callback(User("", ""))
             }
+        }.addOnFailureListener { exception ->
+            // 에러 처리
+            callback(User("", ""))
         }
     }
-    private fun loadTasksForUser(userName: String, callback: (List<Task>) -> Unit) {
-        val taskRef = database.child("tasks").orderByChild("userName").equalTo(userName)
+
+    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
+        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
         taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val taskList = mutableListOf<Task>()
@@ -109,9 +122,8 @@ class TimeTableFragment : Fragment() {
         }
     }
 
-
     private fun schedule(taskList: List<Task>) {
-        val daysOfWeek = listOf(binding.monView, binding.tueView, binding.wedView, binding.thuView, binding.friView, binding.satView, binding.sunView) // 월~금 요일별 레이아웃 View
+        val daysOfWeek = listOf(binding.monView, binding.tueView, binding.wedView, binding.thuView, binding.friView, binding.satView, binding.sunView) // 요일별 레이아웃 View
 
         for (task in taskList) {
             val inflater = LayoutInflater.from(context)
