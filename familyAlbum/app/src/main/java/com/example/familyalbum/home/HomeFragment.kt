@@ -10,6 +10,8 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
@@ -20,31 +22,28 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
 import java.io.FileOutputStream
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 
 class HomeFragment : Fragment() {
-
-    private var isFabOpen = false
     private lateinit var binding: FragmentHomeBinding
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var galleryList: ArrayList<Gallery>
 
-    val CAMERA = arrayOf(Manifest.permission.CAMERA)
-    val STORAGE = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    val CAMERA_CODE = 98
-    val STORAGE_CODE = 99
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            uploadPhoto(uri) // 이미지 업로드 및 갤러리 리스트에 추가
+        }
     }
 
     override fun onCreateView(
@@ -52,8 +51,6 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -74,24 +71,23 @@ class HomeFragment : Fragment() {
         binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.homeRecyclerView.adapter = galleryAdapter
 
-        val mActivity = activity as MainActivity
-        binding.btnGroupSelect.setOnClickListener {
-            mActivity.changeFragment(2)
-        }
-
         binding.btnAddPhoto.setOnClickListener {
-            uploadPhoto()
+            clickUpload()
         }
 
         binding.btnCamera.setOnClickListener{
             Toast.makeText(requireContext(), "open camera", Toast.LENGTH_SHORT).show()
             cameraAction()
+            
+        binding.btnGroupList.setOnClickListener {
+            val intent = Intent(requireContext(), GroupListActivity::class.java)
+            startActivity(intent)
         }
-
+        
         binding.btnGallery.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
             Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private fun cameraAction() {
@@ -105,15 +101,8 @@ class HomeFragment : Fragment() {
         //gallery로 호출해서 받은거 다르게 처리하기.
     }
 
-    private fun addImage(uri: Uri) {
-        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-        val picture = Gallery(uri,currentTime )
 
-        galleryList.add(picture)
-    }
-
-
-    private fun uploadPhoto() {
+    private fun clickUpload() {
         if(isFabOpen){
             ObjectAnimator.ofFloat(binding.btnCamera, "translationX", 0f).apply { start() }
             ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 0f).apply { start() }
@@ -124,6 +113,25 @@ class HomeFragment : Fragment() {
             binding.btnAddPhoto.setImageResource(R.drawable.baseline_clear_24)
         }
 
-        isFabOpen= !isFabOpen
+
+    private fun uploadPhoto(selectedImageUri: Uri) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
+
+        imageRef.putFile(selectedImageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString()
+                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+                    val newPhoto = Gallery(downloadUrl, currentDate)
+                    galleryList.add(newPhoto)
+                    galleryAdapter.notifyItemInserted(galleryList.size - 1)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(requireContext(), "Image upload failed.", Toast.LENGTH_SHORT).show()
+            }
     }
+
 }
