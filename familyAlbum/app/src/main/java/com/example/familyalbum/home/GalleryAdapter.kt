@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

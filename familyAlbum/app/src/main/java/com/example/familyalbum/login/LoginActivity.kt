@@ -1,13 +1,11 @@
-package com.example.familyalbum.user
+package com.example.familyalbum.login
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat.startActivity
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityLoginBinding

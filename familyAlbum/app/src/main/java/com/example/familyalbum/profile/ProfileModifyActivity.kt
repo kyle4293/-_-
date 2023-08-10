@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.profile
 
 
 import android.content.ContentValues.TAG
