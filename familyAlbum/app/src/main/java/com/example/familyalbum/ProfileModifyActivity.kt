@@ -51,7 +51,6 @@ class ProfileModifyActivity : AppCompatActivity() {
     }
 
     private fun saveProfileImage() {
-        Log.e(TAG, "0")
 
         val user = firebaseAuth.currentUser
         if (user != null && imageUri != null) {
