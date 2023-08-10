@@ -2,12 +2,18 @@ package com.example.familyalbum.home
 
 import androidx.lifecycle.ViewModel
 import androidx.databinding.ObservableField
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 
 class CreateGroupViewModel : ViewModel() {
 
     // Observable field for group name
     val groupName = ObservableField<String>()
+
+    private val _groupCreationSuccess = MutableLiveData<Boolean>()
+    val groupCreationSuccess: LiveData<Boolean>
+        get() = _groupCreationSuccess
 
     fun onCreateGroupButtonClick() {
         val name = groupName.get()
@@ -24,10 +30,13 @@ class CreateGroupViewModel : ViewModel() {
                 .addOnSuccessListener { documentReference ->
                     val groupId = documentReference.id
                     // 그룹 생성 성공 시 실행할 코드
-                    // groupId를 이용하여 추가적인 작업을 할 수 있습니다.
+                    _groupCreationSuccess.value = true
+
                 }
                 .addOnFailureListener {
                     // 그룹 생성 실패 시 실행할 코드
+                    _groupCreationSuccess.value = false
+
                 }
         }
     }
