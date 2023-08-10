@@ -52,7 +52,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnProfileModify.setOnClickListener {
-            val intent = Intent(context, ProfileModifyActivity::class.java)
+            val intent = Intent(requireContext(), ProfileModifyActivity::class.java)
             startActivity(intent)
         }
     }
