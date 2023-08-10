@@ -3,10 +3,12 @@ package com.example.familyalbum.home
 import android.Manifest
 import android.Manifest.permission_group.STORAGE
 import android.animation.ObjectAnimator
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
 import java.util.*
@@ -44,9 +47,97 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+
+    companion object {
+        private const val ARG_GROUP_ID = "group_id"
+        private const val ARG_GROUP_NAME = "group_name"
+
+        fun newInstance(groupId: String, groupName: String): HomeFragment {
+            val fragment = HomeFragment()
+            val args = Bundle()
+            args.putString(ARG_GROUP_ID, groupId)
+            args.putString(ARG_GROUP_NAME, groupName)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val groupId = arguments?.getString(ARG_GROUP_ID)
+        val groupName = arguments?.getString(ARG_GROUP_NAME)
+        binding.groupName.text = groupName
+
+        if (!groupId.isNullOrEmpty()) {
+            loadAndDisplayGroupImages(groupId)
+            loadAndDisplayGroupUsers(groupId) // 그룹에 속한 유저들의 목록 가져와서 표시
+        }
+
         init()
+    }
+
+    private fun loadAndDisplayGroupUsers(groupId: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val groupRef = firestore.collection("groups").document(groupId)
+
+        groupRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val members = documentSnapshot.get("members") as? List<String>
+                    members?.let {
+                        fetchAndDisplayUserNames(it)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e(TAG, "Error fetching group data: $exception")
+            }
+    }
+
+
+
+    private fun fetchAndDisplayUserNames(userIds: List<String>) {
+        val firestore = FirebaseFirestore.getInstance()
+
+        val usersIntro = mutableListOf<String>()
+
+        for (userId in userIds) {
+
+            val userDocRef = firestore.collection("users").document(userId)
+            userDocRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userName = documentSnapshot.getString("name")
+                        if (!userName.isNullOrEmpty()) {
+                            usersIntro.add(userName)
+                            if (usersIntro.size == userIds.size) {
+                                val groupIntroText = usersIntro.joinToString(", ")
+                                binding.groupIntro.text = groupIntroText
+                            }
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // 실패 시 처리 로직
+                }
+        }
+    }
+
+    private fun loadAndDisplayGroupImages(groupId: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val imagesRef = firestore.collection("groups").document(groupId).collection("images")
+
+        imagesRef.get()
+            .addOnSuccessListener { documents ->
+                val images = documents.mapNotNull { document ->
+                    document.getString("imageUrl")
+                }
+                galleryAdapter.setGalleryList(images)
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리 로직
+            }
     }
 
     private fun init() {
