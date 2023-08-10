@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
@@ -55,14 +56,12 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            Log.e(TAG, result.resultCode.toString())
             if (result.resultCode == RESULT_OK) {
                 val data: Intent? = result.data
                 // Google 로그인 결과 처리
 
                 val task = GoogleSignIn.getSignedInAccountFromIntent(data)
                 try {
-                    Log.e(TAG, "111111111111")
 
                     val account = task.getResult(ApiException::class.java)
                     firebaseAuthWithGoogle(account?.idToken)
@@ -107,8 +106,37 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val user = firebaseAuth.currentUser
                     val name = user?.displayName.toString()
-                    navigateToNextScreen(name)
-                } else {
+                    val email = user?.email.toString()
+                    val profileImageUrl = user?.photoUrl?.toString() // Get profile image URL
+
+
+                    val db = FirebaseFirestore.getInstance()
+                    val userDocRef = db.collection("users").document(user!!.uid)
+                    // 이미 데이터가 있는 경우에는 추가 정보를 저장하지 않도록 조건을 추가
+                    userDocRef.get().addOnSuccessListener { documentSnapshot ->
+                        if (!documentSnapshot.exists()) {
+                            val name = user.displayName.toString()
+                            val email = user.email.toString()
+                            val profileImageUrl = user.photoUrl?.toString()
+
+                            val userData = hashMapOf(
+                                "email" to email,
+                                "name" to name,
+                                "profileImageUrl" to profileImageUrl
+                            )
+                            userDocRef.set(userData)
+                                .addOnCompleteListener { firestoreTask ->
+                                    if (firestoreTask.isSuccessful) {
+                                        navigateToNextScreen(name)
+                                    } else {
+                                        Log.e(TAG, "Firestore user data save failed", firestoreTask.exception)
+                                    }
+                                }
+                        } else {
+                            navigateToNextScreen(user.displayName.toString())
+                        }
+                    }
+                }  else {
                     Log.e(TAG, "Firebase authentication failed", task.exception)
                     // Handle Firebase authentication failure
                 }

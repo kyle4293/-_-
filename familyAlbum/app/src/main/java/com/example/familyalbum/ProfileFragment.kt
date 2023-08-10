@@ -8,14 +8,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import com.example.familyalbum.databinding.FragmentChatBinding
+import com.bumptech.glide.Glide
 import com.example.familyalbum.databinding.FragmentProfileBinding
 import com.example.familyalbum.user.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 
 class ProfileFragment : Fragment() {
@@ -23,6 +24,8 @@ class ProfileFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
 
 
     override fun onCreateView(
@@ -36,20 +39,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        firebaseAuth = FirebaseAuth.getInstance()
-
-        val user = firebaseAuth.currentUser
-
-        val name = user?.displayName
-        val email = user?.email
-        val photoUrl = user?.photoUrl
-
-        if (name != null)
-            binding.profileNickname.text = name.toString()
-        if (email != null)
-            binding.profileEmail.text = email.toString()
-
+        setupProfile()
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
@@ -68,6 +58,47 @@ class ProfileFragment : Fragment() {
         }
     }
 
+    private fun setupProfile() {
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+
+        val currentUser = firebaseAuth.currentUser
+        val uid = currentUser?.uid
+
+        uid?.let { userId ->
+            val userDocRef = firestore.collection("users").document(userId)
+
+            userDocRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userInfo = documentSnapshot.data
+                        val name = userInfo?.get("name") as? String
+                        val email = userInfo?.get("email") as? String
+
+                        val profileImageUrl = userInfo?.get("profileImageUrl") as? String
+                        profileImageUrl?.let {
+                            // Use Glide to load and display profile image
+                            Glide.with(requireContext())
+                                .load(profileImageUrl)
+                                .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
+                                .error(R.drawable.default_profile_image) // Error image if loading fails
+                                .circleCrop()
+                                .into(binding.profileImageView)
+                        }
+
+                        binding.profileName.text = name
+                        binding.profileEmail.text = email
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "데이터 처리 failed", exception)
+                }
+        }
+    }
+
+
+
     private fun signOut() {
         // Firebase 로그아웃
         firebaseAuth.signOut()
@@ -85,6 +116,11 @@ class ProfileFragment : Fragment() {
                 // 예외 처리 등을 수행합니다.
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupProfile()
     }
 
 }

@@ -58,11 +58,11 @@
         app:layout_constraintTop_toBottomOf="@+id/view">
 
         <ImageView
-            android:id="@+id/imageButton"
+            android:id="@+id/profileImageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_weight="1"
-            android:src="@drawable/baseline_account_circle_24"
+            android:src="@drawable/default_profile_image"
             app:tint="#4B4B4B" />
 
         <LinearLayout
@@ -75,7 +75,7 @@
             android:paddingBottom="13dp">
 
             <TextView
-                android:id="@+id/profile_nickname"
+                android:id="@+id/profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="이름"
