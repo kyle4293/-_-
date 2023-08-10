@@ -96,6 +96,8 @@ class HomeFragment : Fragment() {
             ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 400f).apply { start() }
             binding.btnAddPhoto.setImageResource(R.drawable.baseline_clear_24)
         }
+
+        isFabOpen= !isFabOpen
     }
 
     private fun uploadPhoto(selectedImageUri: Uri) {
