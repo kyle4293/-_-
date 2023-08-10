@@ -21,6 +21,35 @@ class CreateGroupViewModel : ViewModel() {
     val userGroups: LiveData<List<Group>>
         get() = _userGroups
 
+    private val _groupJoinResult = MutableLiveData<Boolean>()
+    val groupJoinResult: LiveData<Boolean>
+        get() = _groupJoinResult
+
+    fun joinGroup(groupId: String) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        val firestore = FirebaseFirestore.getInstance()
+        val userGroup = mapOf("groupId" to groupId)
+
+        firestore.collection("groups")
+            .document(groupId)
+            .update("members", FieldValue.arrayUnion(currentUserUid))
+            .addOnSuccessListener {
+                firestore.collection("users")
+                    .document(currentUserUid)
+                    .update("groups", FieldValue.arrayUnion(userGroup))
+                    .addOnSuccessListener {
+                        _groupJoinResult.value = true
+                    }
+                    .addOnFailureListener {
+                        _groupJoinResult.value = false
+                    }
+            }
+            .addOnFailureListener {
+                _groupJoinResult.value = false
+            }
+    }
+
     fun fetchUserGroups(userId: String) {
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("users")
