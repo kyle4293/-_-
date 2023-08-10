@@ -1,0 +1,94 @@
+package com.example.familyalbum.home
+
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.familyalbum.R
+import com.example.familyalbum.databinding.FragmentHomeBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
+
+class HomeFragment : Fragment() {
+    private lateinit var binding: FragmentHomeBinding
+    private lateinit var galleryAdapter: GalleryAdapter
+    private lateinit var galleryList: ArrayList<Gallery>
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            uploadPhoto(uri) // 이미지 업로드 및 갤러리 리스트에 추가
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        init()
+    }
+
+    private fun init() {
+        galleryList = ArrayList()
+        galleryAdapter = GalleryAdapter(galleryList)
+        initLayout()
+    }
+
+    private fun initLayout() {
+        //년, 월, 일인 경우로 일단 가정.
+        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.homeRecyclerView.adapter = galleryAdapter
+
+        binding.btnAddPhoto.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+
+        binding.btnGroupList.setOnClickListener {
+            val intent = Intent(requireContext(), GroupListActivity::class.java)
+            startActivity(intent)
+        }
+
+
+
+    }
+
+
+
+    private fun uploadPhoto(selectedImageUri: Uri) {
+        val storageRef = FirebaseStorage.getInstance().reference
+        val imageRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
+
+        imageRef.putFile(selectedImageUri)
+            .addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { uri ->
+                    val downloadUrl = uri.toString()
+                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+                    val newPhoto = Gallery(downloadUrl, currentDate)
+                    galleryList.add(newPhoto)
+                    galleryAdapter.notifyItemInserted(galleryList.size - 1)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(requireContext(), "Image upload failed.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+}

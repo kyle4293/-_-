@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.tip
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

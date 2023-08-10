@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".HomeFragment">
+    tools:context=".home.HomeFragment">
 
     <LinearLayout
         android:id="@+id/fragmentTitle"
@@ -29,6 +29,14 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/baseline_camera_24"
+            android:layout_weight="0.2"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/btn_group_list"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/baseline_add_24"
             android:layout_weight="0.2"
             android:layout_gravity="center"/>
 
@@ -94,4 +102,9 @@
                 android:textColor="@drawable/home_radio_text"/>
         </RadioGroup>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

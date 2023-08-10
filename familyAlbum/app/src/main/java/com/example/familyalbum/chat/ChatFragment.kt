@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.chat
 
 import android.content.Context
 import android.os.Bundle
