@@ -59,6 +59,11 @@ class GroupListFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.btnSearchGroup.setOnClickListener {
+            val intent = Intent(requireContext(), SearchGroupActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.btnBack.setOnClickListener {
             requireActivity().finish()
         }
