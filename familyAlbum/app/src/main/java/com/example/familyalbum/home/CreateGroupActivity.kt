@@ -1,6 +1,8 @@
 package com.example.familyalbum.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -25,8 +27,13 @@ class CreateGroupActivity : AppCompatActivity() {
         // 옵저버 패턴을 사용하여 그룹 생성 성공 시 액티비티 종료
         viewModel.groupCreationSuccess.observe(this, Observer { isSuccess ->
             if (isSuccess) {
-                finish() // 그룹 생성 성공 시 액티비티 종료
+                val intent = Intent(this, GroupListActivity::class.java)
+                startActivity(intent)
+            } else {
+                // 그룹 생성 실패 시 처리
+                Toast.makeText(this, "Failed to create group", Toast.LENGTH_SHORT).show()
             }
         })
+
     }
 }

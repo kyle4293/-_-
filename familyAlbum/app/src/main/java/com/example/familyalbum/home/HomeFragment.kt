@@ -61,11 +61,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnGroupList.setOnClickListener {
-            val groupListFragment = GroupListFragment()
-            val fragmentTransaction = parentFragmentManager.beginTransaction()
-            fragmentTransaction.replace(R.id.fragment_container, groupListFragment)
-            fragmentTransaction.addToBackStack(null)
-            fragmentTransaction.commit()
+            val intent = Intent(requireContext(), GroupListActivity::class.java)
+            startActivity(intent)
         }
 
 

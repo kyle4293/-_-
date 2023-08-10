@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.databinding.FragmentGroupListBinding
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 class GroupListFragment : Fragment() {
@@ -39,42 +40,30 @@ class GroupListFragment : Fragment() {
 
 
         // 파이어베이스에서 그룹 정보 가져오기
-        firestore.collection("groups")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    val groupId = document.id
-                    val groupName = document.getString("groupName") ?: ""
-                    val group = Group(groupId, groupName)
-                    dummyGroupList.add(group)
-                }
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUserUid != null) {
+            viewModel.fetchUserGroups(currentUserUid) // Initial fetching
+        }
 
-                // 가져온 그룹 정보로 어댑터 설정
-                groupAdapter = GroupAdapter(dummyGroupList)
-                binding.groupRecyclerView.apply {
-                    layoutManager = LinearLayoutManager(requireContext())
-                    adapter = groupAdapter
-                }
+        viewModel.userGroups.observe(viewLifecycleOwner, Observer { groups ->
+            // 가져온 그룹 정보로 어댑터 설정
+            groupAdapter = GroupAdapter(groups)
+            binding.groupRecyclerView.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = groupAdapter
             }
-            .addOnFailureListener { exception ->
-                // 오류 처리
-                Toast.makeText(requireContext(), "Failed to fetch group data", Toast.LENGTH_SHORT).show()
-            }
+        })
 
         binding.btnCreateGroup.setOnClickListener {
-            // 그룹 추가 화면으로 이동
             val intent = Intent(requireContext(), CreateGroupActivity::class.java)
             startActivity(intent)
         }
 
-        // 그룹 생성이 성공한 경우 관찰하여 그룹 리스트 화면으로 이동
-        viewModel.groupCreationSuccess.observe(viewLifecycleOwner, Observer { isSuccess ->
-            if (isSuccess) {
-                // 그룹 생성 성공 시 추가 동작
-                // 예를 들어 그룹 리스트 갱신 등
-            } else {
-                // 그룹 생성 실패 시 추가 동작
-            }
-        })
+        binding.btnBack.setOnClickListener {
+            requireActivity().finish()
+        }
+
     }
+
 }
+
