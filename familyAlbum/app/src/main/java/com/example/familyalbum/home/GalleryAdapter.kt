@@ -31,6 +31,7 @@ class GalleryAdapter(val galleryList: ArrayList<Gallery>): RecyclerView.Adapter<
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val photo = galleryList[position]
+
         holder.binding.photoDate.text = photo.date
 
         Glide.with(holder.itemView.context)
