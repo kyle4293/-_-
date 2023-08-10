@@ -29,12 +29,6 @@ class TimeTableFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         database = FirebaseDatabase.getInstance().reference
-//        dummy data
-//        val key = database.child("tasks").push().key
-//        val task = Task("bzun","운영체제","공b352","Thu","1200","1500")
-//        if (key != null) {
-//            database.child("tasks").child(key).setValue(task)
-//        }
     }
 
     override fun onCreateView(
