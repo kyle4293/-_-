@@ -69,7 +69,8 @@ class SignUpActivity : AppCompatActivity() {
                                 val userDocRef = db.collection("users").document(user!!.uid)
                                 val userData = hashMapOf(
                                     "email" to email,
-                                    "name" to name
+                                    "name" to name,
+                                    "profileImageUrl" to "" // Initialize with empty string
                                 )
                                 userDocRef.set(userData)
                                     .addOnCompleteListener { firestoreTask ->

@@ -1,15 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context=".HomeFragment">
 
-    <TextView
+    <LinearLayout
+        android:id="@+id/fragmentTitle"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="This is home fragment"
-        android:textSize="20sp"
-        android:gravity="center"/>
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <TextView
+            android:text="Home Gallery"
+            android:textColor="@color/black"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:textSize="20sp"
+            android:layout_width="0dp"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/btn_add_photo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/baseline_camera_24"
+            android:layout_weight="0.2"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/chatting_bottom"
+        android:backgroundTint="@color/cardview_dark_background"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/homeRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.8"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@drawable/chatting_bottom">
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/chatting_bottom">
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="year"
+                android:gravity="center"
+                android:button="@null"
+                android:background="@drawable/home_radio"
+                android:textColor="@drawable/home_radio_text"/>
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="month"
+                android:gravity="center"
+                android:button="@null"
+                android:background="@drawable/home_radio"
+                android:textColor="@drawable/home_radio_text"/>
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="day"
+                android:gravity="center"
+                android:button="@null"
+                android:background="@drawable/home_radio"
+                android:textColor="@drawable/home_radio_text"/>
+            <RadioButton
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="total"
+                android:gravity="center"
+                android:button="@null"
+                android:background="@drawable/home_radio"
+                android:textColor="@drawable/home_radio_text"/>
+        </RadioGroup>
+    </LinearLayout>
+</LinearLayout>
