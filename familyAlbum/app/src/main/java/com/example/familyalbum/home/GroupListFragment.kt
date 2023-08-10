@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentGroupListBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
@@ -37,6 +38,23 @@ class GroupListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 어댑터 초기화
+        groupAdapter = GroupAdapter(emptyList())
+        groupAdapter.setOnGroupClickListener { group ->
+            val homeFragment = HomeFragment.newInstance(group.groupId, group.groupName)
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, homeFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        // 리사이클러뷰에 어댑터 설정
+        binding.groupRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = groupAdapter
+        }
+
         init()
     }
 
@@ -58,13 +76,11 @@ class GroupListFragment : Fragment() {
                     Group(groupId, groupName)
                 }
 
-                groupAdapter = GroupAdapter(groupListWithNames)
-                binding.groupRecyclerView.apply {
-                    layoutManager = LinearLayoutManager(requireContext())
-                    adapter = groupAdapter
-                }
+                // 어댑터에 데이터 설정
+                groupAdapter.setGroupList(groupListWithNames)
             }
         })
+
 
         viewModel.groupJoinResult.observe(viewLifecycleOwner, Observer { isSuccess ->
             if (isSuccess) {
