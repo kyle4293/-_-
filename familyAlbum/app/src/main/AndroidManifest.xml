@@ -20,6 +20,9 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
+            android:name=".SearchGroupActivity"
+            android:exported="false" />
+        <activity
             android:name=".profile.ProfileConfirmActivity"
             android:exported="false" />
         <activity
