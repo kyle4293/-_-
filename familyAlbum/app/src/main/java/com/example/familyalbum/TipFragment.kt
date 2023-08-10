@@ -43,8 +43,10 @@ class TipFragment : Fragment() {
 
         //db에서 받아
         tipList.clear()
-        tipList.add(Tip("제목1","내용1","",""))
-        tipList.add(Tip("제목2","내용2","",""))
+        tipList.add(Tip("제목1","내용1","민하은","의"))
+        tipList.add(Tip("제목2","내용2","최창규","식"))
+        tipList.add(Tip("제목3","내용3","최유빈","주"))
+        tipList.add(Tip("제목4","내용4","김범준","의"))
         //notifi
 
         

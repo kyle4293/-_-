@@ -1,5 +1,6 @@
 package com.example.familyalbum
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.example.familyalbum.databinding.FragmentChatBinding
 import com.example.familyalbum.databinding.FragmentProfileBinding
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
@@ -30,9 +32,23 @@ class TimeTableFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.imageView.setOnClickListener {
+            showDialog()
+        }
         schedule()
     }
 
+    // 프로필 이미지 클릭 시 호출되는 함수
+    fun showDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
+        alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")
+        alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+            // 확인 버튼 클릭 시 실행할 작업
+            dialog.dismiss() // 다이얼로그 닫기
+        })
+        alertDialogBuilder.show()
+    }
     fun schedule() {
 
         val parentView = binding.monView // db에 따라 다르게
