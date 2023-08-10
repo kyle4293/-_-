@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- 인터넷 사용 권한 설정 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -21,6 +20,9 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
+            android:name=".profile.ProfileConfirmActivity"
+            android:exported="false" />
+        <activity
             android:name=".login.SignUpActivity"
             android:exported="false" />
         <activity
@@ -37,7 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"/>
+            android:exported="true" />
     </application>
 
 </manifest>
