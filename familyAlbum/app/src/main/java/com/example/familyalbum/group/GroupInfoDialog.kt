@@ -11,6 +11,7 @@ import com.example.familyalbum.databinding.GroupInfoDialogBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.firestore.FirebaseFirestore
 
+
 class GroupInfoDialog(private val group: Group) : DialogFragment(){
 
     private var binding: GroupInfoDialogBinding?= null
@@ -24,7 +25,6 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
 
 
         loadAndDisplayGroupUsers(group.groupId) // 그룹원 정보 가져오기
-
 
         initLayout()
 
@@ -82,8 +82,6 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
                 }
         }
     }
-
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

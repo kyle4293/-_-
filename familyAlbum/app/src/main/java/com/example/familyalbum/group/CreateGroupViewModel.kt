@@ -1,5 +1,7 @@
 package com.example.familyalbum.group
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.databinding.ObservableField
 import androidx.lifecycle.LiveData
@@ -10,8 +12,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CreateGroupViewModel : ViewModel() {
 
-    // Observable field for group name
-    val groupName = ObservableField<String>()
+    val groupName = MutableLiveData<String>()
+
 
     private val _groupCreationSuccess = MutableLiveData<Boolean>()
     val groupCreationSuccess: LiveData<Boolean>
@@ -68,20 +70,22 @@ class CreateGroupViewModel : ViewModel() {
     }
 
     fun onCreateGroupButtonClick() {
-        val name = groupName.get()
+        val name = groupName.value
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
         if (name != null && name.isNotBlank()) {
             // Firestore에 그룹 정보 저장 및 생성
             val firestore = FirebaseFirestore.getInstance()
             val newGroup = hashMapOf(
-                "groupName" to name
+                "groupName" to name,
+                "members" to listOf(currentUserUid)
             )
 
             firestore.collection("groups")
                 .add(newGroup)
                 .addOnSuccessListener { documentReference ->
                     val groupId = documentReference.id
-                    val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid.toString()
-
+                    Log.e(TAG, currentUserUid)
                     // 유저의 그룹 목록에 추가
                     val userGroup = mapOf("groupId" to groupId, "groupName" to name)
                     firestore.collection("users")

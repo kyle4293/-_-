@@ -46,5 +46,10 @@ class CreateGroupActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener {
             finish()
         }
+
+        binding.btnCreateGroup.setOnClickListener {
+            // 그룹 생성 버튼 클릭 시 ViewModel의 함수 호출
+            viewModel.onCreateGroupButtonClick()
+        }
     }
 }
