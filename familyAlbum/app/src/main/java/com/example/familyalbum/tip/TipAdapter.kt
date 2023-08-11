@@ -1,32 +1,27 @@
-package com.example.familyalbum
+package com.example.familyalbum.tip
 
-import android.annotation.SuppressLint
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.familyalbum.R
+import com.example.familyalbum.TipEditActivity
 import com.example.familyalbum.databinding.TipBinding
-import com.example.familyalbum.tip.Tip
-import com.google.firebase.firestore.DocumentSnapshot
 
-class TipAdapter(private val tipList: List<DocumentSnapshot>): RecyclerView.Adapter<TipAdapter.ViewHolder>() {
+class TipAdapter(private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapter.ViewHolder>() {
     inner class ViewHolder( val binding: TipBinding): RecyclerView.ViewHolder(binding.root){
         init{
             binding.editbutton.setOnClickListener {
                 val context = it.context
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val tipSnapshot = tipList[position]
-                    val title = tipSnapshot.getString("title")
-                    val contents = tipSnapshot.get("contents") as? List<String> // 이건 필요한 타입에 맞게 수정
-                    val tag = tipSnapshot.getString("tag")
-
+                    val tip = tipList[position]
                     val intent = Intent(context, TipEditActivity::class.java)
-                    intent.putExtra("title", title)
-                    intent.putExtra("contents", contents?.toTypedArray()) // 이 역시 필요한 타입에 맞게 수정
-                    intent.putExtra("tag", tag)
+
+                    intent.putExtra("title", tip.title)
+                    intent.putExtra("contents", tip.contents?.toTypedArray()) // 이 역시 필요한 타입에 맞게 수정
+                    intent.putExtra("tag", tip.tag)
                     context.startActivity(intent)
                 }
             }
@@ -39,29 +34,51 @@ class TipAdapter(private val tipList: List<DocumentSnapshot>): RecyclerView.Adap
     }
 
     override fun onBindViewHolder(holder: TipAdapter.ViewHolder, position: Int) {
-        val tipSnapshot = tipList[position]
-        val tip = tipSnapshot.toObject(Tip::class.java)
+        val tip = tipList[position]
 
-        if (tip != null) {
-            holder.binding.tipTitle.text = tip.title
-            holder.binding.tag.text = tip.tag
-            when (tip.tag) {
-                "의" -> holder.binding.tag.setBackgroundResource(R.drawable.tag1)
-                "식" -> holder.binding.tag.setBackgroundResource(R.drawable.tag2)
-                "주" -> holder.binding.tag.setBackgroundResource(R.drawable.tag3)
-            }
-
-            val contentStringBuilder = StringBuilder()
-            tip.contents?.forEach { content ->
-                contentStringBuilder.append(content.content)
-                contentStringBuilder.append("\n")
-            }
-            holder.binding.tipContent.text = contentStringBuilder.toString()
+        holder.binding.tipTitle.text = tip.title
+        holder.binding.tag.text = tip.tag
+        when (tip.tag) {
+            "의" -> holder.binding.tag.setBackgroundResource(R.drawable.tag1)
+            "식" -> holder.binding.tag.setBackgroundResource(R.drawable.tag2)
+            "주" -> holder.binding.tag.setBackgroundResource(R.drawable.tag3)
         }
+
+        val contentStringBuilder = StringBuilder()
+        tip.contents?.forEach { content ->
+            contentStringBuilder.append(content)
+            contentStringBuilder.append("\n")
+        }
+        holder.binding.tipContent.text = contentStringBuilder.toString()
     }
 
     override fun getItemCount(): Int {
         return tipList.size
     }
 
+    // 이전 목록과 새 목록을 비교하여 변경 사항을 계산하는 DiffUtil 콜백 클래스
+    private class TipDiffCallback(private val oldList: List<Tip>, private val newList: List<Tip>) : DiffUtil.Callback() {
+        override fun getOldListSize(): Int {
+            return oldList.size
+        }
+
+        override fun getNewListSize(): Int {
+            return newList.size
+        }
+
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].title == newList[newItemPosition].title
+        }
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+    }
+    fun updateData(newTipList: List<Tip>) {
+        val diffCallback = TipDiffCallback(tipList, newTipList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        tipList = newTipList
+        diffResult.dispatchUpdatesTo(this)
+    }
 }
