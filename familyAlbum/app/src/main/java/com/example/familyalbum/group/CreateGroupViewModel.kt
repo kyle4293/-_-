@@ -1,4 +1,4 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 import androidx.lifecycle.ViewModel
 import androidx.databinding.ObservableField
