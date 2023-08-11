@@ -69,6 +69,21 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+//        val groupId = arguments?.getString(ARG_GROUP_ID)
+//        val groupName = arguments?.getString(ARG_GROUP_NAME)
+//        binding.groupName.text = groupName
+//
+//        if (!groupId.isNullOrEmpty()) {
+//            loadAndDisplayGroupImages(groupId)
+//            loadAndDisplayGroupUsers(groupId) // 그룹에 속한 유저들의 목록 가져와서 표시
+//        }
+//
+//        init()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         val groupId = arguments?.getString(ARG_GROUP_ID)
         val groupName = arguments?.getString(ARG_GROUP_NAME)
         binding.groupName.text = groupName

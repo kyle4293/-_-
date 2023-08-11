@@ -40,11 +40,6 @@ class GroupListFragment : Fragment() {
         groupAdapter = GroupAdapter(emptyList())
         groupAdapter.setOnGroupClickListener { group ->
             val homeFragment = HomeFragment.newInstance(group.groupId, group.groupName)
-//            requireActivity().supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, homeFragment)
-//                .addToBackStack(null)
-//                .commit()
-
             val mActivity = activity as MainActivity
             mActivity.changeFragment(homeFragment)
         }
@@ -101,7 +96,7 @@ class GroupListFragment : Fragment() {
         }
 
         binding.btnBack.setOnClickListener {
-            requireActivity().finish()
+            (activity as MainActivity).onBackPressed()
         }
     }
 
