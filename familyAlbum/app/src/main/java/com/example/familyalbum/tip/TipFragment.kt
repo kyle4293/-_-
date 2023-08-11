@@ -45,15 +45,21 @@ class TipFragment : Fragment() {
             val tipList = documents.documents.mapNotNull { document ->
                 val title = document.getString("title") ?: ""
                 val tag = document.getString("tag") ?: ""
+                val contents = document.get("contents") as? List<HashMap<String, String>> ?: emptyList()
 
-
-                val contentList = when (val contents = document.get("contents")) {
-                    is List<*> -> {
-                        contents.filterIsInstance<String>().map { content -> Content(content) }
+                if (title.isNotEmpty() && tag.isNotEmpty()) {
+                    val contentList = contents.mapNotNull { contentMap ->
+                        val content = contentMap["content"]
+                        if (content != null) {
+                            Content(content)
+                        } else {
+                            null
+                        }
                     }
-                    else -> emptyList()
+                    Tip(title, tag, contentList)
+                } else {
+                    null
                 }
-                Tip(title, tag, contentList)
             }
             tipAdapter.updateData(tipList)
         }

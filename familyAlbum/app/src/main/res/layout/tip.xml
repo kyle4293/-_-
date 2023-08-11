@@ -78,7 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="내용\n어쩌구저꺼구"
+            android:text="제발 나와주세요..."
             android:fontFamily="@font/lineseed_kr_rg"
             android:textSize="16sp" />
     </FrameLayout>
