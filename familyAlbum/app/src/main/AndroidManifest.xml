@@ -43,9 +43,8 @@
         <activity
             android:name=".home.CreateGroupActivity"
             android:exported="false" />
-        <activity
-            android:name=".home.GroupListActivity"
-            android:exported="false" />
+        <activity android:name=".TipEditActivity"
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
             android:exported="true" />
