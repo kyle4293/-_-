@@ -2,6 +2,7 @@ package com.example.familyalbum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
 import com.example.familyalbum.home.GroupListFragment
@@ -55,18 +56,9 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    fun changeFragment(index: Int) {
-        when(index) {
-            1 -> {
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_content, HomeFragment())
-                    .commitAllowingStateLoss()
-            }
-            2 -> {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main_content, GroupListFragment())
-                .commitAllowingStateLoss()
-        }
-        }
+    fun changeFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_content, fragment)
+            .commitAllowingStateLoss()
     }
 }
