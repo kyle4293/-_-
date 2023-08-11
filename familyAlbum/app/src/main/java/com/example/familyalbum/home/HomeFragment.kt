@@ -18,10 +18,6 @@ import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayoutMediator
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.familyalbum.MainActivity
-import com.example.familyalbum.R
-import com.example.familyalbum.databinding.FragmentHomeBinding
 import com.example.familyalbum.group.GroupListFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
