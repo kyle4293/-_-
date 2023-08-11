@@ -15,7 +15,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -169,8 +172,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.btnGroupSelect.setOnClickListener {
-            val intent = Intent(requireContext(), GroupListActivity::class.java)
-            startActivity(intent)
+            val mActivity = activity as MainActivity
+            mActivity.changeFragment(GroupListFragment())
         }
 
         binding.btnGallery.setOnClickListener {
