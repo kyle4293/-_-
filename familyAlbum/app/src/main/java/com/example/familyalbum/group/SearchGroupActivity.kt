@@ -1,4 +1,4 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -49,6 +49,10 @@ class SearchGroupActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "그룹 아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        binding.btnBack.setOnClickListener {
+            finish()
         }
     }
 }

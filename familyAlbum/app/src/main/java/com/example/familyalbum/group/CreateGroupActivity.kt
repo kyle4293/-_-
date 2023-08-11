@@ -1,4 +1,4 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 import android.app.Activity
 import android.content.Intent
@@ -38,5 +38,18 @@ class CreateGroupActivity : AppCompatActivity() {
             }
         })
 
+        initLayout()
+
+    }
+
+    private fun initLayout() {
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
+        binding.btnCreateGroup.setOnClickListener {
+            // 그룹 생성 버튼 클릭 시 ViewModel의 함수 호출
+            viewModel.onCreateGroupButtonClick()
+        }
     }
 }

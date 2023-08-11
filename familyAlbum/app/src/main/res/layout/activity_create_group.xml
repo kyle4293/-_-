@@ -4,7 +4,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.familyalbum.home.CreateGroupViewModel" />
+            type="com.example.familyalbum.group.CreateGroupViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,7 +32,18 @@
             app:layout_constraintTop_toTopOf="@id/btn_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"/>
+            android:layout_marginTop="70dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개설하려는 그룹의 이름을 입력하고 \n 그룹의 대표 사진을 고른 뒤, 그룹생성을 눌러주세요."
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layout1"
+            android:layout_marginBottom="30dp"
+            android:textColor="@color/black"/>
 
         <LinearLayout
             android:id="@+id/layout1"
@@ -40,7 +51,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@+id/textview_layout"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="140dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
             <TextView
@@ -48,6 +59,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:textColor="@color/black"
                 android:text="그룹 이름"/>
 
             <EditText
@@ -65,7 +78,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/layout1"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
             <TextView
@@ -73,6 +86,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/lineseed_kr_rg"
                 android:text="그룹 대표사진"/>
 
             <ImageView
@@ -85,14 +100,18 @@
                 android:background="@drawable/icon_dot_rectangle"/>
         </LinearLayout>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnCreateGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="그룹 생성"
+            android:background="@drawable/chatting_bottom"
+            android:backgroundTint="@color/cardview_dark_background"
+            android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout2"
+            android:layout_marginTop="20dp"
             android:onClick="@{(view) -> viewModel.onCreateGroupButtonClick()}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

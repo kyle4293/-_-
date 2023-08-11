@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(){
     fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_content, fragment)
+            .addToBackStack(null) // 이 부분을 추가하여 백 스택에 추가합니다.
             .commitAllowingStateLoss()
     }
 }
