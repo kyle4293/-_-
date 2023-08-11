@@ -6,7 +6,9 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="20dp"
     android:background="@drawable/tipbox"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:elevation="5dp"
+    android:layout_margin="10dp">
 
 
     <LinearLayout
@@ -18,11 +20,22 @@
         android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/profile"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:srcCompat="@drawable/baseline_account_circle_24" />
+        <TextView
+            android:id="@+id/tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/tag1"
+            android:backgroundTintMode="multiply"
+            android:text="태그"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="5dp"
+            android:textSize="16sp"
+            android:fontFamily="@font/lineseed_kr_rg"/>
+
 
         <TextView
             android:id="@+id/tipTitle"
@@ -32,30 +45,17 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:text="제목"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:textColor="@color/cardview_dark_background"
+            android:fontFamily="@font/lineseed_kr_bd"/>
 
-        <TextView
-            android:id="@+id/tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/tag1"
-            android:backgroundTintMode="multiply"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:text="태그"
-            android:textSize="16sp" />
-
-        <Button
+        <ImageView
             android:id="@+id/editbutton"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
-            android:background="@drawable/dots"
-            android:backgroundTintMode="src_in"
+            android:src="@drawable/dots"
+            app:tint="@color/cardview_dark_background"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     </LinearLayout>
@@ -63,8 +63,9 @@
     <View
         android:id="@+id/view2"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/horizontal_divider" />
+        android:layout_height="1dp"
+        android:background="@drawable/horizontal_divider"
+        android:backgroundTint="@color/gray"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -78,6 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:text="내용\n어쩌구저꺼구"
+            android:fontFamily="@font/lineseed_kr_rg"
             android:textSize="16sp" />
     </FrameLayout>
 

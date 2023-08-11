@@ -1,4 +1,4 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 data class Group(
     var groupId: String,
