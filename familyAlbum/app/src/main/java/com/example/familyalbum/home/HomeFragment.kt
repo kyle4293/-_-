@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import java.text.SimpleDateFormat
@@ -33,7 +34,6 @@ class HomeFragment : Fragment() {
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var galleryList: ArrayList<Gallery>
     private var isFabOpen = false
-
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
@@ -154,13 +154,29 @@ class HomeFragment : Fragment() {
     private fun init() {
         galleryList = ArrayList()
         galleryAdapter = GalleryAdapter(galleryList)
+
         initLayout()
     }
 
     private fun initLayout() {
         //년, 월, 일인 경우로 일단 가정.
-        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.homeRecyclerView.adapter = galleryAdapter
+        val viewPager = binding?.viewPager
+        viewPager?.adapter = AlbumPagerAdapter(requireActivity())
+
+        val tabTitles = listOf<String>("year","month","day","total")
+        val tabIcons = listOf<Int>(R.drawable.baseline_camera_24, R.drawable.baseline_camera_24, R.drawable.baseline_camera_24,R.drawable.baseline_lightbulb_24)
+
+        if (viewPager != null) {
+            TabLayoutMediator(
+                binding!!.tabLayout,
+                viewPager,
+                { tab, position ->
+                    tab.setText(tabTitles[position])
+                }).attach()
+        }
+
+//        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+//        binding.homeRecyclerView.adapter = galleryAdapter
 
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()

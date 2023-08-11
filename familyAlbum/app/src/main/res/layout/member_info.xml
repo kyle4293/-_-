@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:text="Group Name"
+        android:text="member Name"
         android:layout_weight="0.6"
         android:textSize="20sp"
         android:layout_gravity="center" />
