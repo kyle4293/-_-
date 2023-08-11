@@ -20,7 +20,10 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
-            android:name=".home.SearchGroupActivity"
+            android:name=".task.TaskPlusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".group.SearchGroupActivity"
             android:exported="false" />
         <activity
             android:name=".profile.ProfileConfirmActivity"
@@ -41,14 +44,14 @@
             android:name=".profile.ProfileModifyActivity"
             android:exported="false" />
         <activity
-            android:name=".home.CreateGroupActivity"
+            android:name=".group.CreateGroupActivity"
             android:exported="false" />
-        <activity
-            android:name=".home.GroupListActivity"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+        <activity android:name=".TipEditActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

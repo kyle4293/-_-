@@ -1,8 +1,8 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familyalbum.databinding.GroupItemBinding
 class GroupAdapter(private var groupList: List<Group>) : RecyclerView.Adapter<GroupAdapter.ViewHolder>() {
@@ -22,6 +22,18 @@ class GroupAdapter(private var groupList: List<Group>) : RecyclerView.Adapter<Gr
                     onGroupClickListener?.invoke(group)
                 }
             }
+
+            binding.btnInformGroup.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val group = groupList[position]
+                    val dialog = GroupInfoDialog(group)
+                    val fragmentManager = (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+                    fragmentManager?.let { manager ->
+                        dialog.show(manager, "GroupDialog")
+                    }
+                }
+            }
         }
     }
 
@@ -38,6 +50,7 @@ class GroupAdapter(private var groupList: List<Group>) : RecyclerView.Adapter<Gr
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groupList[position]
         holder.binding.groupName.text = group.groupName
+
     }
 
     override fun getItemCount(): Int {

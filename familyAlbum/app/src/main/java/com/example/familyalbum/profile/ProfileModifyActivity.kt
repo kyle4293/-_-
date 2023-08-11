@@ -94,6 +94,10 @@ class ProfileModifyActivity : AppCompatActivity() {
         binding.modifyBtn.setOnClickListener {
             saveProfileImage()
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

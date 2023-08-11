@@ -7,21 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.databinding.FragmentTipBinding
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class TipFragment : Fragment() {
     private lateinit var tipAdapter: TipAdapter
-    private lateinit var tipList: ArrayList<Tip>
     private lateinit var binding: FragmentTipBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private var tipList: List<DocumentSnapshot> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentTipBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,10 +30,7 @@ class TipFragment : Fragment() {
     }
 
     private fun init() {
-        tipList = ArrayList()
-        tipList.add(Tip("제목1","내용1",3))
-        tipList.add(Tip("제목2","내용2",4))
-        tipAdapter = TipAdapter(tipList)
+        tipAdapter = TipAdapter(emptyList())
         initLayout()
     }
 
@@ -43,5 +38,24 @@ class TipFragment : Fragment() {
         binding.tipRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.tipRecyclerView.adapter = tipAdapter
 
+        //firestore에서 데이터 가져오기
+        val db = FirebaseFirestore.getInstance()
+        val tipsCollection = db.collection("tips")
+        tipsCollection.get().addOnSuccessListener { documents ->
+            val tipList = documents.documents.mapNotNull { document ->
+                val title = document.getString("title") ?: ""
+                val tag = document.getString("tag") ?: ""
+
+
+                val contentList = when (val contents = document.get("contents")) {
+                    is List<*> -> {
+                        contents.filterIsInstance<String>().map { content -> Content(content) }
+                    }
+                    else -> emptyList()
+                }
+                Tip(title, tag, contentList)
+            }
+            tipAdapter.updateData(tipList)
+        }
     }
 }

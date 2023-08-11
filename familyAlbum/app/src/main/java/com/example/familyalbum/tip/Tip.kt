@@ -1,9 +1,10 @@
 package com.example.familyalbum.tip
 
-data class Tip(var title: String?,
-               var content: String?,
-               var heart: Int?
+data class Tip(
+    var title: String,
+    var tag: String,
+    var contents: List<Content>?
 ){
-    constructor(): this("","",0)
+    constructor() : this("", "", null)
 }
 

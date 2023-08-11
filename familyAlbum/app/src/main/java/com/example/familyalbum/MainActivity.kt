@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
-import com.example.familyalbum.home.GroupListFragment
 import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
 import com.example.familyalbum.timeTable.TimeTableFragment
@@ -59,6 +58,7 @@ class MainActivity : AppCompatActivity(){
     fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_content, fragment)
+            .addToBackStack(null) // 이 부분을 추가하여 백 스택에 추가합니다.
             .commitAllowingStateLoss()
     }
 }
