@@ -5,11 +5,9 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
-import com.example.familyalbum.home.GroupListFragment
 import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
 import com.example.familyalbum.timeTable.TimeTableFragment
-import com.example.familyalbum.tip.TipFragment
 
 class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
