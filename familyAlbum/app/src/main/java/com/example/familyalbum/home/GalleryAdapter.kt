@@ -20,6 +20,12 @@ class GalleryAdapter(val galleryList: ArrayList<Gallery>): RecyclerView.Adapter<
 
     }
 
+    fun setGalleryList(images: List<String>) {
+        galleryList.clear()
+        galleryList.addAll(images.map { Gallery(it, "") }) // 이미지 URL과 더미 날짜로 갤러리 객체 생성
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = GallerylistviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
