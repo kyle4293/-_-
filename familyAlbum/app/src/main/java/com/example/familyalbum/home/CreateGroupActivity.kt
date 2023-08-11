@@ -38,5 +38,13 @@ class CreateGroupActivity : AppCompatActivity() {
             }
         })
 
+        initLayout()
+
+    }
+
+    private fun initLayout() {
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 }

@@ -50,5 +50,9 @@ class SearchGroupActivity : AppCompatActivity() {
                 Toast.makeText(this, "그룹 아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
+
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
     }
 }
