@@ -13,7 +13,10 @@ import com.example.familyalbum.databinding.GallerylistviewBinding
 
 class LinearGalleryFragment : Fragment() {
     private var binding: FragmentLinearGalleryBinding? = null
-    private var galleryList: ArrayList<Gallery> = arrayListOf(Gallery("","hi"), Gallery("","hi2"), Gallery("","hi3"))
+    //    ---dummy data for test---
+    //    private var galleryList: ArrayList<Gallery> = arrayListOf(Gallery("content://com.android.providers.media.documents/document/image%3A17","hi"), Gallery("","hi2"), Gallery("","hi3"))
+    private var galleryList: ArrayList<Gallery> = arrayListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

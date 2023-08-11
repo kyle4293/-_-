@@ -1,6 +1,7 @@
 package com.example.familyalbum.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,18 +9,21 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentGridGalleryBinding
 
-
-
 class GridGalleryFragment : Fragment() {
     private var binding: FragmentGridGalleryBinding? = null
-    private var galleryList: ArrayList<Gallery> = arrayListOf(Gallery("","hi"), Gallery("","hi2"), Gallery("","hi3"))
+
+//    ---dummy data for test---
+//    private var galleryList: ArrayList<Gallery> = arrayListOf(Gallery("content://com.android.providers.media.documents/document/image%3A17","hi"),
+//    Gallery("", "hiii"), Gallery("", "hi3"), Gallery("", "hi4")
+//    )
+
+    private var galleryList: ArrayList<Gallery> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,32 +37,32 @@ class GridGalleryFragment : Fragment() {
         return binding!!.root
     }
 
-    inner class GridRecyclerViewAdapter(val galleryList: ArrayList<Gallery>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    inner class GridRecyclerViewAdapter(val galleryList: ArrayList<Gallery>) : RecyclerView.Adapter<GridRecyclerViewAdapter.CustomViewHolder>() {
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.gallery_grid_view, parent, false)
             var width = resources.displayMetrics.widthPixels / 3
-            var imageView = ImageView(parent.context)
-            imageView.layoutParams = LinearLayoutCompat.LayoutParams(width, width)
-            return CustomViewHolder(imageView)
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val photo = galleryList[position]
-            val imageView = (holder as CustomViewHolder).imageView
-            Glide.with(holder.itemView.context)
-                .load(photo.imgsrc)
-                .apply(RequestOptions().centerCrop())
-                .into(imageView)
-        }
-
-        inner class CustomViewHolder(var imageView: ImageView) :
-            RecyclerView.ViewHolder(imageView) {
+            view.layoutParams = LinearLayoutCompat.LayoutParams(width, width)
+            return CustomViewHolder(view)
         }
 
         override fun getItemCount(): Int {
             return galleryList.size
         }
 
-    }
+        override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+            val photo = galleryList[position]
+            val imageView = holder.itemView.findViewById<ImageView>(R.id.imageView)
 
+            Glide.with(holder.itemView.context)
+                .load(photo.imgsrc)
+                .placeholder(R.drawable.baseline_arrow_drop_down_24) // Add a placeholder drawable
+                .apply(RequestOptions().centerCrop())
+                .error(R.drawable.baseline_camera_24)
+                .into(imageView)
+        }
+
+        inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+        }
+    }
 }
