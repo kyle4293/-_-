@@ -1,8 +1,10 @@
 package com.example.familyalbum.timeTable
 
+import android.content.ContentValues
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 
 import androidx.appcompat.app.AlertDialog
+import com.bumptech.glide.Glide
 
 import com.example.familyalbum.R
 
@@ -25,6 +28,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 
 class TimeTableFragment : Fragment() {
@@ -32,7 +36,7 @@ class TimeTableFragment : Fragment() {
     private lateinit var binding: FragmentTimeTableBinding
     private lateinit var database: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
-    private val firestore = FirebaseFirestore.getInstance()
+    private var firestore = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,6 +82,7 @@ class TimeTableFragment : Fragment() {
             }
         }
 
+        setupProfile()
         binding.imageView.setOnClickListener {
             showDialog()
         }
@@ -89,6 +94,41 @@ class TimeTableFragment : Fragment() {
 
     }
 
+    private fun setupProfile() {
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        var storage = FirebaseStorage.getInstance()
+
+        val currentUser = firebaseAuth.currentUser
+        val uid = currentUser?.uid
+
+        uid?.let { userId ->
+            val userDocRef = firestore.collection("users").document(userId)
+
+            userDocRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userInfo = documentSnapshot.data
+                        val name = userInfo?.get("name") as? String
+
+                        val profileImageUrl = userInfo?.get("profileImageUrl") as? String
+                        profileImageUrl?.let {
+                            // Use Glide to load and display profile image
+                            Glide.with(requireContext())
+                                .load(profileImageUrl)
+                                .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
+                                .error(R.drawable.default_profile_image) // Error image if loading fails
+                                .circleCrop()
+                                .into(binding.imageView)
+                        }
+                        binding.textView.text = "나의 시간표"
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(ContentValues.TAG, "데이터 처리 failed", exception)
+                }
+        }
+    }
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
@@ -226,8 +266,8 @@ class TimeTableFragment : Fragment() {
 
                 customLayout.setOnClickListener {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
-                    alertDialogBuilder.setTitle("상세화면")
-                    alertDialogBuilder.setMessage("스케줄상세화면입니다.${start.text},${end.text},${name.text},${place.text}")
+                    alertDialogBuilder.setTitle("스케줄 상세정보")
+                    alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
                     alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
                         // 확인 버튼 클릭 시 실행할 작업
                         dialog.dismiss() // 다이얼로그 닫기
