@@ -2,7 +2,6 @@ package com.example.familyalbum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.familyalbum.databinding.ActivityMainBinding
 import com.example.familyalbum.databinding.ActivityTipEditBinding
 
 class TipEditActivity : AppCompatActivity() {
