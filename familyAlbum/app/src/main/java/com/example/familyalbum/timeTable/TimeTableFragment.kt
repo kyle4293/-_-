@@ -1,5 +1,6 @@
 package com.example.familyalbum
 
+import android.content.DialogInterface
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.timeTable.User
@@ -69,6 +71,21 @@ class TimeTableFragment : Fragment() {
                 }
             }
         }
+
+        binding.imageView.setOnClickListener {
+            showDialog()
+        }
+    }
+
+    fun showDialog() {
+        val alertDialogBuilder = AlertDialog.Builder(requireContext())
+        alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
+        alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")
+        alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+            // 확인 버튼 클릭 시 실행할 작업
+            dialog.dismiss() // 다이얼로그 닫기
+        })
+        alertDialogBuilder.show()
     }
 
     private fun loadCurrentUser(userId: String, callback: (User) -> Unit) {
