@@ -1,6 +1,7 @@
 package com.example.familyalbum.tip
 
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -46,11 +47,15 @@ class TipAdapter(private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapte
 
         val contentStringBuilder = StringBuilder()
         tip.contents?.forEach { content ->
-            contentStringBuilder.append(content)
+            contentStringBuilder.append(content.content)
             contentStringBuilder.append("\n")
         }
+
+        Log.d("TipAdapter", "Contents: ${tip.contents}")
+
         holder.binding.tipContent.text = contentStringBuilder.toString()
     }
+
 
     override fun getItemCount(): Int {
         return tipList.size
