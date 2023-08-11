@@ -1,5 +1,6 @@
 package com.example.familyalbum.home
 
+
 import android.animation.ObjectAnimator
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -13,6 +14,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import com.example.familyalbum.MainActivity
+import com.example.familyalbum.R
+import com.example.familyalbum.databinding.FragmentHomeBinding
+import com.google.android.material.tabs.TabLayoutMediator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
@@ -30,7 +35,6 @@ class HomeFragment : Fragment() {
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var galleryList: ArrayList<Gallery>
     private var isFabOpen = false
-
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
@@ -152,6 +156,8 @@ class HomeFragment : Fragment() {
                 if (document.exists()) {
                     val images = document.get("images") as? List<String>
                     if (images != null) {
+//                        ---2. 여기서 원래있는 galleryAdapter가 아니라, AlbumPagerAdapter로 넘겨야할 것 같습니다!!---
+//                        images 배열 통으로 AlbumPagerAdaper-> 각 Fragment -> Adapter까지 넘겨야할 것 가타용...
                         galleryAdapter.setGalleryList(images)
                     }
                 }
@@ -166,13 +172,31 @@ class HomeFragment : Fragment() {
     private fun init() {
         galleryList = ArrayList()
         galleryAdapter = GalleryAdapter(galleryList)
+
         initLayout()
     }
 
     private fun initLayout() {
-        //년, 월, 일인 경우로 일단 가정.
-        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.homeRecyclerView.adapter = galleryAdapter
+        //---1. 변경된 부분---
+        //원래 homeFragment layout에는 recyclerView가 붙어있었음. 그걸 Viewpager로 바꿈.
+        //homeFragment -> AlbumPagerAdapter에서 list/grid 별 fragment로 이동 시켜줌
+        //LinearGalleryFragment, GridGalleryFragment 내에 각각 recyclerview가 붙어있고, binding까지 완료.
+
+        //주석 2번을 찾아가십시오
+        val viewPager = binding?.viewPager
+        viewPager?.adapter = AlbumPagerAdapter(requireActivity())
+
+        val tabTitles = listOf<String>("year","month","day","total")
+
+        if (viewPager != null) {
+            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
+                tab.setText(tabTitles[position])
+            }.attach()
+        }
+
+//        ---이전 코드입니다---
+//        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+//        binding.homeRecyclerView.adapter = galleryAdapter
 
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
