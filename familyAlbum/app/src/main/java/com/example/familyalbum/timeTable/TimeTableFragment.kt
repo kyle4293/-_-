@@ -82,34 +82,56 @@ class TimeTableFragment : Fragment() {
                 }
             } else {
                 // 사용자 정보가 없을 경우에 대한 처리
-                callback(User("", ""))
+                callback(User("", "", "", ""))
             }
         }.addOnFailureListener { exception ->
             // 에러 처리
-            callback(User("", ""))
+            callback(User("", "", "", ""))
         }
     }
 
+//    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
+//        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
+//        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val taskList = mutableListOf<Task>()
+//                for (taskSnapshot in snapshot.children) {
+//                    val task = taskSnapshot.getValue(Task::class.java)
+//                    task?.let {
+//                        taskList.add(it)
+//                    }
+//                }
+//                callback(taskList)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // 에러 처리
+//                callback(emptyList())
+//            }
+//        })
+//    }
+
     private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
-        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
-        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        val tasksCollection = firestore.collection("tasks")
+
+        tasksCollection.whereEqualTo("userName", currentUserName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
                 val taskList = mutableListOf<Task>()
-                for (taskSnapshot in snapshot.children) {
-                    val task = taskSnapshot.getValue(Task::class.java)
+                for (documentSnapshot in querySnapshot.documents) {
+                    val task = documentSnapshot.toObject(Task::class.java)
                     task?.let {
                         taskList.add(it)
                     }
                 }
                 callback(taskList)
             }
-
-            override fun onCancelled(error: DatabaseError) {
+            .addOnFailureListener { exception ->
                 // 에러 처리
                 callback(emptyList())
             }
-        })
     }
+
 
     private fun getDayIndex(dayOfWeek: String): Int {
         return when (dayOfWeek) {
