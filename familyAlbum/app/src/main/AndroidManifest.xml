@@ -23,7 +23,7 @@
             android:name=".task.TaskPlusActivity"
             android:exported="false" />
         <activity
-            android:name=".home.SearchGroupActivity"
+            android:name=".group.SearchGroupActivity"
             android:exported="false" />
         <activity
             android:name=".profile.ProfileConfirmActivity"
@@ -44,7 +44,7 @@
             android:name=".profile.ProfileModifyActivity"
             android:exported="false" />
         <activity
-            android:name=".home.CreateGroupActivity"
+            android:name=".group.CreateGroupActivity"
             android:exported="false" />
 
         <activity
