@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familyalbum.databinding.TipBinding
+import com.example.familyalbum.tip.Tip
 
 class TipAdapter(val tipList: ArrayList<Tip>): RecyclerView.Adapter<TipAdapter.ViewHolder>() {
     inner class ViewHolder(val binding: TipBinding): RecyclerView.ViewHolder(binding.root){
@@ -16,7 +17,7 @@ class TipAdapter(val tipList: ArrayList<Tip>): RecyclerView.Adapter<TipAdapter.V
                 val context = it.context
                 val intent = Intent(context, TipEditActivity::class.java)
                 intent.putExtra("title", tipList[adapterPosition].title)
-                intent.putExtra("content", tipList[adapterPosition].content)
+                intent.putExtra("content", tipList[adapterPosition].contents?.map {content -> content.content }?.toTypedArray())
                 intent.putExtra("tag", tipList[adapterPosition].tag)
                 intent.putExtra("user", tipList[adapterPosition].user)
                 context.startActivity(intent)
@@ -35,13 +36,20 @@ class TipAdapter(val tipList: ArrayList<Tip>): RecyclerView.Adapter<TipAdapter.V
     override fun onBindViewHolder(holder: TipAdapter.ViewHolder, position: Int) {
         val tip = tipList[position]
         holder.binding.tipTitle.text = tip.title
-        holder.binding.tipContent.text = tip.content
         holder.binding.tag.text = tip.tag
         when(tip.tag) {
             "의"->holder.binding.tag.setBackgroundResource(R.drawable.tag1)
             "식"->holder.binding.tag.setBackgroundResource(R.drawable.tag2)
             "주"->holder.binding.tag.setBackgroundResource(R.drawable.tag3)
         }
+
+        //contents 표시
+        val contentStringBuilder = StringBuilder()
+        tip.contents?.forEach { content ->
+            contentStringBuilder.append(content.content)
+            contentStringBuilder.append("\n")
+        }
+        holder.binding.tipContent.text = contentStringBuilder.toString()
     }
 
     override fun getItemCount(): Int {
