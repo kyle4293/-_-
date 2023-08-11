@@ -1,4 +1,4 @@
-package com.example.familyalbum.home
+package com.example.familyalbum.group
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
