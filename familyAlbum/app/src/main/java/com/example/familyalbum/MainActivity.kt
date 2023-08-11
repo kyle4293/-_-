@@ -22,11 +22,11 @@ class MainActivity : AppCompatActivity(){
         binding.bottomNavigation.run {
             setOnItemSelectedListener { item ->
                 when (item.itemId) {
-                    R.id.menu_tip -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TipFragment())
-                            .commitAllowingStateLoss()
-                    }
+//                    R.id.menu_tip -> {
+//                        supportFragmentManager.beginTransaction()
+//                            .replace(R.id.main_content, TipFragment())
+//                            .commitAllowingStateLoss()
+//                    }
                     R.id.menu_chat -> {
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.main_content, ChatFragment())

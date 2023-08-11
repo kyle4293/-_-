@@ -1,6 +1,7 @@
 package com.example.familyalbum.timeTable
 
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import com.example.familyalbum.R
 
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
+import com.example.familyalbum.task.TaskPlusActivity
 import com.example.familyalbum.timeTable.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -79,6 +81,12 @@ class TimeTableFragment : Fragment() {
         binding.imageView.setOnClickListener {
             showDialog()
         }
+
+        binding.plusButton.setOnClickListener{
+            val intent = Intent(activity, TaskPlusActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     fun showDialog() {
@@ -216,7 +224,19 @@ class TimeTableFragment : Fragment() {
                 val place: TextView = customLayout.findViewById(R.id.place)
                 place.text = task.place
 
+                customLayout.setOnClickListener {
+                    val alertDialogBuilder = AlertDialog.Builder(requireContext())
+                    alertDialogBuilder.setTitle("상세화면")
+                    alertDialogBuilder.setMessage("스케줄상세화면입니다.${start.text},${end.text},${name.text},${place.text}")
+                    alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+                        // 확인 버튼 클릭 시 실행할 작업
+                        dialog.dismiss() // 다이얼로그 닫기
+                    })
+                    alertDialogBuilder.show()
+                }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
+
+
             }
         }
     }
