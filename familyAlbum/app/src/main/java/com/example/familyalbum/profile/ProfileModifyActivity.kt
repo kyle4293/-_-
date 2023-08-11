@@ -106,6 +106,7 @@ class ProfileModifyActivity : AppCompatActivity() {
         if (requestCode == REQUEST_CONFIRM && resultCode == RESULT_OK) {
             Glide.with(this)
                 .load(imageUri)
+                .circleCrop()
                 .into(binding.profileImageview)
         }
     }

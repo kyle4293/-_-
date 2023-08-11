@@ -3,11 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="group name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        android:fontFamily="@font/lineseed_kr_bd"/>
     <LinearLayout
         android:id="@+id/group_id_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/group_name"
         android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -16,20 +27,23 @@
             android:id="@+id/textview_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="group ID: "
-            android:textSize="20sp" />
+            android:text="그룹 아이디: "
+            android:fontFamily="@font/lineseed_kr_rg"
+            android:textSize="18sp" />
         <TextView
             android:id="@+id/group_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:text="groupID"
-            android:textSize="20sp"/>
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/member_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toBottomOf="@id/group_id_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

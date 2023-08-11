@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentProfileBinding
 import com.example.familyalbum.login.LoginActivity
@@ -77,12 +78,17 @@ class ProfileFragment : Fragment() {
 
                         val profileImageUrl = userInfo?.get("profileImageUrl") as? String
                         profileImageUrl?.let {
+
+                            // Clear Glide's cache for the profileImageView
+                            Glide.with(requireContext()).clear(binding.profileImageView)
+
                             // Use Glide to load and display profile image
                             Glide.with(requireContext())
                                 .load(profileImageUrl)
                                 .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
                                 .error(R.drawable.default_profile_image) // Error image if loading fails
                                 .circleCrop()
+//                                .apply(RequestOptions.circleCropTransform())
                                 .into(binding.profileImageView)
                         }
 
