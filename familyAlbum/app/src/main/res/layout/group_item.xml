@@ -18,6 +18,18 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="Group Name"
+        android:layout_weight="0.6"
         android:textSize="20sp"
         android:layout_gravity="center" />
+
+    <Button
+        android:id="@+id/btn_inform_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/chatting_bottom"
+        android:layout_marginEnd="30dp"
+        android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
+        android:drawableTint="@color/white"
+        android:text="조회"
+        android:layout_gravity="center"/>
 </LinearLayout>

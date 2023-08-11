@@ -38,6 +38,9 @@ class GroupAdapter(private var groupList: List<Group>) : RecyclerView.Adapter<Gr
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val group = groupList[position]
         holder.binding.groupName.text = group.groupName
+        holder.binding.btnInformGroup.setOnClickListener {
+
+        }
     }
 
     override fun getItemCount(): Int {
