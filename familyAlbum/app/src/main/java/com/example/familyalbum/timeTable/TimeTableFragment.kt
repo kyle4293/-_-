@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.timeTable
 
 import android.content.DialogInterface
 import android.os.Bundle
@@ -8,7 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+
 import androidx.appcompat.app.AlertDialog
+
+import com.example.familyalbum.R
+
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.timeTable.User
@@ -98,34 +102,56 @@ class TimeTableFragment : Fragment() {
                 }
             } else {
                 // 사용자 정보가 없을 경우에 대한 처리
-                callback(User("", ""))
+                callback(User("", "", "", ""))
             }
         }.addOnFailureListener { exception ->
             // 에러 처리
-            callback(User("", ""))
+            callback(User("", "", "", ""))
         }
     }
 
+//    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
+//        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
+//        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val taskList = mutableListOf<Task>()
+//                for (taskSnapshot in snapshot.children) {
+//                    val task = taskSnapshot.getValue(Task::class.java)
+//                    task?.let {
+//                        taskList.add(it)
+//                    }
+//                }
+//                callback(taskList)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // 에러 처리
+//                callback(emptyList())
+//            }
+//        })
+//    }
+
     private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
-        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
-        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
+        val tasksCollection = firestore.collection("tasks")
+
+        tasksCollection.whereEqualTo("userName", currentUserName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
                 val taskList = mutableListOf<Task>()
-                for (taskSnapshot in snapshot.children) {
-                    val task = taskSnapshot.getValue(Task::class.java)
+                for (documentSnapshot in querySnapshot.documents) {
+                    val task = documentSnapshot.toObject(Task::class.java)
                     task?.let {
                         taskList.add(it)
                     }
                 }
                 callback(taskList)
             }
-
-            override fun onCancelled(error: DatabaseError) {
+            .addOnFailureListener { exception ->
                 // 에러 처리
                 callback(emptyList())
             }
-        })
     }
+
 
     private fun getDayIndex(dayOfWeek: String): Int {
         return when (dayOfWeek) {
@@ -143,6 +169,11 @@ class TimeTableFragment : Fragment() {
     private fun schedule(taskList: List<Task>) {
         val daysOfWeek = listOf(binding.monView, binding.tueView, binding.wedView, binding.thuView, binding.friView, binding.satView, binding.sunView) // 요일별 레이아웃 View
 
+        // Table의 시간 범위 설정
+        val startTime = 900
+        val endTime = 2200
+        val totalTimeRange = endTime - startTime
+
         for (task in taskList) {
             val inflater = LayoutInflater.from(context)
 
@@ -150,18 +181,15 @@ class TimeTableFragment : Fragment() {
             val taskStartTime = task.startTime.toInt()
             val taskEndTime = task.endTime.toInt()
 
-            // Table의 시간 범위 설정
-            val startTime = 900
-            val endTime = 2200
+            // 시작시간과 종료시간을 전체 범위 내에서의 비율로 변환
+            val ratio = (taskStartTime - startTime).toFloat() / totalTimeRange
 
-            // 시작시간과 종료시간 사이에서의 비율 계산
-            val ratio = (taskEndTime - taskStartTime).toFloat() / (endTime - startTime)
 
             // 상단에서의 거리 계산
-            val topDistance = ((taskStartTime - startTime) * ratio).toInt()
+            val topDistance = (ratio * binding.root.height).toInt()
 
             // 높이 계산
-            val taskHeight = ((taskEndTime - taskStartTime) * ratio).toInt()
+            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * binding.root.height).toInt()
 
             val dayIndex = getDayIndex(task.dayOfWeek) // 요일 문자열을 인덱스로 변환
             if (dayIndex != -1) {
