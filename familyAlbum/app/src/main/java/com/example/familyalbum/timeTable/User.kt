@@ -1,4 +1,4 @@
-package com.example.familyalbum.user
+package com.example.familyalbum.timeTable
 
 data class User(
     val email: String,

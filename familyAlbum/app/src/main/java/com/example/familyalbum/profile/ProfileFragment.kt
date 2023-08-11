@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.profile
 
 import android.content.ContentValues.TAG
 import android.content.Intent
@@ -9,8 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentProfileBinding
-import com.example.familyalbum.user.LoginActivity
+import com.example.familyalbum.login.LoginActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -21,12 +22,10 @@ import com.google.firebase.storage.FirebaseStorage
 
 class ProfileFragment : Fragment() {
     private lateinit var binding: FragmentProfileBinding
-
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +52,7 @@ class ProfileFragment : Fragment() {
         }
 
         binding.btnProfileModify.setOnClickListener {
-            val intent = Intent(context, ProfileModifyActivity::class.java)
+            val intent = Intent(requireContext(), ProfileModifyActivity::class.java)
             startActivity(intent)
         }
     }

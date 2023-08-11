@@ -2,7 +2,13 @@ package com.example.familyalbum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
+import com.example.familyalbum.home.GroupListFragment
+import com.example.familyalbum.home.HomeFragment
+import com.example.familyalbum.profile.ProfileFragment
+import com.example.familyalbum.timeTable.TimeTableFragment
+import com.example.familyalbum.tip.TipFragment
 
 class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
@@ -46,6 +52,21 @@ class MainActivity : AppCompatActivity(){
                 true
             }
             selectedItemId = R.id.menu_home
+        }
+    }
+
+    fun changeFragment(index: Int) {
+        when(index) {
+            1 -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_content, HomeFragment())
+                    .commitAllowingStateLoss()
+            }
+            2 -> {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content, GroupListFragment())
+                .commitAllowingStateLoss()
+        }
         }
     }
 }

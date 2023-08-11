@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.timeTable
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
-import com.example.familyalbum.user.User
+import com.example.familyalbum.timeTable.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -126,6 +127,11 @@ class TimeTableFragment : Fragment() {
     private fun schedule(taskList: List<Task>) {
         val daysOfWeek = listOf(binding.monView, binding.tueView, binding.wedView, binding.thuView, binding.friView, binding.satView, binding.sunView) // 요일별 레이아웃 View
 
+        // Table의 시간 범위 설정
+        val startTime = 900
+        val endTime = 2200
+        val totalTimeRange = endTime - startTime
+
         for (task in taskList) {
             val inflater = LayoutInflater.from(context)
 
@@ -133,18 +139,15 @@ class TimeTableFragment : Fragment() {
             val taskStartTime = task.startTime.toInt()
             val taskEndTime = task.endTime.toInt()
 
-            // Table의 시간 범위 설정
-            val startTime = 900
-            val endTime = 2200
+            // 시작시간과 종료시간을 전체 범위 내에서의 비율로 변환
+            val ratio = (taskStartTime - startTime).toFloat() / totalTimeRange
 
-            // 시작시간과 종료시간 사이에서의 비율 계산
-            val ratio = (taskEndTime - taskStartTime).toFloat() / (endTime - startTime)
 
             // 상단에서의 거리 계산
-            val topDistance = ((taskStartTime - startTime) * ratio).toInt()
+            val topDistance = (ratio * binding.root.height).toInt()
 
             // 높이 계산
-            val taskHeight = ((taskEndTime - taskStartTime) * ratio).toInt()
+            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * binding.root.height).toInt()
 
             val dayIndex = getDayIndex(task.dayOfWeek) // 요일 문자열을 인덱스로 변환
             if (dayIndex != -1) {

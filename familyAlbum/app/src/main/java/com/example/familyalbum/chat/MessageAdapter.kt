@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.chat
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,12 +12,12 @@ class MessageAdapter(val messageList: ArrayList<Message>): RecyclerView.Adapter<
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = MessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: MessageAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = messageList[position]
         holder.binding.receiveMessageText.text = message.message
         holder.binding.receiveMessageTime.text = message.sendTime
