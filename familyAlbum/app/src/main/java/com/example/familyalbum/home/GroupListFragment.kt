@@ -1,16 +1,19 @@
 package com.example.familyalbum.home
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentGroupListBinding
 import com.google.android.gms.tasks.Task
@@ -22,7 +25,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class GroupListFragment : Fragment() {
-
     private lateinit var binding: FragmentGroupListBinding
     private lateinit var groupAdapter: GroupAdapter
     private lateinit var viewModel: CreateGroupViewModel
@@ -43,10 +45,13 @@ class GroupListFragment : Fragment() {
         groupAdapter = GroupAdapter(emptyList())
         groupAdapter.setOnGroupClickListener { group ->
             val homeFragment = HomeFragment.newInstance(group.groupId, group.groupName)
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, homeFragment)
-                .addToBackStack(null)
-                .commit()
+//            requireActivity().supportFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, homeFragment)
+//                .addToBackStack(null)
+//                .commit()
+
+            val mActivity = activity as MainActivity
+            mActivity.changeFragment(homeFragment)
         }
 
         // 리사이클러뷰에 어댑터 설정
@@ -100,16 +105,11 @@ class GroupListFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.btnSearchGroup.setOnClickListener {
-            val intent = Intent(requireContext(), SearchGroupActivity::class.java)
-            startActivity(intent)
-        }
-
         binding.btnBack.setOnClickListener {
             requireActivity().finish()
         }
-
     }
+
 
     private suspend fun getGroupNameFromFirestore(groupId: String): String {
         val groupDocRef = firestore.collection("groups").document(groupId)
