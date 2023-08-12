@@ -71,13 +71,12 @@ class TimeTableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //taskPlusActivity -> mainActivity -> timetablefragment 정보받음
-        // getArguments()를 사용하여 Bundle에서 데이터 추출
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
-        val taskPlace = arguments?.getString("taskPlace")
-        val taskName = arguments?.getString("taskName")
-        val week = arguments?.getString("week")
+        val bundle = arguments
+        val startTime = bundle?.getString("startTime")
+        val endTime = bundle?.getString("endTime")
+        val week = bundle?.getString("week")
+        val taskName = bundle?.getString("taskName")
+        val taskPlace = bundle?.getString("taskPlace")
 
         if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
             // 데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
@@ -91,7 +90,7 @@ class TimeTableFragment : Fragment() {
 
         } else {
             // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
-            Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -107,7 +106,7 @@ class TimeTableFragment : Fragment() {
             }
         }
 
-        setupProfile()
+        //setupProfile()
         binding.imageView.setOnClickListener {
             showDialog()
         }
@@ -119,7 +118,7 @@ class TimeTableFragment : Fragment() {
 
     }
 
-    private fun setupProfile() {
+    /*private fun setupProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -153,7 +152,7 @@ class TimeTableFragment : Fragment() {
                     Log.e(ContentValues.TAG, "데이터 처리 failed", exception)
                 }
         }
-    }
+    }*/
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
