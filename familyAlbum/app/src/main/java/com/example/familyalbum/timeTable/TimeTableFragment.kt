@@ -153,7 +153,7 @@ class TimeTableFragment : Fragment() {
             }
     }
 
-    private fun setupProfile() {
+    private fun myProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -282,6 +282,8 @@ class TimeTableFragment : Fragment() {
         val totalTimeRange = endTime - startTime
         val inflater = LayoutInflater.from(fragmentContext)
 
+        val currentUser = firebaseAuth.currentUser
+
 
         for (task in taskList) {
             val inflater = LayoutInflater.from(fragmentContext)
@@ -325,26 +327,51 @@ class TimeTableFragment : Fragment() {
                 val place: TextView = customLayout.findViewById(R.id.place)
                 place.text = task.place
 
+                var currentUserId = ""
+                if (currentUser != null) {
+                    currentUserId = currentUser.uid
+                }
+
                 customLayout.setOnClickListener {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
                     alertDialogBuilder.setTitle("스케줄 상세정보")
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
                     alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
-                        parentView.removeView(customLayout)
+                        val tasksCollection = firestore.collection("tasks")
+                        loadCurrentUser(currentUserId) { loadedUser ->
+                            val currentUserName = loadedUser.name
+                            tasksCollection.whereEqualTo("userName", currentUserName)
+                                .whereEqualTo("title", task.title)
+                                .get()
+                                .addOnSuccessListener { querySnapshot ->
+                                    for (documentSnapshot in querySnapshot.documents) {
+                                        tasksCollection.document(documentSnapshot.id).delete()
+                                            .addOnSuccessListener {
+                                                // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                parentView.removeView(customLayout)
+                                                dialog.dismiss() // 다이얼로그 닫기
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // 삭제 실패 시 처리
+                                            }
+                                    }
+                                }
+                                .addOnFailureListener { exception ->
+                                    // 조회 실패 시 처리
+                                }
+                        }
                         dialog.dismiss() // 다이얼로그 닫기
                     })
-                    .setNegativeButton("수정") { dialog, _ ->
+                        .setNegativeButton("수정") { dialog, _ ->
 
-                        val intent = Intent(context, TaskPlusActivity::class.java)
-                        intent.putExtra("key", "수정화면") // 정보 추가
-                        startActivity(intent)
-                        dialog.dismiss() // 다이얼로그 닫기
-                    }
+                            val intent = Intent(context, TaskPlusActivity::class.java)
+                            intent.putExtra("key", "수정화면") // 정보 추가
+                            startActivity(intent)
+                            dialog.dismiss() // 다이얼로그 닫기
+                        }
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
-
-
             }
         }
     }
