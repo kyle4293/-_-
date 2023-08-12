@@ -108,6 +108,17 @@ class ProfileFragment : Fragment() {
         // Firebase 로그아웃
         firebaseAuth.signOut()
 
+        firebaseAuth.addAuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            if (user == null) {
+                // 로그아웃 상태일 때 처리
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            }
+        }
+
+
         // Google 로그아웃
         googleSignInClient.signOut().addOnCompleteListener { task ->
             if (task.isSuccessful) {

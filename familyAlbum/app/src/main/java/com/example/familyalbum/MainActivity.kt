@@ -2,11 +2,13 @@ package com.example.familyalbum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
 import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
+import com.example.familyalbum.task.TaskPlusData
 import com.example.familyalbum.timeTable.TimeTableFragment
 import com.example.familyalbum.tip.TipFragment
 
@@ -16,6 +18,24 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val startTime = intent.getStringExtra("startTime")
+        val endTime = intent.getStringExtra("endTime")
+        val taskPlace = intent.getStringExtra("taskPlace")
+        val taskName = intent.getStringExtra("taskName")
+        val week = intent.getStringExtra("week")
+
+        // 모든 정보가 null이 아닌지 확인
+        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
+            val taskData = TaskPlusData(startTime, endTime, week, taskName,taskPlace)
+            val timetablefragment = TimeTableFragment()
+            timetablefragment.arguments = createTaskBundle(taskData)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content,timetablefragment)
+                .commitAllowingStateLoss()
+        } else {
+            // 오류 메시지 표시 등 필요한 처리 수행
+        }
 
         supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
             .commitAllowingStateLoss()
@@ -60,5 +80,15 @@ class MainActivity : AppCompatActivity(){
             .replace(R.id.main_content, fragment)
             .addToBackStack(null) // 이 부분을 추가하여 백 스택에 추가합니다.
             .commitAllowingStateLoss()
+    }
+
+    fun createTaskBundle(taskData: TaskPlusData): Bundle {
+        val bundle = Bundle()
+        bundle.putString("startTime", taskData.startTime)
+        bundle.putString("endTime", taskData.endTime)
+        bundle.putString("week", taskData.week)
+        bundle.putString("taskName", taskData.taskName)
+        bundle.putString("taskPlace", taskData.taskPlace)
+        return bundle
     }
 }
