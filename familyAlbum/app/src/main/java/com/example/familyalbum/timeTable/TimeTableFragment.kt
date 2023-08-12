@@ -307,6 +307,9 @@ class TimeTableFragment : Fragment() {
                     })
                     .setNegativeButton("수정") { dialog, _ ->
 
+                        val intent = Intent(context, TaskPlusActivity::class.java)
+                        intent.putExtra("key", "수정화면") // 정보 추가
+                        startActivity(intent)
                         dialog.dismiss() // 다이얼로그 닫기
                     }
                     alertDialogBuilder.show()
