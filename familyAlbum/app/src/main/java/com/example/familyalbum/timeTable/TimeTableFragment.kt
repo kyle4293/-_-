@@ -1,6 +1,7 @@
 package com.example.familyalbum.timeTable
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +39,12 @@ class TimeTableFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
     private var firestore = FirebaseFirestore.getInstance()
+    private lateinit var fragmentContext: Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fragmentContext = context
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -245,9 +252,11 @@ class TimeTableFragment : Fragment() {
         val startTime = 900
         val endTime = 2200
         val totalTimeRange = endTime - startTime
+        val inflater = LayoutInflater.from(fragmentContext)
+
 
         for (task in taskList) {
-            val inflater = LayoutInflater.from(context)
+            val inflater = LayoutInflater.from(fragmentContext)
 
             // Task의 시작시간과 종료시간을 가져오기
             val taskStartTime = task.startTime.toInt()

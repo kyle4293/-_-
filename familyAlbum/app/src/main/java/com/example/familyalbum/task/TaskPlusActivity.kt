@@ -172,12 +172,6 @@ class TaskPlusActivity : AppCompatActivity() {
             intent.putExtra("taskName", taskName)
             intent.putExtra("taskPlace", taskPlace)
             startActivity(intent)
-
-
-
-
         }
-
-
     }
 }
