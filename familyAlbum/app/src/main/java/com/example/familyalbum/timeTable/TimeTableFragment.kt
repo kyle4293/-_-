@@ -371,6 +371,31 @@ class TimeTableFragment : Fragment() {
 
 
                         //db삭제
+                            parentView.removeView(customLayout)
+
+                            val tasksCollection = firestore.collection("tasks")
+                            loadCurrentUser(currentUserId) { loadedUser ->
+                                val currentUserName = loadedUser.name
+                                tasksCollection.whereEqualTo("userName", currentUserName)
+                                    .whereEqualTo("title", task.title)
+                                    .get()
+                                    .addOnSuccessListener { querySnapshot ->
+                                        for (documentSnapshot in querySnapshot.documents) {
+                                            tasksCollection.document(documentSnapshot.id).delete()
+                                                .addOnSuccessListener {
+                                                    // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                    parentView.removeView(customLayout)
+                                                    dialog.dismiss() // 다이얼로그 닫기
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // 삭제 실패 시 처리
+                                                }
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        // 조회 실패 시 처리
+                                    }
+                            }
 
                         val intent = Intent(context, TaskPlusActivity::class.java)
                         intent.putExtra("key", "수정") // 정보 추가
