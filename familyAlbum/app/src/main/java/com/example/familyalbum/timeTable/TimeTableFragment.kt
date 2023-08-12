@@ -153,7 +153,7 @@ class TimeTableFragment : Fragment() {
             }
     }
 
-    private fun setupProfile() {
+    private fun myProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -190,9 +190,9 @@ class TimeTableFragment : Fragment() {
     }
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
+        alertDialogBuilder.setTitle("우리가족 시간표 선택")
         alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")
-        alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+        alertDialogBuilder.setPositiveButton("닫기", DialogInterface.OnClickListener { dialog, which ->
             // 확인 버튼 클릭 시 실행할 작업
             dialog.dismiss() // 다이얼로그 닫기
         })
@@ -329,10 +329,17 @@ class TimeTableFragment : Fragment() {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
                     alertDialogBuilder.setTitle("스케줄 상세정보")
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
-                    alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                        // 확인 버튼 클릭 시 실행할 작업
+                    alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
+                        parentView.removeView(customLayout)
                         dialog.dismiss() // 다이얼로그 닫기
                     })
+                        .setNegativeButton("수정") { dialog, _ ->
+
+                            val intent = Intent(context, TaskPlusActivity::class.java)
+                            intent.putExtra("key", "수정화면") // 정보 추가
+                            startActivity(intent)
+                            dialog.dismiss() // 다이얼로그 닫기
+                        }
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
