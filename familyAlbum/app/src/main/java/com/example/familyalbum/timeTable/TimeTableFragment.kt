@@ -337,6 +337,10 @@ class TimeTableFragment : Fragment() {
                     alertDialogBuilder.setTitle("스케줄 상세정보")
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
                     alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
+
+                        parentView.removeView(customLayout)
+                        //요기서 db도 삭제해야함니다
+
                         val tasksCollection = firestore.collection("tasks")
                         loadCurrentUser(currentUserId) { loadedUser ->
                             val currentUserName = loadedUser.name
@@ -360,15 +364,26 @@ class TimeTableFragment : Fragment() {
                                     // 조회 실패 시 처리
                                 }
                         }
+
                         dialog.dismiss() // 다이얼로그 닫기
                     })
                         .setNegativeButton("수정") { dialog, _ ->
 
-                            val intent = Intent(context, TaskPlusActivity::class.java)
-                            intent.putExtra("key", "수정화면") // 정보 추가
-                            startActivity(intent)
-                            dialog.dismiss() // 다이얼로그 닫기
-                        }
+
+                        //db삭제
+
+                        val intent = Intent(context, TaskPlusActivity::class.java)
+                        intent.putExtra("key", "수정") // 정보 추가
+                        intent.putExtra("startTime",task.startTime)
+                        intent.putExtra("endTime",task.endTime)
+                        intent.putExtra("title",task.title)
+                        intent.putExtra("place",task.place)
+                        intent.putExtra("dayOfWeek",task.dayOfWeek)
+                        startActivity(intent)
+
+                        dialog.dismiss() // 다이얼로그 닫기
+                    }
+
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
