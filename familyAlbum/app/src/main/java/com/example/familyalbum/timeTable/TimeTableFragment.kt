@@ -153,7 +153,7 @@ class TimeTableFragment : Fragment() {
             }
     }
 
-    private fun setupProfile() {
+    private fun myProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -333,10 +333,13 @@ class TimeTableFragment : Fragment() {
                         parentView.removeView(customLayout)
                         dialog.dismiss() // 다이얼로그 닫기
                     })
-                    .setNegativeButton("수정") { dialog, _ ->
+                        .setNegativeButton("수정") { dialog, _ ->
 
-                        dialog.dismiss() // 다이얼로그 닫기
-                    }
+                            val intent = Intent(context, TaskPlusActivity::class.java)
+                            intent.putExtra("key", "수정화면") // 정보 추가
+                            startActivity(intent)
+                            dialog.dismiss() // 다이얼로그 닫기
+                        }
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
