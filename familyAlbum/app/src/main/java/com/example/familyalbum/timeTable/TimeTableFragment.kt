@@ -43,19 +43,21 @@ class TimeTableFragment : Fragment() {
         database = FirebaseDatabase.getInstance().reference
         firebaseAuth = FirebaseAuth.getInstance()
 
-
-        // 더미 데이터 생성 및 저장
+//        더미 데이터 생성 및 저장
 //        val dummyTasks = listOf(
-//            Task("Beomjun Kim", "과제1", "강의실A", "Mon", "1000", "1200"),
-//            Task("Beomjun Kim", "미팅", "회의실B", "Tue", "1400", "1600"),
-//            Task("Beomjun Kim", "운동", "체육관", "Wed", "1700", "1800")
+//            Task("test", "근로", "새천년관", "fri", "1000", "1200"),
+//            Task("test", "해커톤", "회의실", "wed", "0900", "2200"),
+//            Task("test", "데이트", "집", "sat", "1300", "2100")
 //        )
 //
 //        for (task in dummyTasks) {
-//            val key = database.child("tasks").push().key
-//            key?.let {
-//                database.child("tasks").child(key).setValue(task)
-//            }
+//            firestore.collection("tasks").add(task)
+//                .addOnSuccessListener { documentReference ->
+//                    Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+//                }
+//                .addOnFailureListener { e ->
+//                    Log.w("TAG", "Error adding document", e)
+//                }
 //        }
     }
 
@@ -158,27 +160,6 @@ class TimeTableFragment : Fragment() {
         }
     }
 
-//    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
-//        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
-//        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val taskList = mutableListOf<Task>()
-//                for (taskSnapshot in snapshot.children) {
-//                    val task = taskSnapshot.getValue(Task::class.java)
-//                    task?.let {
-//                        taskList.add(it)
-//                    }
-//                }
-//                callback(taskList)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // 에러 처리
-//                callback(emptyList())
-//            }
-//        })
-//    }
-
     private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
         val tasksCollection = firestore.collection("tasks")
 
@@ -222,6 +203,8 @@ class TimeTableFragment : Fragment() {
         val endTime = 2200
         val totalTimeRange = endTime - startTime
 
+        val navigationBarHeight = getNavigationBarHeight()
+
         for (task in taskList) {
             val inflater = LayoutInflater.from(context)
 
@@ -232,12 +215,11 @@ class TimeTableFragment : Fragment() {
             // 시작시간과 종료시간을 전체 범위 내에서의 비율로 변환
             val ratio = (taskStartTime - startTime).toFloat() / totalTimeRange
 
-
             // 상단에서의 거리 계산
             val topDistance = (ratio * binding.root.height).toInt()
 
             // 높이 계산
-            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * binding.root.height).toInt()
+            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * (binding.root.height - navigationBarHeight)).toInt()
 
             val dayIndex = getDayIndex(task.dayOfWeek) // 요일 문자열을 인덱스로 변환
             if (dayIndex != -1) {
@@ -278,6 +260,16 @@ class TimeTableFragment : Fragment() {
 
 
             }
+        }
+    }
+
+    // 네비게이션 바의 높이를 가져오는 함수
+    private fun getNavigationBarHeight(): Int {
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else {
+            0
         }
     }
 }
