@@ -1,10 +1,12 @@
 package com.example.familyalbum.task
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 
@@ -20,6 +22,7 @@ class TaskPlusActivity : AppCompatActivity() {
         lateinit var startMin: String
         lateinit var endHour: String
         lateinit var endMin: String
+        lateinit var week: String
 
         // 스피너에 표시할 항목 배열
         var sHours = arrayListOf("00")
@@ -125,21 +128,53 @@ class TaskPlusActivity : AppCompatActivity() {
             }
         }
 
+
+        // 스피너에 표시할 항목 배열
+        var weeks = arrayListOf("월","화","수","목","금","토","일")
+
+        // ArrayAdapter를 사용하여 스피너에 항목을 연결
+        val weekAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, weeks)
+        weekAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // 스피너에 어댑터 설정
+        binding.weekSpinner.adapter = weekAdapter
+
+        // 스피너에서 항목을 선택했을 때 처리
+        binding.weekSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                val selectedItem = parent?.getItemAtPosition(position).toString()
+                week = selectedItem
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // 아무 항목도 선택되지 않았을 때 처리
+            }
+        }
+
         binding.button.setOnClickListener {
             val taskName = binding.inputTaskName.text.toString()
             val taskPlace = binding.inputTaskPlace.text.toString()
-            /*Log.i(taskName,taskName)
-            Log.i(taskPlace,taskPlace)
-            Log.i(startHour,startHour)
-            Log.i(startMin,startMin)
-            Log.i(endHour,endHour)
-            Log.i(endMin,endMin)*/
-
             val startTime = "${startHour}${startMin}"
             val endTime = "${endHour}${endMin}"
 
-            Log.i(startTime,startTime)
-            Log.i(endTime,endTime)
+            when(week){
+                "월" -> week = "mon"
+                "화" -> week = "tue"
+                "수" -> week = "wed"
+                "목" -> week = "thu"
+                "금" -> week = "fri"
+                "토" -> week = "sat"
+                "일" -> week = "sun"
+            }
+
+            // mainactivity로 정보 전송
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("startTime", startTime)
+            intent.putExtra("endTime", endTime)
+            intent.putExtra("week", week)
+            intent.putExtra("taskName", taskName)
+            intent.putExtra("taskPlace", taskPlace)
+            startActivity(intent)
+
 
 
 

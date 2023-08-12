@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
+import android.widget.Toast
 
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
@@ -71,6 +72,30 @@ class TimeTableFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //taskPlusActivity -> mainActivity -> timetablefragment 정보받음
+        // getArguments()를 사용하여 Bundle에서 데이터 추출
+        val startTime = arguments?.getString("startTime")
+        val endTime = arguments?.getString("endTime")
+        val taskPlace = arguments?.getString("taskPlace")
+        val taskName = arguments?.getString("taskName")
+        val week = arguments?.getString("week")
+
+        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
+            // 데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
+            // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
+            // view.findViewById<TextView>(R.id.textStartTime).text = startTime
+            Log.i(startTime,startTime)
+            Log.i(endTime,endTime)
+            Log.i(taskPlace,taskPlace)
+            Log.i(taskName,taskName)
+            Log.i(week,week)
+
+        } else {
+            // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
+            Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
+        }
+
 
         val currentUser = firebaseAuth.currentUser
         currentUser?.let { user ->
