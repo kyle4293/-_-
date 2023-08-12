@@ -35,44 +35,45 @@ class MainActivity : AppCompatActivity(){
                 .commitAllowingStateLoss()
         } else {
             // 오류 메시지 표시 등 필요한 처리 수행
-        }
+            supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
+                .commitAllowingStateLoss()
 
-        supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
-            .commitAllowingStateLoss()
-
-        binding.bottomNavigation.run {
-            setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.menu_tip -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TipFragment())
-                            .commitAllowingStateLoss()
+            binding.bottomNavigation.run {
+                setOnItemSelectedListener { item ->
+                    when (item.itemId) {
+                        R.id.menu_tip -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, TipFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_chat -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ChatFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_home -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, HomeFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_table -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, TimeTableFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_profile -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ProfileFragment())
+                                .commitAllowingStateLoss()
+                        }
                     }
-                    R.id.menu_chat -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ChatFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_home -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, HomeFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_table -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TimeTableFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_profile -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ProfileFragment())
-                            .commitAllowingStateLoss()
-                    }
+                    true
                 }
-                true
+                selectedItemId = R.id.menu_home
             }
-            selectedItemId = R.id.menu_home
         }
+
+
     }
 
     fun changeFragment(fragment: Fragment) {

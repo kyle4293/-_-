@@ -113,7 +113,7 @@ class TimeTableFragment : Fragment() {
             }
         }
 
-        //setupProfile()
+        setupProfile()
         binding.imageView.setOnClickListener {
             showDialog()
         }
@@ -125,7 +125,7 @@ class TimeTableFragment : Fragment() {
 
     }
 
-    /*private fun setupProfile() {
+    private fun setupProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -159,7 +159,7 @@ class TimeTableFragment : Fragment() {
                     Log.e(ContentValues.TAG, "데이터 처리 failed", exception)
                 }
         }
-    }*/
+    }
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
