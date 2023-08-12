@@ -25,54 +25,60 @@ class MainActivity : AppCompatActivity(){
         val taskName = intent.getStringExtra("taskName")
         val week = intent.getStringExtra("week")
 
+        var timetablefragment = TimeTableFragment()
+        var flag = 0
         // 모든 정보가 null이 아닌지 확인
         if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
             val taskData = TaskPlusData(startTime, endTime, week, taskName,taskPlace)
-            val timetablefragment = TimeTableFragment()
             timetablefragment.arguments = createTaskBundle(taskData)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.main_content,timetablefragment)
                 .commitAllowingStateLoss()
+            flag = 1
+
         } else {
             // 오류 메시지 표시 등 필요한 처리 수행
-        }
+            supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
+                .commitAllowingStateLoss() }
 
-        supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
-            .commitAllowingStateLoss()
-
-        binding.bottomNavigation.run {
-            setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.menu_tip -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TipFragment())
-                            .commitAllowingStateLoss()
+            binding.bottomNavigation.run {
+                setOnItemSelectedListener { item ->
+                    when (item.itemId) {
+                        R.id.menu_tip -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, TipFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_chat -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ChatFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_home -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, HomeFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_table -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content,timetablefragment)
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_profile -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ProfileFragment())
+                                .commitAllowingStateLoss()
+                        }
                     }
-                    R.id.menu_chat -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ChatFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_home -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, HomeFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_table -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TimeTableFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_profile -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ProfileFragment())
-                            .commitAllowingStateLoss()
-                    }
+                    true
                 }
-                true
+                if(flag==0){selectedItemId = R.id.menu_home}
+                if(flag==1){selectedItemId = R.id.menu_table}
             }
-            selectedItemId = R.id.menu_home
-        }
+
+
+
+
     }
 
     fun changeFragment(fragment: Fragment) {
