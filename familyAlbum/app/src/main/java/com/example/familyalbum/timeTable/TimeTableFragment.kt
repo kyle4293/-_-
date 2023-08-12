@@ -265,8 +265,9 @@ class TimeTableFragment : Fragment() {
 
     // 네비게이션 바의 높이를 가져오는 함수
     private fun getNavigationBarHeight(): Int {
-        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
-        return if (resourceId > 0) {
+        val resources = context?.resources
+        val resourceId = resources?.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId != null && resourceId > 0) {
             resources.getDimensionPixelSize(resourceId)
         } else {
             0
