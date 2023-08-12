@@ -22,6 +22,7 @@ import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.task.TaskPlusActivity
 import com.example.familyalbum.timeTable.User
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -72,6 +73,15 @@ class TimeTableFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        // BottomNavigationView의 높이 가져오기
+//        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
+//        val bottomNavigationHeight = bottomNavigationView.height
+//
+//        // TimeTableFragment의 높이 조정
+//        val fragmentLayoutParams = binding.root.layoutParams as ViewGroup.MarginLayoutParams
+//        fragmentLayoutParams.bottomMargin = bottomNavigationHeight
+//        binding.root.layoutParams = fragmentLayoutParams
 
         //taskPlusActivity -> mainActivity -> timetablefragment 정보받음
         // getArguments()를 사용하여 Bundle에서 데이터 추출
