@@ -1,4 +1,4 @@
-package com.example.familyalbum
+package com.example.familyalbum.tip
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,21 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.databinding.FragmentTipBinding
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class TipFragment : Fragment() {
     private lateinit var tipAdapter: TipAdapter
-    private lateinit var tipList: ArrayList<Tip>
     private lateinit var binding: FragmentTipBinding
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
+    private var tipList: List<DocumentSnapshot> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentTipBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,8 +30,7 @@ class TipFragment : Fragment() {
     }
 
     private fun init() {
-        tipList = ArrayList()
-        tipAdapter = TipAdapter(tipList)
+        tipAdapter = TipAdapter(emptyList())
         initLayout()
     }
 
@@ -41,14 +38,30 @@ class TipFragment : Fragment() {
         binding.tipRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.tipRecyclerView.adapter = tipAdapter
 
-        //db에서 받아
-        tipList.clear()
-        tipList.add(Tip("제목1","내용1","민하은","의"))
-        tipList.add(Tip("제목2","내용2","최창규","식"))
-        tipList.add(Tip("제목3","내용3","최유빈","주"))
-        tipList.add(Tip("제목4","내용4","김범준","의"))
-        //notifi
+        //firestore에서 데이터 가져오기
+        val db = FirebaseFirestore.getInstance()
+        val tipsCollection = db.collection("tips")
+        tipsCollection.get().addOnSuccessListener { documents ->
+            val tipList = documents.documents.mapNotNull { document ->
+                val title = document.getString("title") ?: ""
+                val tag = document.getString("tag") ?: ""
+                val contents = document.get("contents") as? List<HashMap<String, String>> ?: emptyList()
 
-        
+                if (title.isNotEmpty() && tag.isNotEmpty()) {
+                    val contentList = contents.mapNotNull { contentMap ->
+                        val content = contentMap["content"]
+                        if (content != null) {
+                            Content(content)
+                        } else {
+                            null
+                        }
+                    }
+                    Tip(title, tag, contentList)
+                } else {
+                    null
+                }
+            }
+            tipAdapter.updateData(tipList)
+        }
     }
 }

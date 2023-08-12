@@ -37,6 +37,7 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
     }
 
     private fun initLayout() {
+        binding?.groupName?.text = group.groupName
         binding?.groupId?.text = group.groupId
         binding?.memberRecyclerview?.layoutManager = LinearLayoutManager(requireContext())
         binding?.memberRecyclerview?.adapter = memberAdapter
@@ -69,7 +70,7 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
                         val userName = documentSnapshot.getString("name")
-                        val userImage = documentSnapshot.getString("image") ?: ""
+                        val userImage = documentSnapshot.getString("profileImageUrl") ?: ""
                         if (!userName.isNullOrEmpty()) {
                             val memberInfo = MemberInfo(userName, userImage)
                             memberList.add(memberInfo) // 리스트에 MemberInfo 객체 추가
