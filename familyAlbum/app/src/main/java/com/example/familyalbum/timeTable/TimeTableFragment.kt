@@ -1,6 +1,7 @@
 package com.example.familyalbum.timeTable
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -78,6 +79,9 @@ class TimeTableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val currentUser = firebaseAuth.currentUser
+        val currentUserId = currentUser?.uid
+
         val bundle = arguments
         val startTime = bundle?.getString("startTime")
         val endTime = bundle?.getString("endTime")
@@ -85,23 +89,33 @@ class TimeTableFragment : Fragment() {
         val taskName = bundle?.getString("taskName")
         val taskPlace = bundle?.getString("taskPlace")
 
-        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
-            // 데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
-            // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
-            // view.findViewById<TextView>(R.id.textStartTime).text = startTime
-            Log.i(startTime,startTime)
-            Log.i(endTime,endTime)
-            Log.i(taskPlace,taskPlace)
-            Log.i(taskName,taskName)
-            Log.i(week,week)
 
+        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null && currentUserId != null) {
+            // 현재 로그인한 사용자의 이름 가져오기
+            loadCurrentUser(currentUserId) { loadedUser ->
+                val currentUserName = loadedUser.name
+
+                // Task 객체 생성
+                val task = Task(week, endTime, taskPlace, startTime, taskName, currentUserName) // 이름 추가
+
+                // 파이어스토어에 저장
+                saveTaskToFirestore(task)
+
+//            데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
+//            Log.i(startTime,startTime)
+//            Log.i(endTime,endTime)
+//            Log.i(taskPlace,taskPlace)
+//            Log.i(taskName,taskName)
+//            Log.i(week,week)
+
+                // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
+                // view.findViewById<TextView>(R.id.textStartTime).text = startTime
+            }
         } else {
             // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
             //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
 
-
-        val currentUser = firebaseAuth.currentUser
         currentUser?.let { user ->
             val currentUserId = user.uid
 
@@ -125,7 +139,21 @@ class TimeTableFragment : Fragment() {
 
     }
 
-    private fun myProfile() {
+    private fun saveTaskToFirestore(task: Task) {
+        val tasksCollection = firestore.collection("tasks")
+
+        tasksCollection.add(task)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                // 저장 성공 시 수행할 작업 추가
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+                // 저장 실패 시 수행할 작업 추가
+            }
+    }
+
+    private fun setupProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
