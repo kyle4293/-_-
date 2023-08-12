@@ -3,6 +3,7 @@ package com.example.familyalbum.task
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.familyalbum.MainActivity
@@ -15,6 +16,7 @@ class TaskPlusActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskPlusBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         lateinit var startHour: String
         lateinit var startMin: String
@@ -146,6 +148,79 @@ class TaskPlusActivity : AppCompatActivity() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 // 아무 항목도 선택되지 않았을 때 처리
             }
+        }
+
+        val key = intent.getStringExtra("key")
+        if(key == "수정"){
+            val startTime = intent.getStringExtra("startTime")
+            val endTime = intent.getStringExtra("endTime")
+            val title = intent.getStringExtra("title")
+            val place = intent.getStringExtra("place")
+            var dayOfWeek = intent.getStringExtra("dayOfWeek")
+
+
+            var startHour = (startTime!!.toInt() / 100).toString()
+            if(startHour.toInt() < 10) {
+                startHour = "0${startHour}"
+            }
+            var startMin = (startTime!!.toInt() % 100).toString()
+            if(startMin.toInt() < 10) {
+                startMin = "0${startMin}"
+            }
+            var endHour = (endTime!!.toInt() / 100).toString()
+            if(endHour.toInt() < 10) {
+                endHour = "0${endHour}"
+            }
+            var endMin = (endTime!!.toInt() % 100).toString()
+            if(endMin.toInt() < 10) {
+                endMin = "0${endMin}"
+            }
+
+
+            binding.textView2.text = "스케줄 수정"
+            binding.button.text = "수정"
+
+            val sHposition = sHourAdapter.getPosition(startHour)
+            if (sHposition != -1) {
+                binding.startHourSpinner.setSelection(sHposition)
+            }
+
+            val sMposition = sMinAdapter.getPosition(startMin)
+            if (sMposition != -1) {
+                binding.startMinSpinner.setSelection(sMposition)
+            }
+
+            val eHposition = eHourAdapter.getPosition(endHour)
+            if (eHposition != -1) {
+                binding.endHourSpinner.setSelection(eHposition)
+            }
+
+            val eMposition = eMinAdapter.getPosition(endMin)
+            if (eMposition != -1) {
+                binding.endMinSpinner.setSelection(eMposition)
+            }
+
+            when(dayOfWeek){
+                "mon" -> dayOfWeek ="월"
+                "tue" -> dayOfWeek ="화"
+                "wed" -> dayOfWeek ="수"
+                "thu" -> dayOfWeek ="목"
+                "fri" -> dayOfWeek ="금"
+                "sat" -> dayOfWeek ="토"
+                "sun" -> dayOfWeek ="일"
+            }
+            val weekposition = weekAdapter.getPosition(dayOfWeek)
+            if (weekposition != -1) {
+                binding.weekSpinner.setSelection(weekposition)
+            }
+
+            if (title != null) {
+                binding.inputTaskName.text = Editable.Factory.getInstance().newEditable(title)
+            }
+            if (place != null) {
+                binding.inputTaskPlace.text = Editable.Factory.getInstance().newEditable(place)
+            }
+
         }
 
         binding.button.setOnClickListener {

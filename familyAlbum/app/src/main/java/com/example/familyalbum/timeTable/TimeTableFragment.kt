@@ -153,7 +153,7 @@ class TimeTableFragment : Fragment() {
             }
     }
 
-    private fun setupProfile() {
+    private fun myProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -331,13 +331,22 @@ class TimeTableFragment : Fragment() {
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
                     alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
                         parentView.removeView(customLayout)
+                        //요기서 db도 삭제해야함니다
                         dialog.dismiss() // 다이얼로그 닫기
                     })
                     .setNegativeButton("수정") { dialog, _ ->
 
+                        //db삭제
+
                         val intent = Intent(context, TaskPlusActivity::class.java)
-                        intent.putExtra("key", "수정화면") // 정보 추가
+                        intent.putExtra("key", "수정") // 정보 추가
+                        intent.putExtra("startTime",task.startTime)
+                        intent.putExtra("endTime",task.endTime)
+                        intent.putExtra("title",task.title)
+                        intent.putExtra("place",task.place)
+                        intent.putExtra("dayOfWeek",task.dayOfWeek)
                         startActivity(intent)
+
                         dialog.dismiss() // 다이얼로그 닫기
                     }
                     alertDialogBuilder.show()
