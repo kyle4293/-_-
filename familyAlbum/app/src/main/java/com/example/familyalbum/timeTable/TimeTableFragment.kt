@@ -1,6 +1,7 @@
 package com.example.familyalbum.timeTable
 
 import android.content.ContentValues
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -22,7 +23,6 @@ import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.task.TaskPlusActivity
 import com.example.familyalbum.timeTable.User
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,27 +39,31 @@ class TimeTableFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
     private var firestore = FirebaseFirestore.getInstance()
+    private lateinit var fragmentContext: Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fragmentContext = context
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         database = FirebaseDatabase.getInstance().reference
         firebaseAuth = FirebaseAuth.getInstance()
 
-//        더미 데이터 생성 및 저장
+
+        // 더미 데이터 생성 및 저장
 //        val dummyTasks = listOf(
-//            Task("test", "근로", "새천년관", "fri", "1000", "1200"),
-//            Task("test", "해커톤", "회의실", "wed", "0900", "2200"),
-//            Task("test", "데이트", "집", "sat", "1300", "2100")
+//            Task("Beomjun Kim", "과제1", "강의실A", "Mon", "1000", "1200"),
+//            Task("Beomjun Kim", "미팅", "회의실B", "Tue", "1400", "1600"),
+//            Task("Beomjun Kim", "운동", "체육관", "Wed", "1700", "1800")
 //        )
 //
 //        for (task in dummyTasks) {
-//            firestore.collection("tasks").add(task)
-//                .addOnSuccessListener { documentReference ->
-//                    Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-//                }
-//                .addOnFailureListener { e ->
-//                    Log.w("TAG", "Error adding document", e)
-//                }
+//            val key = database.child("tasks").push().key
+//            key?.let {
+//                database.child("tasks").child(key).setValue(task)
+//            }
 //        }
     }
 
@@ -74,22 +78,12 @@ class TimeTableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        // BottomNavigationView의 높이 가져오기
-//        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation)
-//        val bottomNavigationHeight = bottomNavigationView.height
-//
-//        // TimeTableFragment의 높이 조정
-//        val fragmentLayoutParams = binding.root.layoutParams as ViewGroup.MarginLayoutParams
-//        fragmentLayoutParams.bottomMargin = bottomNavigationHeight
-//        binding.root.layoutParams = fragmentLayoutParams
-
-        //taskPlusActivity -> mainActivity -> timetablefragment 정보받음
-        // getArguments()를 사용하여 Bundle에서 데이터 추출
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
-        val taskPlace = arguments?.getString("taskPlace")
-        val taskName = arguments?.getString("taskName")
-        val week = arguments?.getString("week")
+        val bundle = arguments
+        val startTime = bundle?.getString("startTime")
+        val endTime = bundle?.getString("endTime")
+        val week = bundle?.getString("week")
+        val taskName = bundle?.getString("taskName")
+        val taskPlace = bundle?.getString("taskPlace")
 
         if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
             // 데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
@@ -103,7 +97,7 @@ class TimeTableFragment : Fragment() {
 
         } else {
             // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
-            Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
 
 
@@ -119,7 +113,7 @@ class TimeTableFragment : Fragment() {
             }
         }
 
-        setupProfile()
+        //setupProfile()
         binding.imageView.setOnClickListener {
             showDialog()
         }
@@ -131,7 +125,7 @@ class TimeTableFragment : Fragment() {
 
     }
 
-    private fun setupProfile() {
+    /*private fun setupProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -165,7 +159,7 @@ class TimeTableFragment : Fragment() {
                     Log.e(ContentValues.TAG, "데이터 처리 failed", exception)
                 }
         }
-    }
+    }*/
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
@@ -194,6 +188,27 @@ class TimeTableFragment : Fragment() {
             callback(User("", "", "", ""))
         }
     }
+
+//    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
+//        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
+//        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(snapshot: DataSnapshot) {
+//                val taskList = mutableListOf<Task>()
+//                for (taskSnapshot in snapshot.children) {
+//                    val task = taskSnapshot.getValue(Task::class.java)
+//                    task?.let {
+//                        taskList.add(it)
+//                    }
+//                }
+//                callback(taskList)
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                // 에러 처리
+//                callback(emptyList())
+//            }
+//        })
+//    }
 
     private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
         val tasksCollection = firestore.collection("tasks")
@@ -237,11 +252,11 @@ class TimeTableFragment : Fragment() {
         val startTime = 900
         val endTime = 2200
         val totalTimeRange = endTime - startTime
+        val inflater = LayoutInflater.from(fragmentContext)
 
-        val navigationBarHeight = getNavigationBarHeight()
 
         for (task in taskList) {
-            val inflater = LayoutInflater.from(context)
+            val inflater = LayoutInflater.from(fragmentContext)
 
             // Task의 시작시간과 종료시간을 가져오기
             val taskStartTime = task.startTime.toInt()
@@ -250,11 +265,12 @@ class TimeTableFragment : Fragment() {
             // 시작시간과 종료시간을 전체 범위 내에서의 비율로 변환
             val ratio = (taskStartTime - startTime).toFloat() / totalTimeRange
 
+
             // 상단에서의 거리 계산
             val topDistance = (ratio * binding.root.height).toInt()
 
             // 높이 계산
-            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * (binding.root.height - navigationBarHeight)).toInt()
+            val taskHeight = ((taskEndTime - taskStartTime).toFloat() / totalTimeRange * binding.root.height).toInt()
 
             val dayIndex = getDayIndex(task.dayOfWeek) // 요일 문자열을 인덱스로 변환
             if (dayIndex != -1) {
@@ -295,17 +311,6 @@ class TimeTableFragment : Fragment() {
 
 
             }
-        }
-    }
-
-    // 네비게이션 바의 높이를 가져오는 함수
-    private fun getNavigationBarHeight(): Int {
-        val resources = context?.resources
-        val resourceId = resources?.getIdentifier("navigation_bar_height", "dimen", "android")
-        return if (resourceId != null && resourceId > 0) {
-            resources.getDimensionPixelSize(resourceId)
-        } else {
-            0
         }
     }
 }
