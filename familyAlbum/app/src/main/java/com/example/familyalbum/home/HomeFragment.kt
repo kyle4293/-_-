@@ -2,12 +2,9 @@ package com.example.familyalbum.home
 
 
 import android.animation.ObjectAnimator
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +18,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.example.familyalbum.group.GroupListFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -28,19 +26,30 @@ import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var galleryAdapter: GalleryAdapter
-    private lateinit var galleryList: ArrayList<Gallery>
+    private lateinit var galleryAdapter: AlbumPagerAdapter
+    private lateinit var galleryList: ArrayList<String>
     private var isFabOpen = false
-
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             val groupId = arguments?.getString(ARG_GROUP_ID)
-            if (!groupId.isNullOrEmpty()) {
-                uploadPhoto(uri, groupId)
+            try {
+                if (!groupId.isNullOrEmpty()) {
+//                    uploadPhoto(uri, groupId)
+
+                    val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
+
+                    //confirm Activity로 이동
+                    val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    startActivity(intent)
+                }
+            } catch (e: IOException) {
+//                e.printStackTrace()
             }
         }
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -103,7 +112,7 @@ class HomeFragment : Fragment() {
                 if (document.exists()) {
                     val images = document.get("images") as? List<String>
                     if (images != null) {
-                        galleryAdapter.setGalleryList(images)
+//                        = galleryAdapter(requireActivity(), images)
                     }
                 }
             }
@@ -116,31 +125,30 @@ class HomeFragment : Fragment() {
 
     private fun init() {
         galleryList = ArrayList()
-        galleryAdapter = GalleryAdapter(galleryList)
+        galleryAdapter = AlbumPagerAdapter(requireActivity(), galleryList)
 
         initLayout()
     }
 
     private fun initLayout() {
-        val viewPager = binding?.viewPager
-        viewPager?.adapter = AlbumPagerAdapter(requireActivity())
-
-        val tabTitles = listOf<String>("year","month","day","total")
-
-        if (viewPager != null) {
-            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
-                tab.setText(tabTitles[position])
-            }.attach()
-        }
-
+//        val viewPager = binding?.viewPager
+////        viewPager?.adapter = AlbumPagerAdapter(requireActivity(), galleryList)
+////
+//        val tabTitles = listOf<String>("year","month","day","total")
+//
+//        if (viewPager != null) {
+//            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
+//                tab.setText(tabTitles[position])
+//            }.attach()
+//        }
 
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
         }
 
         binding.btnCamera.setOnClickListener {
-            Toast.makeText(requireContext(), "open camera", Toast.LENGTH_SHORT).show()
-            cameraAction()
+//            Toast.makeText(requireContext(), "open camera", Toast.LENGTH_SHORT).show()
+//            cameraAction()
         }
 
         binding.btnGroupSelect.setOnClickListener {
@@ -154,10 +162,10 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun cameraAction() {
-        val itt = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivity(itt)
-    }
+//    private fun cameraAction() {
+//        val itt = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+//        startActivity(itt)
+//    }
 
 
     private fun clickUpload() {
@@ -175,50 +183,6 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun uploadPhoto(selectedImageUri: Uri, groupId: String) {
-        val storageRef = FirebaseStorage.getInstance().reference
-        val imageRef = storageRef.child("images/${System.currentTimeMillis()}.jpg")
 
-        imageRef.putFile(selectedImageUri)
-            .addOnSuccessListener { taskSnapshot ->
-                imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    val downloadUrl = uri.toString()
-                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-                    // 업로드된 사진 정보를 그룹 정보에 저장
-                    updateGroupWithImageInfo(groupId, downloadUrl, currentDate)
-                }
-            }
-            .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Image upload failed.", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun updateGroupWithImageInfo(groupId: String, imageUrl: String, uploadDate: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        val groupRef = firestore.collection("groups").document(groupId)
-
-        groupRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val images = documentSnapshot.get("images") as? List<String> ?: emptyList()
-                    images.toMutableList().apply {
-                        add(imageUrl)
-                    }.let { updatedImages ->
-                        // 업로드된 사진 URL을 그룹 정보에 저장
-                        groupRef.update("images", updatedImages)
-                            .addOnSuccessListener {
-                                // 업데이트 성공 처리
-                            }
-                            .addOnFailureListener { exception ->
-                                // 업데이트 실패 처리
-                            }
-                    }
-                }
-            }
-            .addOnFailureListener { exception ->
-                // 문서 가져오기 실패 처리
-            }
-    }
 
 }
