@@ -23,21 +23,14 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val startTime = intent.getStringExtra("startTime")
-        val endTime = intent.getStringExtra("endTime")
-        val taskPlace = intent.getStringExtra("taskPlace")
-        val taskName = intent.getStringExtra("taskName")
-        val week = intent.getStringExtra("week")
+        val fromTask = intent.getStringExtra("fromTask")
         val fromTipEdit = intent.getStringExtra("fromTipEdit")
 
-        var timetablefragment = TimeTableFragment()
         var flag = 0
         // 모든 정보가 null이 아닌지 확인
-        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
-            val taskData = TaskPlusData(startTime, endTime, week, taskName,taskPlace)
-            timetablefragment.arguments = createTaskBundle(taskData)
+        if (fromTask == "fromTask") {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.main_content,timetablefragment)
+                .replace(R.id.main_content,TimeTableFragment())
                 .commitAllowingStateLoss()
             flag = 1
 
@@ -73,7 +66,7 @@ class MainActivity : AppCompatActivity(){
                         }
                         R.id.menu_table -> {
                             supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_content,timetablefragment)
+                                .replace(R.id.main_content,TimeTableFragment())
                                 .commitAllowingStateLoss()
                         }
                         R.id.menu_profile -> {
@@ -113,13 +106,5 @@ class MainActivity : AppCompatActivity(){
             .commitAllowingStateLoss()
     }
 
-    fun createTaskBundle(taskData: TaskPlusData): Bundle {
-        val bundle = Bundle()
-        bundle.putString("startTime", taskData.startTime)
-        bundle.putString("endTime", taskData.endTime)
-        bundle.putString("week", taskData.week)
-        bundle.putString("taskName", taskData.taskName)
-        bundle.putString("taskPlace", taskData.taskPlace)
-        return bundle
-    }
+
 }
