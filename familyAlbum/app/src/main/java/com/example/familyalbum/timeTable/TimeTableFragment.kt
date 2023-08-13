@@ -331,6 +331,7 @@ class TimeTableFragment : Fragment() {
                                             .addOnSuccessListener {
                                                 // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
                                                 parentView.removeView(customLayout)
+                                                parentView.invalidate()
 //                                                dialog.dismiss() // 다이얼로그 닫기
                                             }
                                             .addOnFailureListener { exception ->
