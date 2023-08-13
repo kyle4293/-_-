@@ -20,7 +20,10 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
-            android:name=".task.TaskEditActivity"
+            android:name=".home.PhotoConfirmActivity"
+            android:exported="false" />
+        <activity
+            android:name=".home.PostingActivity"
             android:exported="false" />
         <activity
             android:name=".task.TaskPlusActivity"
