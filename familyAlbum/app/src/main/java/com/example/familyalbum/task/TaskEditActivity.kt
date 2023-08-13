@@ -164,7 +164,21 @@ class TaskEditActivity : AppCompatActivity() {
         val title = intent.getStringExtra("title")
         val place = intent.getStringExtra("place")
         var dayOfWeek = intent.getStringExtra("dayOfWeek")
-        var userName = intent.getStringExtra("userName")
+
+        auth = FirebaseAuth.getInstance()
+
+
+        val query = firestore.collection("tasks")
+            .whereEqualTo("dayOfWeek", dayOfWeek)
+            .whereEqualTo("endTime", endTime)
+            .whereEqualTo("place", place)
+            .whereEqualTo("startTime", startTime)
+            .whereEqualTo("title", title)
+        query.addSnapshotListener { querySnapshot, _ ->
+            for (document in querySnapshot!!.documents) {
+                taskId = document.id
+            }
+        }
 
 
         //*********원래 정보로 기본 설정*******
@@ -230,19 +244,6 @@ class TaskEditActivity : AppCompatActivity() {
 
         firestore = FirebaseFirestore.getInstance()
 
-        //그 DB에 새로운 정보로 update
-        val query = firestore.collection("tasks")
-            .whereEqualTo("dayOfWeek", dayOfWeek)
-            .whereEqualTo("endTIme", endTime)
-            .whereEqualTo("place", place)
-            .whereEqualTo("startTime", startTime)
-            .whereEqualTo("title", title)
-            .whereEqualTo("userName", userName)
-        query.addSnapshotListener { querySnapshot, _ ->
-            for (document in querySnapshot!!.documents) {
-                taskId = document.id
-            }
-        }
 
         //*********수정 버튼을 누르면********
         binding.button.setOnClickListener {
@@ -252,6 +253,7 @@ class TaskEditActivity : AppCompatActivity() {
             val newtaskPlace = binding.inputTaskPlace.text.toString()
             val newstartTime = "${startHour}${startMin}"
             val newendTime = "${endHour}${endMin}"
+            val userName = auth.currentUser?.displayName
             lateinit var newweek: String
             when(week){
                 "월" -> newweek = "mon"
