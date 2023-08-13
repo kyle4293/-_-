@@ -1,5 +1,7 @@
 package com.example.familyalbum.chat
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familyalbum.R
+import com.example.familyalbum.databinding.DateSeparatorBinding
 import com.example.familyalbum.databinding.MessageBinding
 import com.example.familyalbum.databinding.MymessageBinding
 import kotlinx.coroutines.NonDisposableHandle.parent
@@ -18,17 +21,26 @@ import kotlin.collections.ArrayList
 class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 //    inner class ViewHolder(val binding: MessageBinding): RecyclerView.ViewHolder(binding.root)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {
-        TYPE_MY -> {
-//                val binding = MymessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-//                return ViewHolder(binding)
-            MyMessageHolder.create(parent)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_MY -> MyMessageHolder.create(parent)
+            TYPE_OTHER -> OtherMessageHolder.create(parent)
+            TYPE_DATE_SEPARATOR -> DateSeparatorHolder.create(parent)
+            else -> throw IllegalStateException("Not Found ViewHolder Type $viewType")
         }
-        TYPE_OTHER -> {
-            OtherMessageHolder.create(parent)
-        }
-        else -> {
-            throw IllegalStateException("Not Found ViewHolder Type $viewType")
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder) {
+            is MyMessageHolder -> {
+                holder.bind(messageList[position] as ChatItem.MyMessage)
+            }
+            is OtherMessageHolder -> {
+                holder.bind(messageList[position] as ChatItem.OtherMessage)
+            }
+            is DateSeparatorHolder -> {
+                holder.bindDateSeparator(messageList[position] as ChatItem.DateSeparator)
+            }
         }
     }
 
@@ -39,6 +51,9 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         is ChatItem.OtherMessage -> {
             TYPE_OTHER
         }
+        is ChatItem.DateSeparator -> {
+            TYPE_DATE_SEPARATOR
+        }
         else -> {
             throw IllegalStateException("Not Found ViewHolder Type")
         }
@@ -48,18 +63,58 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         return messageList.size
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    private fun addDateSeparators() {
 
-        when (holder) {
-            is MyMessageHolder -> {
-                holder.bind(messageList[position] as ChatItem.MyMessage)
-            }
-            is OtherMessageHolder -> {
-                holder.bind(messageList[position] as ChatItem.OtherMessage)
-            }
+        val newList = mutableListOf<ChatItem>()
+        var currentDate: Date? = null
+        Log.e(TAG, messageList.toString())
 
+        for (item in messageList) {
+            if (item is ChatItem.MyMessage || item is ChatItem.OtherMessage) {
+                val itemDate = (item as? ChatItem.MyMessage)?.timestamp ?: (item as? ChatItem.OtherMessage)?.timestamp
+
+                if (itemDate != null && !isSameDate(itemDate, currentDate)) {
+                    currentDate = itemDate
+                    newList.add(ChatItem.DateSeparator(itemDate))
+                }
+            }
+            newList.add(item)
+        }
+
+        messageList.clear()
+        messageList.addAll(newList)
+    }
+
+    private fun isSameDate(date1: Date, date2: Date?): Boolean {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val formattedDate1 = sdf.format(date1)
+        val formattedDate2 = date2?.let { sdf.format(it) }
+        return formattedDate1 == formattedDate2
+    }
+
+    fun updateMessageList(newMessageList: List<ChatItem>) {
+        messageList.clear()
+        messageList.addAll(newMessageList)
+        addDateSeparators() // 날짜 분리선 추가
+        notifyDataSetChanged()
+    }
+
+    class DateSeparatorHolder(private val binding: DateSeparatorBinding): RecyclerView.ViewHolder(binding.root) {
+        fun bindDateSeparator(item: ChatItem.DateSeparator) {
+            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+            val formattedDate = sdf.format(item.date)
+            binding.dateTextView.text = formattedDate
+        }
+
+        companion object {
+            fun create(parent: ViewGroup): DateSeparatorHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = DateSeparatorBinding.inflate(layoutInflater, parent, false)
+                return DateSeparatorHolder(binding)
+            }
         }
     }
+
 
 
     class MyMessageHolder(private val itemView: View): RecyclerView.ViewHolder(itemView){
@@ -67,6 +122,7 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         private val messageTime = itemView.findViewById<TextView>(R.id.send_message_time)
 
         fun bind(message: ChatItem.MyMessage){
+
             messageText.text = message.message
             val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(message.timestamp)
             messageTime.text = formattedTime.toString()
@@ -115,6 +171,7 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
     companion object{
         private const val TYPE_MY = 0
         private const val TYPE_OTHER = 1
+        private const val TYPE_DATE_SEPARATOR = 2
     }
 }
 
