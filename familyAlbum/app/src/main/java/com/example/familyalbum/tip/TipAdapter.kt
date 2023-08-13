@@ -21,7 +21,7 @@ class TipAdapter(private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapte
                     val intent = Intent(context, TipEditActivity::class.java)
 
                     intent.putExtra("title", tip.title)
-                    intent.putExtra("contents", tip.contents?.toTypedArray()) // 이 역시 필요한 타입에 맞게 수정
+                    intent.putExtra("content", tip.content) // 이 역시 필요한 타입에 맞게 수정
                     intent.putExtra("tag", tip.tag)
                     context.startActivity(intent)
                 }
@@ -44,16 +44,9 @@ class TipAdapter(private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapte
             "식" -> holder.binding.tag.setBackgroundResource(R.drawable.tag2)
             "주" -> holder.binding.tag.setBackgroundResource(R.drawable.tag3)
         }
+        holder.binding.tipContent.text = tip.content
 
-        val contentStringBuilder = StringBuilder()
-        tip.contents?.forEach { content ->
-            contentStringBuilder.append(content.content)
-            contentStringBuilder.append("\n")
-        }
-
-        Log.d("TipAdapter", "Contents: ${tip.contents}")
-
-        holder.binding.tipContent.text = contentStringBuilder.toString()
+        Log.d("TipAdapter", "Contents: ${tip.content}")
     }
 
 
