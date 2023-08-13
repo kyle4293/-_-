@@ -17,18 +17,11 @@ class TipEditActivity : AppCompatActivity() {
 
         //요 밑 세가지가 수정 전 tip 정보
         val title = intent.getStringExtra("title")
-        val contents = intent.getStringExtra("contents")
+        val content = intent.getStringExtra("content")
         val tag = intent.getStringExtra("tag")
 
         binding.inputTipTitle.text =  Editable.Factory.getInstance().newEditable(title)
-
-        val contentStringBuilder = StringBuilder()
-        contents?.forEach { content ->
-            contentStringBuilder.append(content)
-            contentStringBuilder.append("\n")
-        }
-
-        binding.inputTipContent.text = Editable.Factory.getInstance().newEditable(contentStringBuilder.toString())
+        binding.inputTipContent.text = Editable.Factory.getInstance().newEditable(content)
 
         val tagspinner = binding.tagSpinner
 
@@ -55,7 +48,7 @@ class TipEditActivity : AppCompatActivity() {
             val newTipContent = binding.inputTipContent.text.toString()
             val newTipTag = binding.tagSpinner.selectedItem.toString()
 
-            //원래의 tip정보로 db를 찾은다음 그 db를 위의 새로운 tip정보로 수정
+            //원래의 tip정보로 db를 찾은다음, 그 db를 위의 새로운 tip정보로 수정
 
 
         }
