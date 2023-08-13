@@ -14,6 +14,10 @@ import com.example.familyalbum.tip.TipFragment
 
 class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
+
+    var selectedGroupId: String? = null
+    var selectedGroupName: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -80,6 +84,18 @@ class MainActivity : AppCompatActivity(){
 
 
     }
+
+    fun changeFragmentWithGroup(groupId: String, groupName: String) {
+        selectedGroupId = groupId
+        selectedGroupName = groupName
+
+        val homeFragment = HomeFragment.newInstance(groupId, groupName)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_content, homeFragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
 
     fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()

@@ -32,6 +32,7 @@ class HomeFragment : Fragment() {
     private lateinit var galleryList: ArrayList<Gallery>
     private var isFabOpen = false
 
+
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             val groupId = arguments?.getString(ARG_GROUP_ID)
@@ -39,6 +40,14 @@ class HomeFragment : Fragment() {
                 uploadPhoto(uri, groupId)
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val selectedGroupName = arguments?.getString(ARG_GROUP_NAME)
+        binding.groupName.text = selectedGroupName
+
     }
 
 
@@ -62,86 +71,28 @@ class HomeFragment : Fragment() {
             args.putString(ARG_GROUP_ID, groupId)
             args.putString(ARG_GROUP_NAME, groupName)
             fragment.arguments = args
+
             return fragment
         }
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        val groupId = arguments?.getString(ARG_GROUP_ID)
-//        val groupName = arguments?.getString(ARG_GROUP_NAME)
-//        binding.groupName.text = groupName
-//
-//        if (!groupId.isNullOrEmpty()) {
-//            loadAndDisplayGroupImages(groupId)
-//            loadAndDisplayGroupUsers(groupId) // 그룹에 속한 유저들의 목록 가져와서 표시
-//        }
-//
-//        init()
     }
 
     override fun onResume() {
         super.onResume()
 
-        val groupId = arguments?.getString(ARG_GROUP_ID)
-        val groupName = arguments?.getString(ARG_GROUP_NAME)
+        val groupId = (activity as MainActivity).selectedGroupId
+        val groupName = (activity as MainActivity).selectedGroupName
+
+        // 갱신된 그룹 이름을 UI에 표시
         binding.groupName.text = groupName
 
         if (!groupId.isNullOrEmpty()) {
             loadAndDisplayGroupImages(groupId)
-            loadAndDisplayGroupUsers(groupId) // 그룹에 속한 유저들의 목록 가져와서 표시
         }
 
         init()
     }
 
-    private fun loadAndDisplayGroupUsers(groupId: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        val groupRef = firestore.collection("groups").document(groupId)
 
-        groupRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val members = documentSnapshot.get("members") as? List<String>
-                    members?.let {
-                        fetchAndDisplayUserNames(it)
-                    }
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error fetching group data: $exception")
-            }
-    }
-
-
-
-    private fun fetchAndDisplayUserNames(userIds: List<String>) {
-        val firestore = FirebaseFirestore.getInstance()
-
-        val usersIntro = mutableListOf<String>()
-
-        for (userId in userIds) {
-
-            val userDocRef = firestore.collection("users").document(userId)
-            userDocRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val userName = documentSnapshot.getString("name")
-                        if (!userName.isNullOrEmpty()) {
-                            usersIntro.add(userName)
-                            if (usersIntro.size == userIds.size) {
-                                val groupIntroText = usersIntro.joinToString(", ")
-                                binding.groupIntro.text = groupIntroText
-                            }
-                        }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    // 실패 시 처리 로직
-                }
-        }
-    }
 
     private fun loadAndDisplayGroupImages(groupId: String) {
         val firestore = FirebaseFirestore.getInstance()
@@ -152,8 +103,6 @@ class HomeFragment : Fragment() {
                 if (document.exists()) {
                     val images = document.get("images") as? List<String>
                     if (images != null) {
-//                        ---2. 여기서 원래있는 galleryAdapter가 아니라, AlbumPagerAdapter로 넘겨야할 것 같습니다!!---
-//                        images 배열 통으로 AlbumPagerAdaper-> 각 Fragment -> Adapter까지 넘겨야할 것 가타용...
                         galleryAdapter.setGalleryList(images)
                     }
                 }
@@ -173,12 +122,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initLayout() {
-        //---1. 변경된 부분---
-        //원래 homeFragment layout에는 recyclerView가 붙어있었음. 그걸 Viewpager로 바꿈.
-        //homeFragment -> AlbumPagerAdapter에서 list/grid 별 fragment로 이동 시켜줌
-        //LinearGalleryFragment, GridGalleryFragment 내에 각각 recyclerview가 붙어있고, binding까지 완료.
-
-        //주석 2번을 찾아가십시오
         val viewPager = binding?.viewPager
         viewPager?.adapter = AlbumPagerAdapter(requireActivity())
 
@@ -190,9 +133,6 @@ class HomeFragment : Fragment() {
             }.attach()
         }
 
-//        ---이전 코드입니다---
-//        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-//        binding.homeRecyclerView.adapter = galleryAdapter
 
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
