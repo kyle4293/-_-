@@ -52,6 +52,7 @@ class ChatFragment : Fragment() {
 
         currentUserID = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+        loadGroupName(groupId)
 
         init()
     }
@@ -117,6 +118,23 @@ class ChatFragment : Fragment() {
                 .add(messageData)
                 .addOnSuccessListener {
                     binding.messageEdit.text.clear()
+                }
+        }
+    }
+
+    private fun loadGroupName(groupId: String?) {
+        if (groupId != null) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val groupName = documentSnapshot.getString("groupName")
+                    binding.groupName.text = groupName
+                }
+                .addOnFailureListener { exception ->
+                    // 그룹 이름을 가져오는 데 실패한 경우 처리
                 }
         }
     }
