@@ -1,10 +1,12 @@
 package com.example.familyalbum.task
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskEditBinding
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
@@ -240,7 +242,9 @@ class TaskEditActivity : AppCompatActivity() {
 
             // 요기서 원래 정보로 DB찾고 그 DB에 새로운 정보로 update
 
-            
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fromTask", "fromTask")
+            startActivity(intent)
         }
     }
 }

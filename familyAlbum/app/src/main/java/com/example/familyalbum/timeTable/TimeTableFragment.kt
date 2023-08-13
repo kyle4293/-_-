@@ -362,31 +362,6 @@ class TimeTableFragment : Fragment() {
                         intent.putExtra("dayOfWeek",task.dayOfWeek)
                         startActivity(intent)
 
-                            if (intent != null) {
-                                //db삭제
-                                val tasksCollection = firestore.collection("tasks")
-                                loadCurrentUser(currentUserId) { loadedUser ->
-                                    val currentUserName = loadedUser.name
-                                    tasksCollection.whereEqualTo("userName", currentUserName)
-                                        .whereEqualTo("title", task.title)
-                                        .get()
-                                        .addOnSuccessListener { querySnapshot ->
-                                            for (documentSnapshot in querySnapshot.documents) {
-                                                tasksCollection.document(documentSnapshot.id).delete()
-                                                    .addOnSuccessListener {
-                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
-                                                        parentView.removeView(customLayout)
-                                                    }
-                                                    .addOnFailureListener { exception ->
-                                                        // 삭제 실패 시 처리
-                                                    }
-                                            }
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            // 조회 실패 시 처리
-                                        }
-                                }
-                            }
                     }
 
                     alertDialogBuilder.show()
