@@ -1,6 +1,8 @@
 package com.example.familyalbum.timeTable
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -38,6 +40,12 @@ class TimeTableFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private lateinit var firebaseAuth: FirebaseAuth
     private var firestore = FirebaseFirestore.getInstance()
+    private lateinit var fragmentContext: Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fragmentContext = context
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,31 +79,43 @@ class TimeTableFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //taskPlusActivity -> mainActivity -> timetablefragment 정보받음
-        // getArguments()를 사용하여 Bundle에서 데이터 추출
-        val startTime = arguments?.getString("startTime")
-        val endTime = arguments?.getString("endTime")
-        val taskPlace = arguments?.getString("taskPlace")
-        val taskName = arguments?.getString("taskName")
-        val week = arguments?.getString("week")
+        val currentUser = firebaseAuth.currentUser
+        val currentUserId = currentUser?.uid
 
-        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
-            // 데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
-            // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
-            // view.findViewById<TextView>(R.id.textStartTime).text = startTime
-            Log.i(startTime,startTime)
-            Log.i(endTime,endTime)
-            Log.i(taskPlace,taskPlace)
-            Log.i(taskName,taskName)
-            Log.i(week,week)
+        val bundle = arguments
+        val startTime = bundle?.getString("startTime")
+        val endTime = bundle?.getString("endTime")
+        val week = bundle?.getString("week")
+        val taskName = bundle?.getString("taskName")
+        val taskPlace = bundle?.getString("taskPlace")
 
+
+        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null && currentUserId != null) {
+            // 현재 로그인한 사용자의 이름 가져오기
+            loadCurrentUser(currentUserId) { loadedUser ->
+                val currentUserName = loadedUser.name
+
+                // Task 객체 생성
+                val task = Task(week, endTime, taskPlace, startTime, taskName, currentUserName) // 이름 추가
+
+                // 파이어스토어에 저장
+                saveTaskToFirestore(task)
+
+//            데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
+//            Log.i(startTime,startTime)
+//            Log.i(endTime,endTime)
+//            Log.i(taskPlace,taskPlace)
+//            Log.i(taskName,taskName)
+//            Log.i(week,week)
+
+                // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
+                // view.findViewById<TextView>(R.id.textStartTime).text = startTime
+            }
         } else {
             // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
-            Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
         }
 
-
-        val currentUser = firebaseAuth.currentUser
         currentUser?.let { user ->
             val currentUserId = user.uid
 
@@ -107,7 +127,7 @@ class TimeTableFragment : Fragment() {
             }
         }
 
-        setupProfile()
+        myProfile()
         binding.imageView.setOnClickListener {
             showDialog()
         }
@@ -119,7 +139,21 @@ class TimeTableFragment : Fragment() {
 
     }
 
-    private fun setupProfile() {
+    private fun saveTaskToFirestore(task: Task) {
+        val tasksCollection = firestore.collection("tasks")
+
+        tasksCollection.add(task)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                // 저장 성공 시 수행할 작업 추가
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+                // 저장 실패 시 수행할 작업 추가
+            }
+    }
+
+    private fun myProfile() {
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         var storage = FirebaseStorage.getInstance()
@@ -156,9 +190,9 @@ class TimeTableFragment : Fragment() {
     }
     fun showDialog() {
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("이미지 클릭 다이얼로그")
+        alertDialogBuilder.setTitle("우리가족 시간표 선택")
         alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")
-        alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
+        alertDialogBuilder.setPositiveButton("닫기", DialogInterface.OnClickListener { dialog, which ->
             // 확인 버튼 클릭 시 실행할 작업
             dialog.dismiss() // 다이얼로그 닫기
         })
@@ -246,9 +280,13 @@ class TimeTableFragment : Fragment() {
         val startTime = 900
         val endTime = 2200
         val totalTimeRange = endTime - startTime
+        val inflater = LayoutInflater.from(fragmentContext)
+
+        val currentUser = firebaseAuth.currentUser
+
 
         for (task in taskList) {
-            val inflater = LayoutInflater.from(context)
+            val inflater = LayoutInflater.from(fragmentContext)
 
             // Task의 시작시간과 종료시간을 가져오기
             val taskStartTime = task.startTime.toInt()
@@ -289,19 +327,91 @@ class TimeTableFragment : Fragment() {
                 val place: TextView = customLayout.findViewById(R.id.place)
                 place.text = task.place
 
+                var currentUserId = ""
+                if (currentUser != null) {
+                    currentUserId = currentUser.uid
+                }
+
                 customLayout.setOnClickListener {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
                     alertDialogBuilder.setTitle("스케줄 상세정보")
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
-                    alertDialogBuilder.setPositiveButton("확인", DialogInterface.OnClickListener { dialog, which ->
-                        // 확인 버튼 클릭 시 실행할 작업
+                    alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
+
+                        parentView.removeView(customLayout)
+                        //요기서 db도 삭제해야함니다
+
+                        val tasksCollection = firestore.collection("tasks")
+                        loadCurrentUser(currentUserId) { loadedUser ->
+                            val currentUserName = loadedUser.name
+                            tasksCollection.whereEqualTo("userName", currentUserName)
+                                .whereEqualTo("title", task.title)
+                                .get()
+                                .addOnSuccessListener { querySnapshot ->
+                                    for (documentSnapshot in querySnapshot.documents) {
+                                        tasksCollection.document(documentSnapshot.id).delete()
+                                            .addOnSuccessListener {
+                                                // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                parentView.removeView(customLayout)
+                                                dialog.dismiss() // 다이얼로그 닫기
+                                            }
+                                            .addOnFailureListener { exception ->
+                                                // 삭제 실패 시 처리
+                                            }
+                                    }
+                                }
+                                .addOnFailureListener { exception ->
+                                    // 조회 실패 시 처리
+                                }
+                        }
+
                         dialog.dismiss() // 다이얼로그 닫기
                     })
+                        .setNegativeButton("수정") { dialog, _ ->
+
+
+                        //db삭제
+                            parentView.removeView(customLayout)
+
+                            val tasksCollection = firestore.collection("tasks")
+                            loadCurrentUser(currentUserId) { loadedUser ->
+                                val currentUserName = loadedUser.name
+                                tasksCollection.whereEqualTo("userName", currentUserName)
+                                    .whereEqualTo("title", task.title)
+                                    .get()
+                                    .addOnSuccessListener { querySnapshot ->
+                                        for (documentSnapshot in querySnapshot.documents) {
+                                            tasksCollection.document(documentSnapshot.id).delete()
+                                                .addOnSuccessListener {
+                                                    // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                    parentView.removeView(customLayout)
+                                                    dialog.dismiss() // 다이얼로그 닫기
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // 삭제 실패 시 처리
+                                                }
+                                        }
+                                    }
+                                    .addOnFailureListener { exception ->
+                                        // 조회 실패 시 처리
+                                    }
+                            }
+
+                        val intent = Intent(context, TaskPlusActivity::class.java)
+                        intent.putExtra("key", "수정") // 정보 추가
+                        intent.putExtra("startTime",task.startTime)
+                        intent.putExtra("endTime",task.endTime)
+                        intent.putExtra("title",task.title)
+                        intent.putExtra("place",task.place)
+                        intent.putExtra("dayOfWeek",task.dayOfWeek)
+                        startActivity(intent)
+
+                        dialog.dismiss() // 다이얼로그 닫기
+                    }
+
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
-
-
             }
         }
     }

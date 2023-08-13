@@ -8,6 +8,7 @@ import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
 import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
+import com.example.familyalbum.task.TaskPlusData
 import com.example.familyalbum.timeTable.TimeTableFragment
 import com.example.familyalbum.tip.TipFragment
 
@@ -24,61 +25,60 @@ class MainActivity : AppCompatActivity(){
         val taskName = intent.getStringExtra("taskName")
         val week = intent.getStringExtra("week")
 
+        var timetablefragment = TimeTableFragment()
+        var flag = 0
         // 모든 정보가 null이 아닌지 확인
         if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
-            val fragment = TimeTableFragment().apply {
-                arguments = Bundle().apply {
-                    putString("startTime", startTime)
-                    putString("endTime", endTime)
-                    putString("taskPlace", taskPlace)
-                    putString("taskName", taskName)
-                    putString("week", week)
-                }
-            }
+            val taskData = TaskPlusData(startTime, endTime, week, taskName,taskPlace)
+            timetablefragment.arguments = createTaskBundle(taskData)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.main_content, fragment)
-                .commit()
+                .replace(R.id.main_content,timetablefragment)
+                .commitAllowingStateLoss()
+            flag = 1
+
         } else {
             // 오류 메시지 표시 등 필요한 처리 수행
-            Toast.makeText(this, "모든 정보를 제공해야 합니다.", Toast.LENGTH_SHORT).show()
-        }
+            supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
+                .commitAllowingStateLoss() }
 
-        supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
-            .commitAllowingStateLoss()
-
-        binding.bottomNavigation.run {
-            setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.menu_tip -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TipFragment())
-                            .commitAllowingStateLoss()
+            binding.bottomNavigation.run {
+                setOnItemSelectedListener { item ->
+                    when (item.itemId) {
+                        R.id.menu_tip -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, TipFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_chat -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ChatFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_home -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, HomeFragment())
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_table -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content,timetablefragment)
+                                .commitAllowingStateLoss()
+                        }
+                        R.id.menu_profile -> {
+                            supportFragmentManager.beginTransaction()
+                                .replace(R.id.main_content, ProfileFragment())
+                                .commitAllowingStateLoss()
+                        }
                     }
-                    R.id.menu_chat -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ChatFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_home -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, HomeFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_table -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, TimeTableFragment())
-                            .commitAllowingStateLoss()
-                    }
-                    R.id.menu_profile -> {
-                        supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_content, ProfileFragment())
-                            .commitAllowingStateLoss()
-                    }
+                    true
                 }
-                true
+                if(flag==0){selectedItemId = R.id.menu_home}
+                if(flag==1){selectedItemId = R.id.menu_table}
             }
-            selectedItemId = R.id.menu_home
-        }
+
+
+
+
     }
 
     fun changeFragment(fragment: Fragment) {
@@ -86,5 +86,15 @@ class MainActivity : AppCompatActivity(){
             .replace(R.id.main_content, fragment)
             .addToBackStack(null) // 이 부분을 추가하여 백 스택에 추가합니다.
             .commitAllowingStateLoss()
+    }
+
+    fun createTaskBundle(taskData: TaskPlusData): Bundle {
+        val bundle = Bundle()
+        bundle.putString("startTime", taskData.startTime)
+        bundle.putString("endTime", taskData.endTime)
+        bundle.putString("week", taskData.week)
+        bundle.putString("taskName", taskData.taskName)
+        bundle.putString("taskPlace", taskData.taskPlace)
+        return bundle
     }
 }
