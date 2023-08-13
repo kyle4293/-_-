@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(){
         val taskPlace = intent.getStringExtra("taskPlace")
         val taskName = intent.getStringExtra("taskName")
         val week = intent.getStringExtra("week")
+        val fromTipEdit = intent.getStringExtra("fromTipEdit")
 
         var timetablefragment = TimeTableFragment()
         var flag = 0
@@ -40,10 +41,17 @@ class MainActivity : AppCompatActivity(){
                 .commitAllowingStateLoss()
             flag = 1
 
-        } else {
+        } else if(fromTipEdit == "fromTipEdit"){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content, TipFragment())
+                .commitAllowingStateLoss()
+            flag = 2
+        }
+        else {
             // 오류 메시지 표시 등 필요한 처리 수행
             supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
-                .commitAllowingStateLoss() }
+                .commitAllowingStateLoss()
+        }
 
             binding.bottomNavigation.run {
                 setOnItemSelectedListener { item ->
@@ -78,6 +86,7 @@ class MainActivity : AppCompatActivity(){
                 }
                 if(flag==0){selectedItemId = R.id.menu_home}
                 if(flag==1){selectedItemId = R.id.menu_table}
+                if(flag==2){selectedItemId = R.id.menu_tip}
             }
 
 
