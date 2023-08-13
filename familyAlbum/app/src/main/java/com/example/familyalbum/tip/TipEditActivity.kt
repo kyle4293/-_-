@@ -12,6 +12,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class TipEditActivity : AppCompatActivity() {
     lateinit var binding: ActivityTipEditBinding
+    lateinit var firestore: FirebaseFirestore
+    lateinit var tipId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTipEditBinding.inflate(layoutInflater)
@@ -40,8 +43,20 @@ class TipEditActivity : AppCompatActivity() {
             }
         }
 
-        binding.button2.setOnClickListener {
+        firestore = FirebaseFirestore.getInstance()
 
+        val query = firestore.collection("tips")
+            .whereEqualTo("title", title)
+            .whereEqualTo("content", content)
+            .whereEqualTo("tag", tag)
+
+        query.addSnapshotListener { querySnapshot, _ ->
+            for (document in querySnapshot!!.documents) {
+                tipId = document.id
+            }
+        }
+
+        binding.button2.setOnClickListener {
             //여기서 DB작업을 해주면 됩니다
 
             //새로운 tip 정보
@@ -49,40 +64,22 @@ class TipEditActivity : AppCompatActivity() {
             val newTipContent = binding.inputTipContent.text.toString()
             val newTipTag = binding.tagSpinner.selectedItem.toString()
 
-            //원래의 tip정보로 db를 찾은다음, 그 db를 위의 새로운 tip정보로 수정
-            val firestore = FirebaseFirestore.getInstance()
-            val tipDocRef = firestore.collection("tips")
+            val updateData = mapOf(
+                "title" to newTipTitle,
+                "content" to newTipContent,
+                "tag" to newTipTag
+            )
 
-            val query = tipDocRef
-                .whereEqualTo("title", title)
-                .whereEqualTo("content", content)
-                .whereEqualTo("tag", tag)
-
-            query.get()
-                .addOnSuccessListener { querySnapshot ->
-                    for (document in querySnapshot.documents) {
-                        val tipId = document.id
-
-                        val updateData = mapOf(
-                            "title" to newTipTitle,
-                            "content" to newTipContent,
-                            "tag" to newTipTag
-                        )
-                        // 해당 문서 업데이트
-                        tipDocRef.document(tipId)
-                            .update(updateData)
-                            .addOnSuccessListener {
-                                // 수정 성공 시 처리
-                            }
-                            .addOnFailureListener { e ->
-                                // 수정 실패 시 처리
-                                Log.e(TAG, "Error updating document", e)
-                            }
-                    }
+            // 해당 문서 업데이트
+            firestore.collection("tips").document(tipId)
+                .update(updateData)
+                .addOnSuccessListener {
+                    // 수정 성공 시 처리
+                    finish()
                 }
                 .addOnFailureListener { e ->
-                    // 조회 실패 시 처리
-                    Log.e(TAG, "Error querying documents", e)
+                    // 수정 실패 시 처리
+                    Log.e(TAG, "Error updating document", e)
                 }
         }
     }
