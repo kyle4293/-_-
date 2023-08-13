@@ -1,5 +1,6 @@
 package com.example.familyalbum.tip
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -31,6 +32,12 @@ class TipFragment : Fragment() {
 
     private fun init() {
         tipAdapter = TipAdapter(emptyList())
+
+        binding.tipPlusButton.setOnClickListener {
+            val intent = Intent(context, TipPlusActivity::class.java)
+            startActivity(intent)
+        }
+
         initLayout()
     }
 
@@ -51,5 +58,10 @@ class TipFragment : Fragment() {
             }
             tipAdapter.updateData(tipList)
         }
+
+
+
+
+
     }
 }

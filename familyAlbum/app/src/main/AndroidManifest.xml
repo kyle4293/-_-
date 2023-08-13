@@ -20,6 +20,9 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
+            android:name=".tip.TipPlusActivity"
+            android:exported="false" />
+        <activity
             android:name=".home.PhotoConfirmActivity"
             android:exported="false" />
         <activity
