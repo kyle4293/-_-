@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
+import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.FragmentGroupListBinding
 import com.example.familyalbum.home.HomeFragment
 import com.google.firebase.auth.FirebaseAuth
@@ -38,11 +39,6 @@ class GroupListFragment : Fragment() {
 
         // 어댑터 초기화
         groupAdapter = GroupAdapter(emptyList())
-        groupAdapter.setOnGroupClickListener { group ->
-            val homeFragment = HomeFragment.newInstance(group.groupId, group.groupName)
-            val mActivity = activity as MainActivity
-            mActivity.changeFragment(homeFragment)
-        }
 
         // 리사이클러뷰에 어댑터 설정
         binding.groupRecyclerView.apply {
@@ -61,6 +57,11 @@ class GroupListFragment : Fragment() {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUserUid != null) {
             viewModel.fetchUserGroups(currentUserUid)
+        }
+
+        groupAdapter.setOnGroupClickListener { group ->
+            val mActivity = activity as MainActivity
+            mActivity.changeFragmentWithGroup(group.groupId, group.groupName)
         }
 
         viewModel.userGroups.observe(viewLifecycleOwner, Observer { groups ->
