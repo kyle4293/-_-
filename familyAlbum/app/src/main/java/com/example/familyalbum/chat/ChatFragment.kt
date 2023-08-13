@@ -17,7 +17,7 @@ import kotlin.collections.ArrayList
 
 class ChatFragment : Fragment() {
     private lateinit var messageAdapter: MessageAdapter
-    private lateinit var messageList: ArrayList<Message>
+    private lateinit var messageList: ArrayList<ChatItem>
     private lateinit var binding: FragmentChatBinding
     private lateinit var currentUserID: String
     private lateinit var chatRoomId: String
@@ -33,8 +33,6 @@ class ChatFragment : Fragment() {
             return fragment
         }
     }
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +50,7 @@ class ChatFragment : Fragment() {
 
         currentUserID = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+        loadGroupName(groupId)
 
         init()
     }
@@ -83,7 +82,14 @@ class ChatFragment : Fragment() {
                     val message = document.getString("message")
                     val timestamp = document.getTimestamp("timestamp")?.toDate()
                     if (senderId != null && message != null && timestamp != null) {
-                        Message(message, senderId, timestamp)
+                        if(senderId == currentUserID){
+                            ChatItem.MyMessage(message, senderId, timestamp)
+                        }else{
+                            //다른 사람이 보낸 메세지
+                            //User Table에서 참조해서 Img, name 받아오면 됩니다 ~
+//                            ChatItem.OtherMessage(me)
+                            null
+                        }
                     } else {
                         null
                     }
@@ -117,6 +123,23 @@ class ChatFragment : Fragment() {
                 .add(messageData)
                 .addOnSuccessListener {
                     binding.messageEdit.text.clear()
+                }
+        }
+    }
+
+    private fun loadGroupName(groupId: String?) {
+        if (groupId != null) {
+            val db = FirebaseFirestore.getInstance()
+
+            db.collection("groups")
+                .document(groupId)
+                .get()
+                .addOnSuccessListener { documentSnapshot ->
+                    val groupName = documentSnapshot.getString("groupName")
+                    binding.groupName.text = groupName
+                }
+                .addOnFailureListener { exception ->
+                    // 그룹 이름을 가져오는 데 실패한 경우 처리
                 }
         }
     }
