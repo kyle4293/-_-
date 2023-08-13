@@ -69,8 +69,8 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
             messageText.text = message.message
             messageTime.text = message.timestamp.toString()
         }
-        companion object Factory{
-            fun create(parent: ViewGroup): MyMessageHolder{
+        companion object Factory {
+            fun create(parent: ViewGroup): MyMessageHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater.inflate(R.layout.mymessage, parent, false)
 
@@ -93,12 +93,12 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
 //            senderImg.setImageResource(message.senderImg)
             senderName.text = message.senderName
         }
-        companion object Factory{
-            fun create(parent: ViewGroup): MyMessageHolder{
+        companion object Factory {
+            fun create(parent: ViewGroup): OtherMessageHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater.inflate(R.layout.message, parent, false)
 
-                return MyMessageHolder(view)
+                return OtherMessageHolder(view)
             }
         }
     }
