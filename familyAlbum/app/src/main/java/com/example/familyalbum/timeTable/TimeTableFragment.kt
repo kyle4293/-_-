@@ -217,27 +217,6 @@ class TimeTableFragment : Fragment() {
         }
     }
 
-//    private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
-//        val taskRef = database.child("tasks").orderByChild("userName").equalTo(currentUserName)
-//        taskRef.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(snapshot: DataSnapshot) {
-//                val taskList = mutableListOf<Task>()
-//                for (taskSnapshot in snapshot.children) {
-//                    val task = taskSnapshot.getValue(Task::class.java)
-//                    task?.let {
-//                        taskList.add(it)
-//                    }
-//                }
-//                callback(taskList)
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                // 에러 처리
-//                callback(emptyList())
-//            }
-//        })
-//    }
-
     private fun loadTasksForCurrentUser(currentUserName: String, callback: (List<Task>) -> Unit) {
         val tasksCollection = firestore.collection("tasks")
 
@@ -245,6 +224,7 @@ class TimeTableFragment : Fragment() {
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val taskList = mutableListOf<Task>()
+                taskList.clear()
                 for (documentSnapshot in querySnapshot.documents) {
                     val task = documentSnapshot.toObject(Task::class.java)
                     task?.let {
@@ -336,7 +316,15 @@ class TimeTableFragment : Fragment() {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
                     alertDialogBuilder.setTitle("스케줄 상세정보")
                     alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
+                    var isHandlingClickEvent = false
+
                     alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
+                        if (isHandlingClickEvent) {
+                            return@OnClickListener // 이미 다른 작업을 처리 중인 경우 무시
+                        }
+                        isHandlingClickEvent = true // 작업 시작
+
+                        //요기서 db도 삭제해야함니다
                         val tasksCollection = firestore.collection("tasks")
                         loadCurrentUser(currentUserId) { loadedUser ->
                             val currentUserName = loadedUser.name
@@ -349,7 +337,7 @@ class TimeTableFragment : Fragment() {
                                             .addOnSuccessListener {
                                                 // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
                                                 parentView.removeView(customLayout)
-                                                dialog.dismiss() // 다이얼로그 닫기
+//                                                dialog.dismiss() // 다이얼로그 닫기
                                             }
                                             .addOnFailureListener { exception ->
                                                 // 삭제 실패 시 처리
@@ -360,15 +348,54 @@ class TimeTableFragment : Fragment() {
                                     // 조회 실패 시 처리
                                 }
                         }
-                        dialog.dismiss() // 다이얼로그 닫기
+                        isHandlingClickEvent = false
+                        dialog.dismiss()
                     })
                         .setNegativeButton("수정") { dialog, _ ->
 
-                            val intent = Intent(context, TaskPlusActivity::class.java)
-                            intent.putExtra("key", "수정화면") // 정보 추가
-                            startActivity(intent)
-                            dialog.dismiss() // 다이얼로그 닫기
-                        }
+                            if (isHandlingClickEvent) {
+                                return@setNegativeButton // 이미 다른 작업을 처리 중인 경우 무시
+                            }
+                            isHandlingClickEvent = true // 작업 시작
+
+                        dialog.dismiss() // 다이얼로그 닫기
+
+                        val intent = Intent(context, TaskPlusActivity::class.java)
+                        intent.putExtra("key", "수정") // 정보 추가
+                        intent.putExtra("startTime",task.startTime)
+                        intent.putExtra("endTime",task.endTime)
+                        intent.putExtra("title",task.title)
+                        intent.putExtra("place",task.place)
+                        intent.putExtra("dayOfWeek",task.dayOfWeek)
+                        startActivity(intent)
+
+                            if (intent != null) {
+                                //db삭제
+                                val tasksCollection = firestore.collection("tasks")
+                                loadCurrentUser(currentUserId) { loadedUser ->
+                                    val currentUserName = loadedUser.name
+                                    tasksCollection.whereEqualTo("userName", currentUserName)
+                                        .whereEqualTo("title", task.title)
+                                        .get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            for (documentSnapshot in querySnapshot.documents) {
+                                                tasksCollection.document(documentSnapshot.id).delete()
+                                                    .addOnSuccessListener {
+                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                        parentView.removeView(customLayout)
+                                                    }
+                                                    .addOnFailureListener { exception ->
+                                                        // 삭제 실패 시 처리
+                                                    }
+                                            }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            // 조회 실패 시 처리
+                                        }
+                                }
+                            }
+                    }
+
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
