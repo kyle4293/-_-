@@ -11,4 +11,12 @@
     <color name="light_pink">#FFFFE0E3</color>
     <color name="light_green">#FFB0FABE</color>
     <color name="light_blue">#FF6CC3FF</color>
+    <color name="blue_gray">#6699CC</color>
+    <color name="maize_yellow">#FFF275</color>
+    <color name="Pumpkin">#FF8C42</color>
+    <color name="Vermilion_red">#FF3C38</color>
+    <color name="Redwood">#A23E48</color>
+    <color name="font_richblack">#0F1F2E</color>
+    <color name="font_darkgray">#2A2A2A</color>
+    
 </resources>
