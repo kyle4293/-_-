@@ -8,7 +8,7 @@ interface ChatItem {
         var message: String?,
         var senderId: String?,
         var timestamp: Date?
-        ): ChatItem
+    ): ChatItem
 
     data class OtherMessage(
         var message: String?,
