@@ -1,28 +1,30 @@
 package com.example.familyalbum.task
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.example.familyalbum.MainActivity
+import com.example.familyalbum.R
+import com.example.familyalbum.databinding.ActivityTaskEditBinding
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
-class TaskPlusActivity : AppCompatActivity() {
-    lateinit var binding: ActivityTaskPlusBinding
+class TaskEditActivity : AppCompatActivity() {
+    lateinit var binding: ActivityTaskEditBinding
     lateinit var firestore: FirebaseFirestore
     lateinit var auth: FirebaseAuth
+    lateinit var taskId: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTaskPlusBinding.inflate(layoutInflater)
+        binding = ActivityTaskEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
 
         lateinit var startHour: String
         lateinit var startMin: String
@@ -156,44 +158,128 @@ class TaskPlusActivity : AppCompatActivity() {
             }
         }
 
-        binding.button.setOnClickListener {
-            val taskName = binding.inputTaskName.text.toString()
-            val taskPlace = binding.inputTaskPlace.text.toString()
-            val startTime = "${startHour}${startMin}"
-            val endTime = "${endHour}${endMin}"
+        //*********원래 정보**********
+        val startTime = intent.getStringExtra("startTime")
+        val endTime = intent.getStringExtra("endTime")
+        val title = intent.getStringExtra("title")
+        val place = intent.getStringExtra("place")
+        var dayOfWeek = intent.getStringExtra("dayOfWeek")
+        var userName = intent.getStringExtra("userName")
 
+
+        //*********원래 정보로 기본 설정*******
+        var oldstartHour = (startTime!!.toInt() / 100).toString()
+        if(oldstartHour.toInt() < 10) {
+            oldstartHour = "0${oldstartHour}"
+        }
+        var oldstartMin = (startTime!!.toInt() % 100).toString()
+        if(oldstartMin.toInt() < 10) {
+            oldstartMin = "0${oldstartMin}"
+        }
+        var oldendHour = (endTime!!.toInt() / 100).toString()
+        if(oldendHour.toInt() < 10) {
+            oldendHour = "0${oldendHour}"
+        }
+        var oldendMin = (endTime!!.toInt() % 100).toString()
+        if(oldendMin.toInt() < 10) {
+            oldendMin = "0${oldendMin}"
+        }
+
+        val sHposition = sHourAdapter.getPosition(oldstartHour)
+        if (sHposition != -1) {
+            binding.startHourSpinner.setSelection(sHposition)
+        }
+
+        val sMposition = sMinAdapter.getPosition(oldstartMin)
+        if (sMposition != -1) {
+            binding.startMinSpinner.setSelection(sMposition)
+        }
+
+        val eHposition = eHourAdapter.getPosition(oldendHour)
+        if (eHposition != -1) {
+            binding.endHourSpinner.setSelection(eHposition)
+        }
+
+        val eMposition = eMinAdapter.getPosition(oldendMin)
+        if (eMposition != -1) {
+            binding.endMinSpinner.setSelection(eMposition)
+        }
+
+        when(dayOfWeek){
+            "mon" -> dayOfWeek ="월"
+            "tue" -> dayOfWeek ="화"
+            "wed" -> dayOfWeek ="수"
+            "thu" -> dayOfWeek ="목"
+            "fri" -> dayOfWeek ="금"
+            "sat" -> dayOfWeek ="토"
+            "sun" -> dayOfWeek ="일"
+        }
+        val weekposition = weekAdapter.getPosition(dayOfWeek)
+        if (weekposition != -1) {
+            binding.weekSpinner.setSelection(weekposition)
+        }
+
+        if (title != null) {
+            binding.inputTaskName.text = Editable.Factory.getInstance().newEditable(title)
+        }
+        if (place != null) {
+            binding.inputTaskPlace.text = Editable.Factory.getInstance().newEditable(place)
+        }
+        //********기본 설정 끝******
+
+        firestore = FirebaseFirestore.getInstance()
+
+        //그 DB에 새로운 정보로 update
+        val query = firestore.collection("tasks")
+            .whereEqualTo("dayOfWeek", dayOfWeek)
+            .whereEqualTo("endTIme", endTime)
+            .whereEqualTo("place", place)
+            .whereEqualTo("startTime", startTime)
+            .whereEqualTo("title", title)
+            .whereEqualTo("userName", userName)
+        query.addSnapshotListener { querySnapshot, _ ->
+            for (document in querySnapshot!!.documents) {
+                taskId = document.id
+            }
+        }
+
+        //*********수정 버튼을 누르면********
+        binding.button.setOnClickListener {
+
+            //새로운 정보
+            val newtaskName = binding.inputTaskName.text.toString()
+            val newtaskPlace = binding.inputTaskPlace.text.toString()
+            val newstartTime = "${startHour}${startMin}"
+            val newendTime = "${endHour}${endMin}"
+            lateinit var newweek: String
             when(week){
-                "월" -> week = "mon"
-                "화" -> week = "tue"
-                "수" -> week = "wed"
-                "목" -> week = "thu"
-                "금" -> week = "fri"
-                "토" -> week = "sat"
-                "일" -> week = "sun"
+                "월" -> newweek = "mon"
+                "화" -> newweek = "tue"
+                "수" -> newweek = "wed"
+                "목" -> newweek = "thu"
+                "금" -> newweek = "fri"
+                "토" -> newweek = "sat"
+                "일" -> newweek = "sun"
             }
 
-            val userName = auth.currentUser?.displayName
-
-            val newTask = Task(
-                dayOfWeek = week,
-                endTime = endTime,
-                place = taskPlace,
-                startTime = startTime,
-                title = taskName,
-                userName = userName ?: "" // 사용자 이름이 없으면 빈 문자열로 설정
+            val updateData = mapOf(
+                "title" to newtaskName,
+                "place" to newtaskPlace,
+                "startTime" to newstartTime,
+                "endTime" to newendTime,
+                "dayOfWeek" to newweek,
+                "userName" to userName
             )
 
-            // 요기서 DB에 task 추가
-            firestore.collection("tasks")
-                .add(newTask)
+            firestore.collection("tasks").document(taskId)
+                .update(updateData)
                 .addOnSuccessListener {
-                    // 추가 성공 시 처리
+                    //수정 성공 시 처리
                 }
                 .addOnFailureListener { e ->
-                    // 추가 실패 시 처리
-                    // 예를 들어, 에러 메시지 출력 등
+                    //수정 실패 시 처리
+                    Log.e(TAG, "Error updating document", e)
                 }
-
         }
     }
 }

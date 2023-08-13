@@ -22,6 +22,7 @@ import com.example.familyalbum.R
 
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
 import com.example.familyalbum.task.Task
+import com.example.familyalbum.task.TaskEditActivity
 import com.example.familyalbum.task.TaskPlusActivity
 import com.example.familyalbum.timeTable.User
 import com.google.firebase.auth.FirebaseAuth
@@ -82,39 +83,32 @@ class TimeTableFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser
         val currentUserId = currentUser?.uid
 
-        val bundle = arguments
-        val startTime = bundle?.getString("startTime")
-        val endTime = bundle?.getString("endTime")
-        val week = bundle?.getString("week")
-        val taskName = bundle?.getString("taskName")
-        val taskPlace = bundle?.getString("taskPlace")
 
-
-        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null && currentUserId != null) {
-            // 현재 로그인한 사용자의 이름 가져오기
-            loadCurrentUser(currentUserId) { loadedUser ->
-                val currentUserName = loadedUser.name
-
-                // Task 객체 생성
-                val task = Task(week, endTime, taskPlace, startTime, taskName, currentUserName) // 이름 추가
-
-                // 파이어스토어에 저장
-                saveTaskToFirestore(task)
-
-//            데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
-//            Log.i(startTime,startTime)
-//            Log.i(endTime,endTime)
-//            Log.i(taskPlace,taskPlace)
-//            Log.i(taskName,taskName)
-//            Log.i(week,week)
-
-                // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
-                // view.findViewById<TextView>(R.id.textStartTime).text = startTime
-            }
-        } else {
-            // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
-            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
-        }
+//        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null && currentUserId != null) {
+//            // 현재 로그인한 사용자의 이름 가져오기
+//            loadCurrentUser(currentUserId) { loadedUser ->
+//                val currentUserName = loadedUser.name
+//
+//                // Task 객체 생성
+//                val task = Task(week, endTime, taskPlace, startTime, taskName, currentUserName) // 이름 추가
+//
+//                // 파이어스토어에 저장
+//                saveTaskToFirestore(task)
+//
+////            데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
+////            Log.i(startTime,startTime)
+////            Log.i(endTime,endTime)
+////            Log.i(taskPlace,taskPlace)
+////            Log.i(taskName,taskName)
+////            Log.i(week,week)
+//
+//                // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
+//                // view.findViewById<TextView>(R.id.textStartTime).text = startTime
+//            }
+//        } else {
+//            // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
+//            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
+//        }
 
         currentUser?.let { user ->
             val currentUserId = user.uid
@@ -173,7 +167,7 @@ class TimeTableFragment : Fragment() {
                         val profileImageUrl = userInfo?.get("profileImageUrl") as? String
                         profileImageUrl?.let {
                             // Use Glide to load and display profile image
-                            Glide.with(requireContext())
+                            Glide.with(fragmentContext)
                                 .load(profileImageUrl)
                                 .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
                                 .error(R.drawable.default_profile_image) // Error image if loading fails
@@ -360,8 +354,7 @@ class TimeTableFragment : Fragment() {
 
                         dialog.dismiss() // 다이얼로그 닫기
 
-                        val intent = Intent(context, TaskPlusActivity::class.java)
-                        intent.putExtra("key", "수정") // 정보 추가
+                        val intent = Intent(context, TaskEditActivity::class.java)
                         intent.putExtra("startTime",task.startTime)
                         intent.putExtra("endTime",task.endTime)
                         intent.putExtra("title",task.title)
@@ -369,31 +362,6 @@ class TimeTableFragment : Fragment() {
                         intent.putExtra("dayOfWeek",task.dayOfWeek)
                         startActivity(intent)
 
-                            if (intent != null) {
-                                //db삭제
-                                val tasksCollection = firestore.collection("tasks")
-                                loadCurrentUser(currentUserId) { loadedUser ->
-                                    val currentUserName = loadedUser.name
-                                    tasksCollection.whereEqualTo("userName", currentUserName)
-                                        .whereEqualTo("title", task.title)
-                                        .get()
-                                        .addOnSuccessListener { querySnapshot ->
-                                            for (documentSnapshot in querySnapshot.documents) {
-                                                tasksCollection.document(documentSnapshot.id).delete()
-                                                    .addOnSuccessListener {
-                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
-                                                        parentView.removeView(customLayout)
-                                                    }
-                                                    .addOnFailureListener { exception ->
-                                                        // 삭제 실패 시 처리
-                                                    }
-                                            }
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            // 조회 실패 시 처리
-                                        }
-                                }
-                            }
                     }
 
                     alertDialogBuilder.show()
