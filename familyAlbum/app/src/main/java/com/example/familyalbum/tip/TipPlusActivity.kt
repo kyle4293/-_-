@@ -53,6 +53,7 @@ class TipPlusActivity : AppCompatActivity() {
                     // 추가 실패 시 처리
                     // 예를 들어, 에러 메시지 출력 등
                 }
+
         }
     }
 }

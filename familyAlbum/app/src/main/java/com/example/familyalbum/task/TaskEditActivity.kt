@@ -8,6 +8,7 @@ import android.text.Editable
 import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskEditBinding
@@ -278,11 +279,20 @@ class TaskEditActivity : AppCompatActivity() {
                 .update(updateData)
                 .addOnSuccessListener {
                     //수정 성공 시 처리
+
                 }
                 .addOnFailureListener { e ->
                     //수정 실패 시 처리
                     Log.e(TAG, "Error updating document", e)
                 }
+
+            if(startTime.toInt() < endTime.toInt()) {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("fromTask", "fromTask")
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
