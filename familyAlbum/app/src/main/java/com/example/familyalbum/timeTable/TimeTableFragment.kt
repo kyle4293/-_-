@@ -167,7 +167,7 @@ class TimeTableFragment : Fragment() {
                         val profileImageUrl = userInfo?.get("profileImageUrl") as? String
                         profileImageUrl?.let {
                             // Use Glide to load and display profile image
-                            Glide.with(requireContext())
+                            Glide.with(fragmentContext)
                                 .load(profileImageUrl)
                                 .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
                                 .error(R.drawable.default_profile_image) // Error image if loading fails
