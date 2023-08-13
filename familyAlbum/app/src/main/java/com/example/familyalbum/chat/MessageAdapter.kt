@@ -7,9 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familyalbum.R
-import com.example.familyalbum.databinding.MessageBinding
-import com.example.familyalbum.databinding.MymessageBinding
-import kotlinx.coroutines.NonDisposableHandle.parent
+
 
 class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 //    inner class ViewHolder(val binding: MessageBinding): RecyclerView.ViewHolder(binding.root)
