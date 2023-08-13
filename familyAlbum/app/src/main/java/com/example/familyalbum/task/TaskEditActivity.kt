@@ -8,9 +8,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.familyalbum.MainActivity
-import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskEditBinding
-import com.example.familyalbum.databinding.ActivityTaskPlusBinding
+
 
 class TaskEditActivity : AppCompatActivity() {
     lateinit var binding: ActivityTaskEditBinding
