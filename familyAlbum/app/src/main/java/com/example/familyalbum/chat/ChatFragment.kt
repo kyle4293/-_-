@@ -66,6 +66,7 @@ class ChatFragment : Fragment() {
 
         // 채팅 메시지 불러오기 및 실시간 감지
         loadAndListenForMessages(chatRoomId)
+        messageAdapter.updateMessageList(messageList)
 
         binding.sendBtn.setOnClickListener {
             sendMessage()
@@ -84,15 +85,11 @@ class ChatFragment : Fragment() {
                     val senderId = document.getString("senderId")
                     val message = document.getString("message")
                     val timestamp = document.getTimestamp("timestamp")?.toDate()
+
                     if (senderId != null && message != null && timestamp != null) {
                         if(senderId == currentUserID){
                             ChatItem.MyMessage(message, senderId, timestamp)
                         }else{
-                            //다른 사람이 보낸 메세지
-                            //User Table에서 참조해서 Img, name 받아오면 됩니다 ~
-
-                            Log.e(TAG,"0")
-
                             loadOtherUserInfoAndAddChatItem(senderId, message, timestamp)
 
                             null
@@ -105,6 +102,8 @@ class ChatFragment : Fragment() {
                 messageList.clear()
                 messageList.addAll(messages)
                 messageAdapter.notifyDataSetChanged()
+
+                messageAdapter.updateMessageList(messages)
 
                 // Scroll to the bottom
                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
@@ -154,6 +153,9 @@ class ChatFragment : Fragment() {
                 .add(messageData)
                 .addOnSuccessListener {
                     binding.messageEdit.text.clear()
+
+                    // 새로운 메시지가 추가되었으므로 스크롤을 아래로 이동
+                    binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
                 }
         }
     }
