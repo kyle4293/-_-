@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginStart="50dp"
+    android:layout_marginEnd="50dp"
+    android:orientation="horizontal"
+    android:layout_gravity="center_horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <View
+        android:layout_width="50dp"
+        android:layout_height="3dp"
+        android:background="@drawable/vertical_divider"
+        android:backgroundTint="@color/cardview_dark_background"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="10dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2000년 00월 00일"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:fontFamily="@font/lineseed_kr_rg"/>
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="3dp"
+        android:backgroundTint="@color/cardview_dark_background"
+        android:background="@drawable/vertical_divider"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="10dp"/>
+
+
+</LinearLayout>

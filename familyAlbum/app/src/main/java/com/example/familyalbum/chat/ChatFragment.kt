@@ -1,6 +1,9 @@
 package com.example.familyalbum.chat
 
+
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -87,7 +90,11 @@ class ChatFragment : Fragment() {
                         }else{
                             //다른 사람이 보낸 메세지
                             //User Table에서 참조해서 Img, name 받아오면 됩니다 ~
-//                            ChatItem.OtherMessage(me)
+
+                            Log.e(TAG,"0")
+
+                            loadOtherUserInfoAndAddChatItem(senderId, message, timestamp)
+
                             null
                         }
                     } else {
@@ -101,7 +108,31 @@ class ChatFragment : Fragment() {
 
                 // Scroll to the bottom
                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+
             }
+    }
+
+    private fun loadOtherUserInfoAndAddChatItem(senderId: String, message: String, timestamp: Date) {
+        val db = FirebaseFirestore.getInstance()
+        val userRef = db.collection("users").document(senderId)
+
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                val senderName = documentSnapshot.getString("name")
+                val senderImg = documentSnapshot.getString("profileImageUrl")
+
+                if (senderName != null && senderImg != null) {
+                    val otherMessage = ChatItem.OtherMessage(message, senderId, senderName, timestamp, senderImg)
+                    // Add the otherMessage to your messageList
+                    messageList.add(otherMessage)
+
+                    messageAdapter.notifyDataSetChanged()
+                }
+            }
+            .addOnFailureListener {
+                // Error handling
+            }
+
     }
 
 

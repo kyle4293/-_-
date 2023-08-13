@@ -7,6 +7,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.familyalbum.R
+import com.example.familyalbum.databinding.MessageBinding
+import com.example.familyalbum.databinding.MymessageBinding
+import kotlinx.coroutines.NonDisposableHandle.parent
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -51,13 +57,10 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
             is OtherMessageHolder -> {
                 holder.bind(messageList[position] as ChatItem.OtherMessage)
             }
-//        }
-//        val message = messageList[position]
-//        holder.binding.receiveMessageText.text = message.message
-//        holder.binding.receiveMessageTime.text = message.timestamp.toString() // 수정 필요
-//        holder.binding.receiveMessageSender.text = message.senderId
+
         }
     }
+
 
     class MyMessageHolder(private val itemView: View): RecyclerView.ViewHolder(itemView){
         private val messageText = itemView.findViewById<TextView>(R.id.send_message_text)
@@ -65,16 +68,20 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
 
         fun bind(message: ChatItem.MyMessage){
             messageText.text = message.message
-            messageTime.text = message.timestamp.toString()
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(message.timestamp)
+            messageTime.text = formattedTime.toString()
         }
-        companion object Factory{
-            fun create(parent: ViewGroup): MyMessageHolder{
+
+
+        companion object Factory {
+            fun create(parent: ViewGroup): MyMessageHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater.inflate(R.layout.mymessage, parent, false)
 
                 return MyMessageHolder(view)
             }
         }
+
     }
 
     class OtherMessageHolder(private val itemView: View): RecyclerView.ViewHolder(itemView){
@@ -87,16 +94,20 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
 
         fun bind(message: ChatItem.OtherMessage){
             messageText.text = message.message
-            messageTime.text = message.timestamp.toString()
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(message.timestamp)
+
+            messageTime.text = formattedTime.toString()
 //            senderImg.setImageResource(message.senderImg)
             senderName.text = message.senderName
         }
-        companion object Factory{
-            fun create(parent: ViewGroup): MyMessageHolder{
+
+
+        companion object Factory {
+            fun create(parent: ViewGroup): OtherMessageHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = layoutInflater.inflate(R.layout.message, parent, false)
 
-                return MyMessageHolder(view)
+                return OtherMessageHolder(view)
             }
         }
     }
