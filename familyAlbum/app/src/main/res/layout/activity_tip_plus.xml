@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:layout_margin="30dp"
     android:orientation="vertical"
-    tools:context=".TipEditActivity">
+    tools:context=".tip.TipPlusActivity">
 
     <TextView
         android:id="@+id/textView8"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="수정"
+        android:text="추가"
         android:textSize="20sp" />
 
     <LinearLayout
@@ -96,12 +96,6 @@
         android:id="@+id/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="수정" />
-
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="삭제" />
+        android:text="추가" />
 
 </LinearLayout>

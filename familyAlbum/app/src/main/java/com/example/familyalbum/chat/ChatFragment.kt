@@ -1,5 +1,6 @@
 package com.example.familyalbum.chat
 
+
 import android.content.ContentValues.TAG
 import android.os.Bundle
 import android.util.Log
@@ -89,9 +90,11 @@ class ChatFragment : Fragment() {
                         }else{
                             //다른 사람이 보낸 메세지
                             //User Table에서 참조해서 Img, name 받아오면 됩니다 ~
+
                             Log.e(TAG,"0")
 
                             loadOtherUserInfoAndAddChatItem(senderId, message, timestamp)
+
                             null
                         }
                     } else {
@@ -105,6 +108,7 @@ class ChatFragment : Fragment() {
 
                 // Scroll to the bottom
                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+
             }
     }
 
@@ -128,7 +132,9 @@ class ChatFragment : Fragment() {
             .addOnFailureListener {
                 // Error handling
             }
+
     }
+
 
     private fun sendMessage() {
         val messageText = binding.messageEdit.text.toString().trim()
