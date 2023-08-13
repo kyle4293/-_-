@@ -1,9 +1,11 @@
 package com.example.familyalbum.tip
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.ArrayAdapter
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 import com.example.familyalbum.databinding.ActivityTipEditBinding
@@ -42,7 +44,10 @@ class TipPlusActivity : AppCompatActivity() {
                 .add(newTip)
                 .addOnSuccessListener {
                     // 추가 성공 시 처리
-                    finish() // 예를 들어, 현재 화면을 종료하거나 다른 처리 가능
+                    //finish() // 예를 들어, 현재 화면을 종료하거나 다른 처리 가능
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("fromTipEdit", "fromTipEdit")
+                    startActivity(intent)
                 }
                 .addOnFailureListener { e ->
                     // 추가 실패 시 처리
