@@ -8,24 +8,28 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_chat"
+        android:elevation="5dp"
+        android:layout_marginBottom="10dp">
+
         <TextView
             android:id="@+id/group_name"
-            android:text="Chat"
-            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:drawableRight="@drawable/icon_chat"
+            android:text="Group Name"
+            android:fontFamily="@font/lineseed_kr_bd"
+            android:textColor="@color/black"
+            android:textSize="25sp" />
 
     </LinearLayout>
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#D9D9D9"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"

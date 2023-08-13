@@ -23,27 +23,28 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val startTime = intent.getStringExtra("startTime")
-        val endTime = intent.getStringExtra("endTime")
-        val taskPlace = intent.getStringExtra("taskPlace")
-        val taskName = intent.getStringExtra("taskName")
-        val week = intent.getStringExtra("week")
+        val fromTask = intent.getStringExtra("fromTask")
+        val fromTipEdit = intent.getStringExtra("fromTipEdit")
 
-        var timetablefragment = TimeTableFragment()
         var flag = 0
         // 모든 정보가 null이 아닌지 확인
-        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null) {
-            val taskData = TaskPlusData(startTime, endTime, week, taskName,taskPlace)
-            timetablefragment.arguments = createTaskBundle(taskData)
+        if (fromTask == "fromTask") {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.main_content,timetablefragment)
+                .replace(R.id.main_content,TimeTableFragment())
                 .commitAllowingStateLoss()
             flag = 1
 
-        } else {
+        } else if(fromTipEdit == "fromTipEdit"){
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_content, TipFragment())
+                .commitAllowingStateLoss()
+            flag = 2
+        }
+        else {
             // 오류 메시지 표시 등 필요한 처리 수행
             supportFragmentManager.beginTransaction().replace(R.id.main_content, HomeFragment())
-                .commitAllowingStateLoss() }
+                .commitAllowingStateLoss()
+        }
 
             binding.bottomNavigation.run {
                 setOnItemSelectedListener { item ->
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity(){
                         }
                         R.id.menu_table -> {
                             supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_content,timetablefragment)
+                                .replace(R.id.main_content,TimeTableFragment())
                                 .commitAllowingStateLoss()
                         }
                         R.id.menu_profile -> {
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity(){
                 }
                 if(flag==0){selectedItemId = R.id.menu_home}
                 if(flag==1){selectedItemId = R.id.menu_table}
+                if(flag==2){selectedItemId = R.id.menu_tip}
             }
 
 
@@ -104,13 +106,5 @@ class MainActivity : AppCompatActivity(){
             .commitAllowingStateLoss()
     }
 
-    fun createTaskBundle(taskData: TaskPlusData): Bundle {
-        val bundle = Bundle()
-        bundle.putString("startTime", taskData.startTime)
-        bundle.putString("endTime", taskData.endTime)
-        bundle.putString("week", taskData.week)
-        bundle.putString("taskName", taskData.taskName)
-        bundle.putString("taskPlace", taskData.taskPlace)
-        return bundle
-    }
+
 }

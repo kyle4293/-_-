@@ -2,6 +2,7 @@ package com.example.familyalbum
 
 import android.R
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -76,7 +77,10 @@ class TipEditActivity : AppCompatActivity() {
                 .update(updateData)
                 .addOnSuccessListener {
                     // 수정 성공 시 처리
-                    finish()
+                    //finish()
+                    val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("fromTipEdit", "fromTipEdit")
+                    startActivity(intent)
                 }
                 .addOnFailureListener { e ->
                     // 수정 실패 시 처리
@@ -98,7 +102,10 @@ class TipEditActivity : AppCompatActivity() {
                         .addOnSuccessListener {
                             // 삭제 성공 시 처리
                             // 예를 들어, 삭제 후 홈 화면으로 이동하는 등의 처리 가능
-                            finish()
+                            //finish()
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.putExtra("fromTipEdit", "fromTipEdit")
+                            startActivity(intent)
                         }
                         .addOnFailureListener { e ->
                             // 삭제 실패 시 처리
