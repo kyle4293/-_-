@@ -205,16 +205,17 @@ class TaskEditActivity : AppCompatActivity() {
             binding.endMinSpinner.setSelection(eMposition)
         }
 
+        lateinit var oldDayOfWeek: String
         when(dayOfWeek){
-            "mon" -> dayOfWeek ="월"
-            "tue" -> dayOfWeek ="화"
-            "wed" -> dayOfWeek ="수"
-            "thu" -> dayOfWeek ="목"
-            "fri" -> dayOfWeek ="금"
-            "sat" -> dayOfWeek ="토"
-            "sun" -> dayOfWeek ="일"
+            "mon" -> oldDayOfWeek ="월"
+            "tue" -> oldDayOfWeek ="화"
+            "wed" -> oldDayOfWeek ="수"
+            "thu" -> oldDayOfWeek ="목"
+            "fri" -> oldDayOfWeek ="금"
+            "sat" -> oldDayOfWeek ="토"
+            "sun" -> oldDayOfWeek ="일"
         }
-        val weekposition = weekAdapter.getPosition(dayOfWeek)
+        val weekposition = weekAdapter.getPosition(oldDayOfWeek)
         if (weekposition != -1) {
             binding.weekSpinner.setSelection(weekposition)
         }
