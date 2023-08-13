@@ -169,6 +169,10 @@ class TaskPlusActivity : AppCompatActivity() {
             }
 
             // 요기서 DB에 task 추가
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fromTask", "fromTask")
+            startActivity(intent)
         }
     }
 }
