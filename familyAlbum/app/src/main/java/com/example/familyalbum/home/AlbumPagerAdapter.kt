@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
 
 
-class AlbumPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
+class AlbumPagerAdapter(fragmentActivity: FragmentActivity, photos: ArrayList<String>) : FragmentStateAdapter(fragmentActivity){
 
     override fun getItemCount(): Int {
         return 4
