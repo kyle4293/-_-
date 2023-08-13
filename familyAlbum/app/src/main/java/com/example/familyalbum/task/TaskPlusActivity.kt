@@ -6,18 +6,23 @@ import android.os.Bundle
 import android.text.Editable
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class TaskPlusActivity : AppCompatActivity() {
     lateinit var binding: ActivityTaskPlusBinding
+    lateinit var firestore: FirebaseFirestore
+    lateinit var auth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskPlusBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
 
         lateinit var startHour: String
         lateinit var startMin: String
@@ -151,8 +156,6 @@ class TaskPlusActivity : AppCompatActivity() {
             }
         }
 
-
-
         binding.button.setOnClickListener {
             val taskName = binding.inputTaskName.text.toString()
             val taskPlace = binding.inputTaskPlace.text.toString()
@@ -169,15 +172,28 @@ class TaskPlusActivity : AppCompatActivity() {
                 "일" -> week = "sun"
             }
 
-            // 요기서 DB에 task 추가
+            val userName = auth.currentUser?.displayName
 
-            if(startTime.toInt() < endTime.toInt()) {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("fromTask", "fromTask")
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
-            }
+            val newTask = Task(
+                dayOfWeek = week,
+                endTime = endTime,
+                place = taskPlace,
+                startTime = startTime,
+                title = taskName,
+                userName = userName ?: "" // 사용자 이름이 없으면 빈 문자열로 설정
+            )
+
+            // 요기서 DB에 task 추가
+            firestore.collection("tasks")
+                .add(newTask)
+                .addOnSuccessListener {
+                    // 추가 성공 시 처리
+                }
+                .addOnFailureListener { e ->
+                    // 추가 실패 시 처리
+                    // 예를 들어, 에러 메시지 출력 등
+                }
+
         }
     }
 }

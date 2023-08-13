@@ -1,18 +1,25 @@
 package com.example.familyalbum.task
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.example.familyalbum.MainActivity
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityTaskEditBinding
-
+import com.example.familyalbum.databinding.ActivityTaskPlusBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class TaskEditActivity : AppCompatActivity() {
     lateinit var binding: ActivityTaskEditBinding
+    lateinit var firestore: FirebaseFirestore
+    lateinit var auth: FirebaseAuth
+    lateinit var taskId: String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskEditBinding.inflate(layoutInflater)
@@ -151,13 +158,27 @@ class TaskEditActivity : AppCompatActivity() {
             }
         }
 
-
         //*********원래 정보**********
         val startTime = intent.getStringExtra("startTime")
         val endTime = intent.getStringExtra("endTime")
         val title = intent.getStringExtra("title")
         val place = intent.getStringExtra("place")
         var dayOfWeek = intent.getStringExtra("dayOfWeek")
+
+        auth = FirebaseAuth.getInstance()
+
+
+        val query = firestore.collection("tasks")
+            .whereEqualTo("dayOfWeek", dayOfWeek)
+            .whereEqualTo("endTime", endTime)
+            .whereEqualTo("place", place)
+            .whereEqualTo("startTime", startTime)
+            .whereEqualTo("title", title)
+        query.addSnapshotListener { querySnapshot, _ ->
+            for (document in querySnapshot!!.documents) {
+                taskId = document.id
+            }
+        }
 
 
         //*********원래 정보로 기본 설정*******
@@ -221,6 +242,8 @@ class TaskEditActivity : AppCompatActivity() {
         }
         //********기본 설정 끝******
 
+        firestore = FirebaseFirestore.getInstance()
+
 
         //*********수정 버튼을 누르면********
         binding.button.setOnClickListener {
@@ -230,6 +253,7 @@ class TaskEditActivity : AppCompatActivity() {
             val newtaskPlace = binding.inputTaskPlace.text.toString()
             val newstartTime = "${startHour}${startMin}"
             val newendTime = "${endHour}${endMin}"
+            val userName = auth.currentUser?.displayName
             lateinit var newweek: String
             when(week){
                 "월" -> newweek = "mon"
@@ -241,15 +265,24 @@ class TaskEditActivity : AppCompatActivity() {
                 "일" -> newweek = "sun"
             }
 
-            // 요기서 원래 정보로 DB찾고 그 DB에 새로운 정보로 update
+            val updateData = mapOf(
+                "title" to newtaskName,
+                "place" to newtaskPlace,
+                "startTime" to newstartTime,
+                "endTime" to newendTime,
+                "dayOfWeek" to newweek,
+                "userName" to userName
+            )
 
-            if(startTime.toInt() < endTime.toInt()) {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("fromTask", "fromTask")
-                startActivity(intent)
-            }else{
-                Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
-            }
+            firestore.collection("tasks").document(taskId)
+                .update(updateData)
+                .addOnSuccessListener {
+                    //수정 성공 시 처리
+                }
+                .addOnFailureListener { e ->
+                    //수정 실패 시 처리
+                    Log.e(TAG, "Error updating document", e)
+                }
         }
     }
 }
