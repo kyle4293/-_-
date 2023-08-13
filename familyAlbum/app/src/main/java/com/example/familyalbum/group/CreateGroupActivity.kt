@@ -2,20 +2,42 @@ package com.example.familyalbum.group
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.ActivityCreateGroupBinding
+import com.example.familyalbum.profile.ProfileConfirmActivity
+import java.io.IOException
 
 class CreateGroupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateGroupBinding
     private lateinit var viewModel: CreateGroupViewModel
+    private var imageUri: Uri? = null
+    var REQUEST_CONFIRM = 0
+
+    private val imagePickerLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                imageUri = uri
+                try {
+                    //confirm Activity로 이동
+                    val intent = Intent(this, ProfileConfirmActivity::class.java)
+                    intent.putExtra("imageUrl", imageUri.toString())
+                    startActivityForResult(intent, REQUEST_CONFIRM)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +72,20 @@ class CreateGroupActivity : AppCompatActivity() {
         binding.btnCreateGroup.setOnClickListener {
             // 그룹 생성 버튼 클릭 시 ViewModel의 함수 호출
             viewModel.onCreateGroupButtonClick()
+        }
+
+        binding.groupImg.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CONFIRM && resultCode == RESULT_OK) {
+            Glide.with(this)
+                .load(imageUri)
+                .into(binding.groupImg)
         }
     }
 }
