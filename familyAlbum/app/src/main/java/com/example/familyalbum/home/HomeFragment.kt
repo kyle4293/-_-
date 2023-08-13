@@ -41,6 +41,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.groupName.text = (activity as MainActivity).selectedGroupName
+
+        if (!(activity as MainActivity).selectedGroupId.isNullOrEmpty()) {
+            loadAndDisplayGroupImages((activity as MainActivity).selectedGroupId!!)
+            loadAndDisplayGroupUsers((activity as MainActivity).selectedGroupId!!)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,21 +74,6 @@ class HomeFragment : Fragment() {
             fragment.arguments = args
             return fragment
         }
-    }
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        val groupId = arguments?.getString(ARG_GROUP_ID)
-//        val groupName = arguments?.getString(ARG_GROUP_NAME)
-//        binding.groupName.text = groupName
-//
-//        if (!groupId.isNullOrEmpty()) {
-//            loadAndDisplayGroupImages(groupId)
-//            loadAndDisplayGroupUsers(groupId) // 그룹에 속한 유저들의 목록 가져와서 표시
-//        }
-//
-//        init()
     }
 
     override fun onResume() {
@@ -173,12 +168,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initLayout() {
-        //---1. 변경된 부분---
-        //원래 homeFragment layout에는 recyclerView가 붙어있었음. 그걸 Viewpager로 바꿈.
-        //homeFragment -> AlbumPagerAdapter에서 list/grid 별 fragment로 이동 시켜줌
-        //LinearGalleryFragment, GridGalleryFragment 내에 각각 recyclerview가 붙어있고, binding까지 완료.
-
-        //주석 2번을 찾아가십시오
         val viewPager = binding?.viewPager
         viewPager?.adapter = AlbumPagerAdapter(requireActivity())
 
@@ -190,9 +179,6 @@ class HomeFragment : Fragment() {
             }.attach()
         }
 
-//        ---이전 코드입니다---
-//        binding.homeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-//        binding.homeRecyclerView.adapter = galleryAdapter
 
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
