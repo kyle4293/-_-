@@ -1,20 +1,19 @@
 package com.example.familyalbum.task
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import com.example.familyalbum.MainActivity
+import com.example.familyalbum.R
+import com.example.familyalbum.databinding.ActivityTaskEditBinding
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 
-
-class TaskPlusActivity : AppCompatActivity() {
-    lateinit var binding: ActivityTaskPlusBinding
+class TaskEditActivity : AppCompatActivity() {
+    lateinit var binding: ActivityTaskEditBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTaskPlusBinding.inflate(layoutInflater)
+        binding = ActivityTaskEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 
@@ -151,24 +150,97 @@ class TaskPlusActivity : AppCompatActivity() {
         }
 
 
+        //*********원래 정보**********
+        val startTime = intent.getStringExtra("startTime")
+        val endTime = intent.getStringExtra("endTime")
+        val title = intent.getStringExtra("title")
+        val place = intent.getStringExtra("place")
+        var dayOfWeek = intent.getStringExtra("dayOfWeek")
 
+
+        //*********원래 정보로 기본 설정*******
+        var oldstartHour = (startTime!!.toInt() / 100).toString()
+        if(oldstartHour.toInt() < 10) {
+            oldstartHour = "0${oldstartHour}"
+        }
+        var oldstartMin = (startTime!!.toInt() % 100).toString()
+        if(oldstartMin.toInt() < 10) {
+            oldstartMin = "0${oldstartMin}"
+        }
+        var oldendHour = (endTime!!.toInt() / 100).toString()
+        if(oldendHour.toInt() < 10) {
+            oldendHour = "0${oldendHour}"
+        }
+        var oldendMin = (endTime!!.toInt() % 100).toString()
+        if(oldendMin.toInt() < 10) {
+            oldendMin = "0${oldendMin}"
+        }
+
+        val sHposition = sHourAdapter.getPosition(oldstartHour)
+        if (sHposition != -1) {
+            binding.startHourSpinner.setSelection(sHposition)
+        }
+
+        val sMposition = sMinAdapter.getPosition(oldstartMin)
+        if (sMposition != -1) {
+            binding.startMinSpinner.setSelection(sMposition)
+        }
+
+        val eHposition = eHourAdapter.getPosition(oldendHour)
+        if (eHposition != -1) {
+            binding.endHourSpinner.setSelection(eHposition)
+        }
+
+        val eMposition = eMinAdapter.getPosition(oldendMin)
+        if (eMposition != -1) {
+            binding.endMinSpinner.setSelection(eMposition)
+        }
+
+        when(dayOfWeek){
+            "mon" -> dayOfWeek ="월"
+            "tue" -> dayOfWeek ="화"
+            "wed" -> dayOfWeek ="수"
+            "thu" -> dayOfWeek ="목"
+            "fri" -> dayOfWeek ="금"
+            "sat" -> dayOfWeek ="토"
+            "sun" -> dayOfWeek ="일"
+        }
+        val weekposition = weekAdapter.getPosition(dayOfWeek)
+        if (weekposition != -1) {
+            binding.weekSpinner.setSelection(weekposition)
+        }
+
+        if (title != null) {
+            binding.inputTaskName.text = Editable.Factory.getInstance().newEditable(title)
+        }
+        if (place != null) {
+            binding.inputTaskPlace.text = Editable.Factory.getInstance().newEditable(place)
+        }
+        //********기본 설정 끝******
+
+
+        //*********수정 버튼을 누르면********
         binding.button.setOnClickListener {
-            val taskName = binding.inputTaskName.text.toString()
-            val taskPlace = binding.inputTaskPlace.text.toString()
-            val startTime = "${startHour}${startMin}"
-            val endTime = "${endHour}${endMin}"
 
+            //새로운 정보
+            val newtaskName = binding.inputTaskName.text.toString()
+            val newtaskPlace = binding.inputTaskPlace.text.toString()
+            val newstartTime = "${startHour}${startMin}"
+            val newendTime = "${endHour}${endMin}"
+            lateinit var newweek: String
             when(week){
-                "월" -> week = "mon"
-                "화" -> week = "tue"
-                "수" -> week = "wed"
-                "목" -> week = "thu"
-                "금" -> week = "fri"
-                "토" -> week = "sat"
-                "일" -> week = "sun"
+                "월" -> newweek = "mon"
+                "화" -> newweek = "tue"
+                "수" -> newweek = "wed"
+                "목" -> newweek = "thu"
+                "금" -> newweek = "fri"
+                "토" -> newweek = "sat"
+                "일" -> newweek = "sun"
             }
 
-            // 요기서 DB에 task 추가
+            // 요기서 원래 정보로 DB찾고 그 DB에 새로운 정보로 update
+
+            
         }
     }
 }
