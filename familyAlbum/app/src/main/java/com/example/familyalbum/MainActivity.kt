@@ -96,12 +96,6 @@ class MainActivity : AppCompatActivity(){
             .commitAllowingStateLoss()
     }
 
-    fun changeFragmentToChat(groupId: String) {
-        val chatFragment = ChatFragment.newInstance(groupId)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_content, chatFragment)
-            .commitAllowingStateLoss()
-    }
 
     fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
