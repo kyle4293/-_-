@@ -20,6 +20,12 @@
         android:theme="@style/Theme.FamilyAlbum"
         tools:targetApi="31">
         <activity
+            android:name=".home.FolderCreateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
+        <activity
             android:name=".task.TaskEditActivity"
             android:exported="false" />
         <activity
@@ -58,9 +64,6 @@
         <activity
             android:name=".group.CreateGroupActivity"
             android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
         <activity
             android:name=".TipEditActivity"
             android:exported="false" />
