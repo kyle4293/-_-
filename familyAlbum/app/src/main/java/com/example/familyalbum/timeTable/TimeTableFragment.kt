@@ -16,16 +16,20 @@ import android.widget.TextView
 import android.widget.Toast
 
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.familyalbum.MainActivity
 
 import com.example.familyalbum.R
 
 import com.example.familyalbum.databinding.FragmentTimeTableBinding
+import com.example.familyalbum.group.Group
+import com.example.familyalbum.group.TimeTableGroupInfoDialog
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.task.TaskEditActivity
 import com.example.familyalbum.task.TaskPlusActivity
 import com.example.familyalbum.timeTable.User
+import com.google.android.play.integrity.internal.t
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -36,7 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 
-class TimeTableFragment : Fragment() {
+class TimeTableFragment : Fragment(){
 
     private lateinit var binding: FragmentTimeTableBinding
     private lateinit var database: DatabaseReference
@@ -53,21 +57,6 @@ class TimeTableFragment : Fragment() {
 
         database = FirebaseDatabase.getInstance().reference
         firebaseAuth = FirebaseAuth.getInstance()
-
-
-        // 더미 데이터 생성 및 저장
-//        val dummyTasks = listOf(
-//            Task("Beomjun Kim", "과제1", "강의실A", "Mon", "1000", "1200"),
-//            Task("Beomjun Kim", "미팅", "회의실B", "Tue", "1400", "1600"),
-//            Task("Beomjun Kim", "운동", "체육관", "Wed", "1700", "1800")
-//        )
-//
-//        for (task in dummyTasks) {
-//            val key = database.child("tasks").push().key
-//            key?.let {
-//                database.child("tasks").child(key).setValue(task)
-//            }
-//        }
     }
 
     override fun onCreateView(
@@ -84,33 +73,6 @@ class TimeTableFragment : Fragment() {
         val currentUser = firebaseAuth.currentUser
         val currentUserId = currentUser?.uid
 
-
-//        if (startTime != null && endTime != null && taskPlace != null && taskName != null && week != null && currentUserId != null) {
-//            // 현재 로그인한 사용자의 이름 가져오기
-//            loadCurrentUser(currentUserId) { loadedUser ->
-//                val currentUserName = loadedUser.name
-//
-//                // Task 객체 생성
-//                val task = Task(week, endTime, taskPlace, startTime, taskName, currentUserName) // 이름 추가
-//
-//                // 파이어스토어에 저장
-//                saveTaskToFirestore(task)
-//
-////            데이터를 활용하여 UI 업데이트 또는 다른 작업 수행
-////            Log.i(startTime,startTime)
-////            Log.i(endTime,endTime)
-////            Log.i(taskPlace,taskPlace)
-////            Log.i(taskName,taskName)
-////            Log.i(week,week)
-//
-//                // 예를 들면, 텍스트뷰에 데이터를 설정하는 코드:
-//                // view.findViewById<TextView>(R.id.textStartTime).text = startTime
-//            }
-//        } else {
-//            // 필요한 데이터가 없으면 오류 메시지 표시 또는 다른 처리 수행
-//            //Toast.makeText(context, "필요한 정보가 제공되지 않았습니다.", Toast.LENGTH_SHORT).show()
-//        }
-
         currentUser?.let { user ->
             val currentUserId = user.uid
 
@@ -122,11 +84,15 @@ class TimeTableFragment : Fragment() {
             }
         }
 
+
         myProfile()
+
+        //프로필 이미지를 선택하면
         binding.imageView.setOnClickListener {
             showDialog()
         }
 
+        //추가버튼을 누르면
         binding.plusButton.setOnClickListener{
             val intent = Intent(activity, TaskPlusActivity::class.java)
             startActivity(intent)
@@ -184,24 +150,30 @@ class TimeTableFragment : Fragment() {
         }
     }
 
-    private fun getData(): String {
-        // 공유 데이터 사용
-        return (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
-    }
 
     fun showDialog() {
 
-        val currentGroupName = getData()
-        Log.i("currentGroupName",currentGroupName)
+        //현재 그룹 이름
+        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
+        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
 
-        val alertDialogBuilder = AlertDialog.Builder(requireContext())
-        alertDialogBuilder.setTitle("우리가족 시간표 선택")
-        alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")
-        alertDialogBuilder.setPositiveButton("닫기", DialogInterface.OnClickListener { dialog, which ->
-            // 확인 버튼 클릭 시 실행할 작업
-            dialog.dismiss() // 다이얼로그 닫기
-        })
-        alertDialogBuilder.show()
+        val dialog = TimeTableGroupInfoDialog(Group(currentGroupID,currentGroupName))
+        dialog.setDataListener { selectedUserName ->
+            Log.i("selectedUserName",selectedUserName)
+
+            //selectedUserName 이 현재 사용자의 이름과 같을 때
+            //원래로직대로 myprofile, 나의 시간표들 출력 , 함수를 부르면 될듯
+
+            //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
+            //otherprofile, 그 유저이름의 시간표들 출력 
+
+        }
+        val fragmentManager = (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+        fragmentManager?.let { manager ->
+            dialog.show(manager, "GroupDialog")
+        }
+
+
     }
 
     private fun loadCurrentUser(userId: String, callback: (User) -> Unit) {
