@@ -69,7 +69,7 @@ class SignUpActivity : AppCompatActivity() {
                                 val userData = hashMapOf(
                                     "email" to email,
                                     "name" to name,
-                                    "profileImageUrl" to "" // Initialize with empty string
+                                    "profileImageUrl" to "https://firebasestorage.googleapis.com/v0/b/k-ricepower.appspot.com/o/profile_images%2FoK7HlM5ZXmhwqUUQZ1y8Y2va9m93.jpg?alt=media&token=37c2f7b4-2809-433b-b89a-19b47c54e93f" // Initialize with empty string
                                 )
                                 userDocRef.set(userData)
                                     .addOnCompleteListener { firestoreTask ->
