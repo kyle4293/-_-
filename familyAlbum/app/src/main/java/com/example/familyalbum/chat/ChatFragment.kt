@@ -80,9 +80,7 @@ class ChatFragment : Fragment() {
                     }
                 } ?: emptyList()
 
-                messageList.clear()
-                messageList.addAll(messages)
-                messageAdapter.notifyDataSetChanged()
+                messageAdapter.updateMessageList(messages)
 
                 // Scroll to the bottom
                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
