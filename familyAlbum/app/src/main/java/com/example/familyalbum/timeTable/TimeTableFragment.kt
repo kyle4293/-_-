@@ -116,6 +116,12 @@ class TimeTableFragment : Fragment(){
                 .error(R.drawable.default_profile_image) // Error image if loading fails
                 .circleCrop()
                 .into(binding.imageView)
+        } ?: run {
+            // 이미지가 없는 경우 기본 이미지를 로드
+            Glide.with(fragmentContext)
+                .load(R.drawable.default_profile_image)
+                .circleCrop()
+                .into(binding.imageView)
         }
     }
 
@@ -153,10 +159,13 @@ class TimeTableFragment : Fragment(){
                 if (uid != null) {
                     loadCurrentUser(uid) { loadedUser ->
                         loadTasksForCurrentUser(loadedUser.name) { taskList ->
+                            //Task 모델들을 이용하여 시간표에 표시하는 로직
                             schedule(taskList)
                         }
+                        loadUserProfile(loadedUser.name) { userImage ->
+                            myProfile(loadedUser.name, userImage)
+                        }
                     }
-                    myProfile(currentUserName, currentUserImage)
                 }
             } else {
                 //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
@@ -187,7 +196,7 @@ class TimeTableFragment : Fragment(){
         }
 
 
-    }
+
 
     private fun loadCurrentUser(userId: String, callback: (User) -> Unit) {
         val userRef = firestore.collection("users").document(userId)
@@ -228,7 +237,7 @@ class TimeTableFragment : Fragment(){
                 callback(emptyList())
             }
     }
-    private fun loadUserProfile(userName: String, callback: (String) -> Unit) {
+    private fun loadUserProfile(userName: String, callback: (String?) -> Unit) {
         firestore.collection("users")
             .whereEqualTo("name", userName)
             .get()
@@ -236,13 +245,14 @@ class TimeTableFragment : Fragment(){
                 if (!querySnapshot.isEmpty) {
                     val document = querySnapshot.documents[0]
                     val profileImageUrl = document.getString("profileImageUrl")
-                    profileImageUrl?.let {
-                        callback(it)
-                    }
+                    callback(profileImageUrl)
+                } else {
+                    callback(null)
                 }
             }
             .addOnFailureListener { exception ->
                 // 실패 시 처리 로직
+                callback(null)
             }
     }
 
