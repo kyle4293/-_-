@@ -1,7 +1,10 @@
 package com.example.familyalbum
 
+import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
@@ -10,6 +13,9 @@ import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
 import com.example.familyalbum.timeTable.TimeTableFragment
 import com.example.familyalbum.tip.TipFragment
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity(){
     lateinit var binding: ActivityMainBinding
@@ -23,6 +29,7 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         val fromTask = intent.getStringExtra("fromTask")
         val fromTipEdit = intent.getStringExtra("fromTipEdit")
