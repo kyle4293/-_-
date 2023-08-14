@@ -11,6 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
@@ -26,8 +28,8 @@ import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var galleryAdapter: AlbumPagerAdapter
-    private lateinit var galleryList: ArrayList<String>
+    private lateinit var galleryAdapter: GalleryAdapter
+    private lateinit var galleryList: ArrayList<Gallery>
     private var isFabOpen = false
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -35,8 +37,6 @@ class HomeFragment : Fragment() {
             val groupId = arguments?.getString(ARG_GROUP_ID)
             try {
                 if (!groupId.isNullOrEmpty()) {
-//                    uploadPhoto(uri, groupId)
-
                     val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
 
                     //confirm Activity로 이동
@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
                 if (document.exists()) {
                     val images = document.get("images") as? List<String>
                     if (images != null) {
-//                        = galleryAdapter(requireActivity(), images)
+                        galleryAdapter.setGalleryList(images)
                     }
                 }
             }
@@ -125,31 +125,19 @@ class HomeFragment : Fragment() {
 
     private fun init() {
         galleryList = ArrayList()
-        galleryAdapter = AlbumPagerAdapter(requireActivity(), galleryList)
+        galleryAdapter = GalleryAdapter(this, galleryList)
 
         initLayout()
     }
 
     private fun initLayout() {
-//        val viewPager = binding?.viewPager
-////        viewPager?.adapter = AlbumPagerAdapter(requireActivity(), galleryList)
-////
-//        val tabTitles = listOf<String>("year","month","day","total")
-//
-//        if (viewPager != null) {
-//            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
-//                tab.setText(tabTitles[position])
-//            }.attach()
-//        }
 
+        binding.folderRecyclerview.layoutManager = LinearLayoutManager(requireContext())
+        binding.folderRecyclerview.adapter = galleryAdapter
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
         }
 
-        binding.btnCamera.setOnClickListener {
-//            Toast.makeText(requireContext(), "open camera", Toast.LENGTH_SHORT).show()
-//            cameraAction()
-        }
 
         binding.btnGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
@@ -160,29 +148,28 @@ class HomeFragment : Fragment() {
             imagePickerLauncher.launch("image/*")
             Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
-    }
 
-//    private fun cameraAction() {
-//        val itt = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//        startActivity(itt)
-//    }
+        binding.btnFolderCreate.setOnClickListener {
+            val groupId = arguments?.getString(ARG_GROUP_ID)
+
+            val intent = Intent(requireContext(), FolderCreateActivity::class.java)
+            intent.putExtra("groupId", groupId)
+            startActivity(intent)
+        }
+    }
 
 
     private fun clickUpload() {
         if (isFabOpen) {
-            ObjectAnimator.ofFloat(binding.btnCamera, "translationX", 0f).apply { start() }
+            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 0f).apply { start() }
             ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 0f).apply { start() }
             binding.btnAddPhoto.setImageResource(R.drawable.baseline_camera_24)
         } else {
-            ObjectAnimator.ofFloat(binding.btnCamera, "translationX", 200f).apply { start() }
+            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 200f).apply { start() }
             ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 400f).apply { start() }
             binding.btnAddPhoto.setImageResource(R.drawable.baseline_clear_24)
         }
 
         isFabOpen= !isFabOpen
     }
-
-
-
-
 }

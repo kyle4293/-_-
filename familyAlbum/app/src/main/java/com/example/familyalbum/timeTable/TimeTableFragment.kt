@@ -167,7 +167,7 @@ class TimeTableFragment : Fragment() {
                         val profileImageUrl = userInfo?.get("profileImageUrl") as? String
                         profileImageUrl?.let {
                             // Use Glide to load and display profile image
-                            Glide.with(requireContext())
+                            Glide.with(fragmentContext)
                                 .load(profileImageUrl)
                                 .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
                                 .error(R.drawable.default_profile_image) // Error image if loading fails
@@ -331,6 +331,7 @@ class TimeTableFragment : Fragment() {
                                             .addOnSuccessListener {
                                                 // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
                                                 parentView.removeView(customLayout)
+                                                parentView.invalidate()
 //                                                dialog.dismiss() // 다이얼로그 닫기
                                             }
                                             .addOnFailureListener { exception ->
@@ -362,31 +363,6 @@ class TimeTableFragment : Fragment() {
                         intent.putExtra("dayOfWeek",task.dayOfWeek)
                         startActivity(intent)
 
-                            if (intent != null) {
-                                //db삭제
-                                val tasksCollection = firestore.collection("tasks")
-                                loadCurrentUser(currentUserId) { loadedUser ->
-                                    val currentUserName = loadedUser.name
-                                    tasksCollection.whereEqualTo("userName", currentUserName)
-                                        .whereEqualTo("title", task.title)
-                                        .get()
-                                        .addOnSuccessListener { querySnapshot ->
-                                            for (documentSnapshot in querySnapshot.documents) {
-                                                tasksCollection.document(documentSnapshot.id).delete()
-                                                    .addOnSuccessListener {
-                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
-                                                        parentView.removeView(customLayout)
-                                                    }
-                                                    .addOnFailureListener { exception ->
-                                                        // 삭제 실패 시 처리
-                                                    }
-                                            }
-                                        }
-                                        .addOnFailureListener { exception ->
-                                            // 조회 실패 시 처리
-                                        }
-                                }
-                            }
                     }
 
                     alertDialogBuilder.show()

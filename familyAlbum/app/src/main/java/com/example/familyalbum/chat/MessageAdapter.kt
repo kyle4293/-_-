@@ -1,6 +1,7 @@
 package com.example.familyalbum.chat
 
 import android.content.ContentValues.TAG
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.DateSeparatorBinding
 import com.example.familyalbum.databinding.MessageBinding
@@ -146,15 +148,18 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         private val senderImg = itemView.findViewById<ImageView>(R.id.receive_message_img)
         private val senderName = itemView.findViewById<TextView>(R.id.receive_message_sender)
 
-
-
         fun bind(message: ChatItem.OtherMessage){
             messageText.text = message.message
             val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(message.timestamp)
 
             messageTime.text = formattedTime.toString()
-//            senderImg.setImageResource(message.senderImg)
             senderName.text = message.senderName
+            val imageUri = Uri.parse(message.senderImg)
+
+            Glide.with(itemView.context)
+                .load(imageUri)
+                .circleCrop()
+                .into(senderImg)
         }
 
 
@@ -174,4 +179,3 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         private const val TYPE_DATE_SEPARATOR = 2
     }
 }
-
