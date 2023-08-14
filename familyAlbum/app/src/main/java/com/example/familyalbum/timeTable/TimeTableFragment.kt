@@ -187,7 +187,7 @@ class TimeTableFragment : Fragment(){
         }
 
 
-    }
+
 
     private fun loadCurrentUser(userId: String, callback: (User) -> Unit) {
         val userRef = firestore.collection("users").document(userId)
