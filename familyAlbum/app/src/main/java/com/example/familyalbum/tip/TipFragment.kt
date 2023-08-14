@@ -38,6 +38,24 @@ class TipFragment : Fragment() {
             startActivity(intent)
         }
 
+
+        //********태그 필터*********
+        binding.allbutton.setOnClickListener {
+            //전체 => 요건 밑에거 그대로 하믄 될 것 같고
+        }
+
+        binding.button9.setOnClickListener {
+            //의 => 태그가 "의"인 것만 데이터 가져오기
+        }
+
+        binding.button10.setOnClickListener {
+            //식
+        }
+
+        binding.button11.setOnClickListener {
+            //주
+        }
+
         initLayout()
     }
 
