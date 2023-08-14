@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.FamilyAlbum" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/blue_gray</item>
-        <item name="colorPrimaryVariant">@color/maize_yellow</item>
+        <item name="colorPrimary">@color/vintage_yellow</item>
+        <item name="colorPrimaryVariant">@color/gray</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/Pumpkin</item>
