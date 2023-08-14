@@ -17,6 +17,7 @@ import android.widget.Toast
 
 import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
+import com.example.familyalbum.MainActivity
 
 import com.example.familyalbum.R
 
@@ -182,7 +183,17 @@ class TimeTableFragment : Fragment() {
                 }
         }
     }
+
+    private fun getData(): String {
+        // 공유 데이터 사용
+        return (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+    }
+
     fun showDialog() {
+
+        val currentGroupName = getData()
+        Log.i("currentGroupName",currentGroupName)
+
         val alertDialogBuilder = AlertDialog.Builder(requireContext())
         alertDialogBuilder.setTitle("우리가족 시간표 선택")
         alertDialogBuilder.setMessage("이미지를 클릭하셨습니다.")

@@ -2,6 +2,7 @@ package com.example.familyalbum
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
@@ -15,6 +16,8 @@ class MainActivity : AppCompatActivity(){
 
     var selectedGroupId: String? = null
     var selectedGroupName: String? = null
+    val sharedViewModel: SharedViewModel by viewModels()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,5 +107,5 @@ class MainActivity : AppCompatActivity(){
             .commitAllowingStateLoss()
     }
 
-
 }
+
