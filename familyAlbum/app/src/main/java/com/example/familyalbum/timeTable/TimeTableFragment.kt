@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
-import android.widget.Toast
 
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -28,14 +27,9 @@ import com.example.familyalbum.group.TimeTableGroupInfoDialog
 import com.example.familyalbum.task.Task
 import com.example.familyalbum.task.TaskEditActivity
 import com.example.familyalbum.task.TaskPlusActivity
-import com.example.familyalbum.timeTable.User
-import com.google.android.play.integrity.internal.t
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
@@ -71,8 +65,6 @@ class TimeTableFragment : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         val currentUser = firebaseAuth.currentUser
-        val currentUserId = currentUser?.uid
-
         currentUser?.let { user ->
             val currentUserId = user.uid
 
@@ -81,11 +73,11 @@ class TimeTableFragment : Fragment(){
                     //Task 모델들을 이용하여 시간표에 표시하는 로직
                     schedule(taskList)
                 }
+                loadUserProfile(loadedUser.name) { userImage ->
+                    myProfile(loadedUser.name, userImage)
+                }
             }
         }
-
-
-        myProfile()
 
         //프로필 이미지를 선택하면
         binding.imageView.setOnClickListener {
@@ -114,39 +106,16 @@ class TimeTableFragment : Fragment(){
             }
     }
 
-    private fun myProfile() {
-        firebaseAuth = FirebaseAuth.getInstance()
-        firestore = FirebaseFirestore.getInstance()
-        var storage = FirebaseStorage.getInstance()
-
-        val currentUser = firebaseAuth.currentUser
-        val uid = currentUser?.uid
-
-        uid?.let { userId ->
-            val userDocRef = firestore.collection("users").document(userId)
-
-            userDocRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val userInfo = documentSnapshot.data
-                        val name = userInfo?.get("name") as? String
-
-                        val profileImageUrl = userInfo?.get("profileImageUrl") as? String
-                        profileImageUrl?.let {
-                            // Use Glide to load and display profile image
-                            Glide.with(fragmentContext)
-                                .load(profileImageUrl)
-                                .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
-                                .error(R.drawable.default_profile_image) // Error image if loading fails
-                                .circleCrop()
-                                .into(binding.imageView)
-                        }
-                        binding.textView.text = "나의 시간표"
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Log.e(ContentValues.TAG, "데이터 처리 failed", exception)
-                }
+    private fun myProfile(userName: String?, userImage: String?) {
+        binding.textView.text = if (userName.isNullOrEmpty()) "나의 시간표" else "$userName 의 시간표"
+        userImage?.let {
+            // Use Glide to load and display profile image
+            Glide.with(fragmentContext)
+                .load(userImage)
+                .placeholder(R.drawable.default_profile_image) // Placeholder image while loading
+                .error(R.drawable.default_profile_image) // Error image if loading fails
+                .circleCrop()
+                .into(binding.imageView)
         }
     }
 
@@ -157,18 +126,59 @@ class TimeTableFragment : Fragment(){
         val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
         val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
 
-        if (currentGroupID != "") {
-            val dialog = TimeTableGroupInfoDialog(Group(currentGroupID, currentGroupName))
-            dialog.setDataListener { selectedUserName ->
-                Log.i("selectedUserName", selectedUserName)
+        firebaseAuth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        val currentUser = firebaseAuth.currentUser
+        val uid = currentUser?.uid
+        var currentUserName: String? = null
+        var currentUserImage: String? = null
 
-                //selectedUserName 이 현재 사용자의 이름과 같을 때
-                //원래로직대로 myprofile, 나의 시간표들 출력 , 함수를 부르면 될듯
+        if (uid != null) {
+            val userDocRef = firestore.collection("users").document(uid)
+            userDocRef.get().addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    currentUserName = documentSnapshot.getString("name")
+                    currentUserImage = documentSnapshot.getString("profileImageURL")
+                }
+            }
+        }
 
+        val dialog = TimeTableGroupInfoDialog(Group(currentGroupID,currentGroupName))
+        dialog.setDataListener { selectedUserName ->
+            Log.i("selectedUserName",selectedUserName)
+
+            //selectedUserName 이 현재 사용자의 이름과 같을 때
+            //원래로직대로 myprofile, 나의 시간표들 출력 , 함수를 부르면 될듯
+            if (selectedUserName == currentUserName) {
+                if (uid != null) {
+                    loadCurrentUser(uid) { loadedUser ->
+                        loadTasksForCurrentUser(loadedUser.name) { taskList ->
+                            schedule(taskList)
+                        }
+                    }
+                    myProfile(currentUserName, currentUserImage)
+                }
+            } else {
                 //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
                 //otherprofile, 그 유저이름의 시간표들 출력
+                val query = firestore.collection("users").whereEqualTo("name", selectedUserName)
+                query.get().addOnSuccessListener { querySnapshot ->
+                    if (!querySnapshot.isEmpty) {
+                        val selectedUserDoc = querySnapshot.documents[0]
+                        val selectedUserId = selectedUserDoc.id
+                        loadCurrentUser(selectedUserId) { loadedUser ->
+                            loadTasksForCurrentUser(loadedUser.name) { taskList ->
+                                schedule(taskList)
+                            }
+                            loadUserProfile(loadedUser.name) { userImage ->
+                                myProfile(selectedUserName, userImage)
+                            }
+                        }
 
+                    }
+                }
             }
+        }
             val fragmentManager =
                 (binding.root.context as? AppCompatActivity)?.supportFragmentManager
             fragmentManager?.let { manager ->
@@ -218,6 +228,23 @@ class TimeTableFragment : Fragment(){
                 callback(emptyList())
             }
     }
+    private fun loadUserProfile(userName: String, callback: (String) -> Unit) {
+        firestore.collection("users")
+            .whereEqualTo("name", userName)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                if (!querySnapshot.isEmpty) {
+                    val document = querySnapshot.documents[0]
+                    val profileImageUrl = document.getString("profileImageUrl")
+                    profileImageUrl?.let {
+                        callback(it)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리 로직
+            }
+    }
 
 
     private fun getDayIndex(dayOfWeek: String): Int {
@@ -235,6 +262,11 @@ class TimeTableFragment : Fragment(){
 
     private fun schedule(taskList: List<Task>) {
         val daysOfWeek = listOf(binding.monView, binding.tueView, binding.wedView, binding.thuView, binding.friView, binding.satView, binding.sunView) // 요일별 레이아웃 View
+
+        //기존 뷰 모두 제거
+        for (parentView in daysOfWeek) {
+            parentView.removeAllViews()
+        }
 
         // Table의 시간 범위 설정
         val startTime = 900
