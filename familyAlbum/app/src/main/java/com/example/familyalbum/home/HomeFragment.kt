@@ -93,9 +93,10 @@ class HomeFragment : Fragment() {
 
         // 갱신된 그룹 이름을 UI에 표시
         binding.groupName.text = groupName
+
         //공유 데이터 update
-        if (groupName != null) {
-            setData(groupName)
+        if (groupName != null && groupId != null) {
+            setData(groupId,groupName)
         }
 
         if (!groupId.isNullOrEmpty()) {
@@ -105,9 +106,10 @@ class HomeFragment : Fragment() {
         init()
     }
 
-    private fun setData(data: String) {
+    private fun setData(groupId: String,groupName: String) {
         // 공유 데이터 설정
-        (activity as? MainActivity)?.sharedViewModel?.currentGroupName = data
+        (activity as? MainActivity)?.sharedViewModel?.currentGroupID = groupId
+        (activity as? MainActivity)?.sharedViewModel?.currentGroupName = groupName
     }
 
 
