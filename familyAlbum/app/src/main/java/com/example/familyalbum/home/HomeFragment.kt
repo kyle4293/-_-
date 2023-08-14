@@ -93,6 +93,10 @@ class HomeFragment : Fragment() {
 
         // 갱신된 그룹 이름을 UI에 표시
         binding.groupName.text = groupName
+        //공유 데이터 update
+        if (groupName != null) {
+            setData(groupName)
+        }
 
         if (!groupId.isNullOrEmpty()) {
             loadAndDisplayGroupImages(groupId)
@@ -101,6 +105,10 @@ class HomeFragment : Fragment() {
         init()
     }
 
+    private fun setData(data: String) {
+        // 공유 데이터 설정
+        (activity as? MainActivity)?.sharedViewModel?.currentGroupName = data
+    }
 
 
     private fun loadAndDisplayGroupImages(groupId: String) {
@@ -156,6 +164,7 @@ class HomeFragment : Fragment() {
             intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
+
     }
 
 
