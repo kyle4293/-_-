@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -188,12 +189,20 @@ class TaskPlusActivity : AppCompatActivity() {
                 .add(newTask)
                 .addOnSuccessListener {
                     // 추가 성공 시 처리
+
                 }
                 .addOnFailureListener { e ->
                     // 추가 실패 시 처리
                     // 예를 들어, 에러 메시지 출력 등
                 }
-
+            
+            if(startTime.toInt() < endTime.toInt()) {
+                val intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("fromTask", "fromTask")
+                startActivity(intent)
+            }else{
+                Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
