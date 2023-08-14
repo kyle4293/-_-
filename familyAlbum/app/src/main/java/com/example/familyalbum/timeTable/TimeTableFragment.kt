@@ -178,11 +178,12 @@ class TimeTableFragment : Fragment(){
                     }
                 }
             }
-
         }
-        val fragmentManager = (binding.root.context as? AppCompatActivity)?.supportFragmentManager
-        fragmentManager?.let { manager ->
-            dialog.show(manager, "GroupDialog")
+            val fragmentManager =
+                (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+            fragmentManager?.let { manager ->
+                dialog.show(manager, "GroupDialog")
+            }
         }
 
 

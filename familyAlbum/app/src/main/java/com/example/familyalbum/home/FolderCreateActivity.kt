@@ -16,10 +16,8 @@ class FolderCreateActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
-
         binding.btnCreateFolder.setOnClickListener {
             finish()
         }
-
     }
 }
