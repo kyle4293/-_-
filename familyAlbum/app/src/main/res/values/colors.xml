@@ -18,5 +18,10 @@
     <color name="Redwood">#A23E48</color>
     <color name="font_richblack">#0F1F2E</color>
     <color name="font_darkgray">#2A2A2A</color>
-    
+    <color name="font_lightgray">#514f4a</color>
+    <color name="vintage_light_pink">#e8d9d4</color>
+    <color name="vintage_light_yellow">#fbf6e6</color>
+    <color name="vintage_yellow">#fbc958</color>
+    <color name="vintage_ivory">#e8e3e0</color>
+    <color name="background_color">#f4f4f4</color>
 </resources>
