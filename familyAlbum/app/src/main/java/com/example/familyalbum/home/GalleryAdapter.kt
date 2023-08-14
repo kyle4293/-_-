@@ -5,15 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.familyalbum.MainActivity
-import com.example.familyalbum.R
-import com.example.familyalbum.databinding.GallerylistviewBinding
-import com.example.familyalbum.group.GroupListFragment
-import java.text.SimpleDateFormat
+import com.example.familyalbum.databinding.FolderListViewBinding
 import java.util.*
 import kotlin.collections.ArrayList
 
 class GalleryAdapter(val fragment: HomeFragment, val galleryList: ArrayList<Gallery>): RecyclerView.Adapter<GalleryAdapter.ViewHolder>() {
-    inner class ViewHolder(val binding: GallerylistviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: FolderListViewBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.root.setOnClickListener {
                 val position = adapterPosition
@@ -35,7 +32,7 @@ class GalleryAdapter(val fragment: HomeFragment, val galleryList: ArrayList<Gall
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = GallerylistviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = FolderListViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
