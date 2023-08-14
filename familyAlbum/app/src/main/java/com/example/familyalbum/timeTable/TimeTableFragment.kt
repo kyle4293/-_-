@@ -157,20 +157,23 @@ class TimeTableFragment : Fragment(){
         val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
         val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
 
-        val dialog = TimeTableGroupInfoDialog(Group(currentGroupID,currentGroupName))
-        dialog.setDataListener { selectedUserName ->
-            Log.i("selectedUserName",selectedUserName)
+        if (currentGroupID != "") {
+            val dialog = TimeTableGroupInfoDialog(Group(currentGroupID, currentGroupName))
+            dialog.setDataListener { selectedUserName ->
+                Log.i("selectedUserName", selectedUserName)
 
-            //selectedUserName 이 현재 사용자의 이름과 같을 때
-            //원래로직대로 myprofile, 나의 시간표들 출력 , 함수를 부르면 될듯
+                //selectedUserName 이 현재 사용자의 이름과 같을 때
+                //원래로직대로 myprofile, 나의 시간표들 출력 , 함수를 부르면 될듯
 
-            //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
-            //otherprofile, 그 유저이름의 시간표들 출력 
+                //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
+                //otherprofile, 그 유저이름의 시간표들 출력
 
-        }
-        val fragmentManager = (binding.root.context as? AppCompatActivity)?.supportFragmentManager
-        fragmentManager?.let { manager ->
-            dialog.show(manager, "GroupDialog")
+            }
+            val fragmentManager =
+                (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+            fragmentManager?.let { manager ->
+                dialog.show(manager, "GroupDialog")
+            }
         }
 
 
