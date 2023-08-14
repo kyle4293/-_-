@@ -3,7 +3,6 @@ package com.example.familyalbum.home
 
 import android.animation.ObjectAnimator
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,25 +10,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.example.familyalbum.group.GroupListFragment
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
 
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private lateinit var galleryAdapter: GalleryAdapter
-    private lateinit var galleryList: ArrayList<Gallery>
     private var isFabOpen = false
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
@@ -98,11 +90,7 @@ class HomeFragment : Fragment() {
             setData(groupName)
         }
 
-        if (!groupId.isNullOrEmpty()) {
-            loadAndDisplayGroupImages(groupId)
-        }
-
-        init()
+        initLayout()
     }
 
     private fun setData(data: String) {
@@ -110,42 +98,23 @@ class HomeFragment : Fragment() {
         (activity as? MainActivity)?.sharedViewModel?.currentGroupName = data
     }
 
-
-    private fun loadAndDisplayGroupImages(groupId: String) {
-        val firestore = FirebaseFirestore.getInstance()
-        val imagesRef = firestore.collection("groups").document(groupId)
-
-        imagesRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val images = document.get("images") as? List<String>
-                    if (images != null) {
-                        galleryAdapter.setGalleryList(images)
-                    }
-                }
-            }
-            .addOnFailureListener { exception ->
-                // 실패 시 처리 로직
-            }
-    }
-
-
-
-    private fun init() {
-        galleryList = ArrayList()
-        galleryAdapter = GalleryAdapter(this, galleryList)
-
-        initLayout()
-    }
-
     private fun initLayout() {
 
-        binding.folderRecyclerview.layoutManager = LinearLayoutManager(requireContext())
-        binding.folderRecyclerview.adapter = galleryAdapter
+        //viewPager adapter 연결, TapLayout 설정
+        val viewPager = binding?.viewPager
+        viewPager?.adapter = ViewPagerAdapter(requireActivity())
+
+        val tabTitles = listOf<String>("folder","전체 사진보기")
+
+        if (viewPager != null) {
+            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
+                tab.setText(tabTitles[position])
+            }.attach()
+        }
+
         binding.btnAddPhoto.setOnClickListener {
             clickUpload()
         }
-
 
         binding.btnGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
@@ -157,9 +126,9 @@ class HomeFragment : Fragment() {
             Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
 
+        //폴더 생성 화면으로 이동.
         binding.btnFolderCreate.setOnClickListener {
             val groupId = arguments?.getString(ARG_GROUP_ID)
-
             val intent = Intent(requireContext(), FolderCreateActivity::class.java)
             intent.putExtra("groupId", groupId)
             startActivity(intent)
@@ -167,8 +136,8 @@ class HomeFragment : Fragment() {
 
     }
 
-
     private fun clickUpload() {
+        //upload button animation function
         if (isFabOpen) {
             ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 0f).apply { start() }
             ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 0f).apply { start() }
@@ -180,5 +149,31 @@ class HomeFragment : Fragment() {
         }
 
         isFabOpen= !isFabOpen
+    }
+
+    inner class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
+        //tab layout 선택에 따라 viewPager 부분에 다른 fragment binding
+
+        override fun getItemCount(): Int {
+            return 2
+        }
+
+        override fun createFragment(position: Int): Fragment {
+            var groupId = arguments?.getString(ARG_GROUP_ID)
+
+            return when (position) {
+                0 -> {
+                    // Fragment for FolderList 보기
+                    if(groupId != null) FolderListFragment(groupId)
+                    else FolderListFragment("NO_GROUP")
+                }
+                1 -> {
+                    // Fragment for 전체 사진 보기
+                    if(groupId != null) TotalGalleryFragment(groupId)
+                    else TotalGalleryFragment("NO_GROUP")
+                }
+                else -> throw IllegalArgumentException("Invalid position: $position")
+            }
+        }
     }
 }

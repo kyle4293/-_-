@@ -1,24 +1,24 @@
 package com.example.familyalbum.home
 
 import android.os.Bundle
-import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.familyalbum.R
-import com.example.familyalbum.databinding.FragmentFolderBinding
+import com.example.familyalbum.databinding.FragmentFolderGalleryBinding
+import com.google.firebase.firestore.FirebaseFirestore
 
-class FolderFragment(var folderName: String) : Fragment() {
-
-    private lateinit var binding: FragmentFolderBinding
+class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragment() {
+    private lateinit var binding: FragmentFolderGalleryBinding
     private var galleryList: ArrayList<Gallery> = arrayListOf()
+    private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,12 +29,43 @@ class FolderFragment(var folderName: String) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding = FragmentFolderBinding.inflate(inflater, container, false)
-        binding!!.folderName.text = folderName
-        binding!!.gridGallery.adapter = GridRecyclerViewAdapter(galleryList)
+        binding = FragmentFolderGalleryBinding.inflate(inflater, container, false)
+        return binding!!.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        galleryList = ArrayList()
+        gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
+        initLayout()
+
+    }
+
+    private fun initLayout() {
+        binding!!.gridGallery.adapter = gridGalleryAdapter
         binding!!.gridGallery.layoutManager = GridLayoutManager(activity, 3)
 
-        return binding!!.root
+        if(folderId!= "NO_FOLDER"){
+            binding.textviewNofolder.visibility = View.GONE
+            loadAndDisplayGroupImages(groupId)
+        }
+    }
+
+    private fun loadAndDisplayGroupImages(groupId: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val imagesRef = firestore.collection("groups").document(groupId)
+
+        imagesRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val images = document.get("images") as? List<String>
+                    if (images != null) {
+                        gridGalleryAdapter.setGalleryList(images)
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 실패 시 처리 로직
+            }
     }
 
 
@@ -63,8 +94,13 @@ class FolderFragment(var folderName: String) : Fragment() {
                 .into(imageView)
         }
 
+        fun setGalleryList(images: List<String>) {
+            galleryList.clear()
+            galleryList.addAll(images.map { Gallery(it, "") }) // 이미지 URL과 더미 날짜로 갤러리 객체 생성
+            notifyDataSetChanged()
+        }
+
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         }
     }
-
 }
