@@ -38,6 +38,41 @@ class TipFragment : Fragment() {
             startActivity(intent)
         }
 
+
+        //********태그 필터*********
+        binding.allbutton.setOnClickListener {
+            //firestore에서 데이터 가져오기
+            val db = FirebaseFirestore.getInstance()
+            val tipsCollection = db.collection("tips")
+            tipsCollection.get().addOnSuccessListener { documents ->
+                val tipList = documents.documents.mapNotNull { document ->
+                    val title = document.getString("title") ?: ""
+                    val tag = document.getString("tag") ?: ""
+                    val content = document.getString("content") ?: ""
+
+                    Tip(title, tag, content)
+                }
+                tipAdapter.updateData(tipList)
+            }
+        }
+
+        binding.button9.setOnClickListener {
+            //의 => 태그가 "의"인 것만 데이터 가져오기
+            loadTipsByTag("의")
+        }
+
+        binding.button10.setOnClickListener {
+            //식
+            loadTipsByTag("식")
+
+        }
+
+        binding.button11.setOnClickListener {
+            //주
+            loadTipsByTag("주")
+
+        }
+
         initLayout()
     }
 
@@ -58,10 +93,22 @@ class TipFragment : Fragment() {
             }
             tipAdapter.updateData(tipList)
         }
+    }
 
+    private fun loadTipsByTag(tag: String) {
+        val db = FirebaseFirestore.getInstance()
+        val tipsCollection = db.collection("tips")
+            .whereEqualTo("tag", tag)
 
+        tipsCollection.get().addOnSuccessListener { documents ->
+            val tipList = documents.documents.mapNotNull { document ->
+                val title = document.getString("title") ?: ""
+                val tag = document.getString("tag") ?: ""
+                val content = document.getString("content") ?: ""
 
-
-
+                Tip(title, tag, content)
+            }
+            tipAdapter.updateData(tipList)
+        }
     }
 }

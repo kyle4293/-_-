@@ -53,10 +53,7 @@ class PostingActivity : AppCompatActivity() {
             .addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val downloadUrl = uri.toString()
-                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(
-                        Date()
-                    )
-
+                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                     // 업로드된 사진 정보를 그룹 정보에 저장
                     updateGroupWithImageInfo(groupId, downloadUrl, currentDate)
                 }
