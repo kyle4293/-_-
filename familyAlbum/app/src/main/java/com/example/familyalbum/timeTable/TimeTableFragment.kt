@@ -179,12 +179,12 @@ class TimeTableFragment : Fragment(){
                 }
             }
         }
-            val fragmentManager =
-                (binding.root.context as? AppCompatActivity)?.supportFragmentManager
-            fragmentManager?.let { manager ->
-                dialog.show(manager, "GroupDialog")
-            }
+        val fragmentManager =
+            (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+        fragmentManager?.let { manager ->
+            dialog.show(manager, "GroupDialog")
         }
+    }
 
 
 
@@ -371,17 +371,17 @@ class TimeTableFragment : Fragment(){
                             }
                             isHandlingClickEvent = true // 작업 시작
 
-                        dialog.dismiss() // 다이얼로그 닫기
+                            dialog.dismiss() // 다이얼로그 닫기
 
-                        val intent = Intent(context, TaskEditActivity::class.java)
-                        intent.putExtra("startTime",task.startTime)
-                        intent.putExtra("endTime",task.endTime)
-                        intent.putExtra("title",task.title)
-                        intent.putExtra("place",task.place)
-                        intent.putExtra("dayOfWeek",task.dayOfWeek)
-                        startActivity(intent)
+                            val intent = Intent(context, TaskEditActivity::class.java)
+                            intent.putExtra("startTime",task.startTime)
+                            intent.putExtra("endTime",task.endTime)
+                            intent.putExtra("title",task.title)
+                            intent.putExtra("place",task.place)
+                            intent.putExtra("dayOfWeek",task.dayOfWeek)
+                            startActivity(intent)
 
-                    }
+                        }
 
                     alertDialogBuilder.show()
                 }
