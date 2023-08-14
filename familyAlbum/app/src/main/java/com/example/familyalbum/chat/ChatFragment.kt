@@ -1,20 +1,16 @@
 package com.example.familyalbum.chat
 
-
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.FragmentChatBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -24,18 +20,6 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private lateinit var currentUserID: String
     private lateinit var chatRoomId: String
-
-    companion object {
-        private const val ARG_GROUP_ID = "group_id"
-
-        fun newInstance(groupId: String): ChatFragment {
-            val fragment = ChatFragment()
-            val args = Bundle()
-            args.putString(ARG_GROUP_ID, groupId)
-            fragment.arguments = args
-            return fragment
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -66,7 +50,6 @@ class ChatFragment : Fragment() {
 
         // 채팅 메시지 불러오기 및 실시간 감지
         loadAndListenForMessages(chatRoomId)
-        messageAdapter.updateMessageList(messageList)
 
         binding.sendBtn.setOnClickListener {
             sendMessage()
@@ -87,12 +70,10 @@ class ChatFragment : Fragment() {
                     val timestamp = document.getTimestamp("timestamp")?.toDate()
 
                     if (senderId != null && message != null && timestamp != null) {
-                        if(senderId == currentUserID){
+                        if (senderId == currentUserID) {
                             ChatItem.MyMessage(message, senderId, timestamp)
-                        }else{
-                            loadOtherUserInfoAndAddChatItem(senderId, message, timestamp)
-
-                            null
+                        } else {
+                            ChatItem.OtherMessage(message, senderId, "", timestamp, "")
                         }
                     } else {
                         null
@@ -103,43 +84,14 @@ class ChatFragment : Fragment() {
                 messageList.addAll(messages)
                 messageAdapter.notifyDataSetChanged()
 
-                messageAdapter.updateMessageList(messages)
-
                 // Scroll to the bottom
                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
-
             }
     }
-
-    private fun loadOtherUserInfoAndAddChatItem(senderId: String, message: String, timestamp: Date) {
-        val db = FirebaseFirestore.getInstance()
-        val userRef = db.collection("users").document(senderId)
-
-        userRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                val senderName = documentSnapshot.getString("name")
-                val senderImg = documentSnapshot.getString("profileImageUrl")
-
-                if (senderName != null && senderImg != null) {
-                    val otherMessage = ChatItem.OtherMessage(message, senderId, senderName, timestamp, senderImg)
-                    // Add the otherMessage to your messageList
-                    messageList.add(otherMessage)
-
-                    messageAdapter.notifyDataSetChanged()
-                }
-            }
-            .addOnFailureListener {
-                // Error handling
-            }
-
-    }
-
 
     private fun sendMessage() {
         val messageText = binding.messageEdit.text.toString().trim()
         if (messageText.isNotEmpty()) {
-            val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
-
             val db = FirebaseFirestore.getInstance()
             val messageData = hashMapOf(
                 "senderId" to currentUserID,
