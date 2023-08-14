@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.FragmentChatBinding
+import com.example.familyalbum.group.MemberInfo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
@@ -66,14 +67,17 @@ class ChatFragment : Fragment() {
             .addSnapshotListener { querySnapshot, _ ->
                 val messages = querySnapshot?.documents?.mapNotNull { document ->
                     val senderId = document.getString("senderId")
+                    val senderName = document.getString("senderName")
+                    val senderImg = document.getString("senderImg")
                     val message = document.getString("message")
                     val timestamp = document.getTimestamp("timestamp")?.toDate()
 
-                    if (senderId != null && message != null && timestamp != null) {
+
+                    if (senderId != null && senderName != null && senderImg != null && message != null && timestamp != null) {
                         if (senderId == currentUserID) {
                             ChatItem.MyMessage(message, senderId, timestamp)
                         } else {
-                            ChatItem.OtherMessage(message, senderId, "", timestamp, "")
+                            ChatItem.OtherMessage(message, senderId, senderName, timestamp, senderImg)
                         }
                     } else {
                         null
@@ -91,21 +95,35 @@ class ChatFragment : Fragment() {
         val messageText = binding.messageEdit.text.toString().trim()
         if (messageText.isNotEmpty()) {
             val db = FirebaseFirestore.getInstance()
-            val messageData = hashMapOf(
-                "senderId" to currentUserID,
-                "message" to messageText,
-                "timestamp" to FieldValue.serverTimestamp()
-            )
+            val userId = currentUserID
+            val userDocRef = db.collection("users").document(userId)
+            userDocRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val senderName = documentSnapshot.getString("name")
+                        val senderImg = documentSnapshot.getString("profileImageUrl") ?: ""
+                        val messageData = hashMapOf(
+                            "senderId" to userId,
+                            "message" to messageText,
+                            "senderName" to senderName,
+                            "senderImg" to senderImg,
+                            "timestamp" to FieldValue.serverTimestamp()
+                        )
 
-            db.collection("chatRooms")
-                .document(chatRoomId)
-                .collection("messages")
-                .add(messageData)
-                .addOnSuccessListener {
-                    binding.messageEdit.text.clear()
+                        db.collection("chatRooms")
+                            .document(chatRoomId)
+                            .collection("messages")
+                            .add(messageData)
+                            .addOnSuccessListener {
+                                binding.messageEdit.text.clear()
 
-                    // 새로운 메시지가 추가되었으므로 스크롤을 아래로 이동
-                    binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+                                // 새로운 메시지가 추가되었으므로 스크롤을 아래로 이동
+                                binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+                            }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // 실패 시 처리 로직
                 }
         }
     }
