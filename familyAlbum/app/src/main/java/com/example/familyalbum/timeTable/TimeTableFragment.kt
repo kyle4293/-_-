@@ -74,7 +74,7 @@ class TimeTableFragment : Fragment(){
                     schedule(taskList)
                 }
                 loadUserProfile(loadedUser.name) { userImage ->
-                    myProfile(loadedUser.name, userImage)
+                    myProfile("나의 시간표", userImage)
                 }
             }
         }
@@ -163,10 +163,11 @@ class TimeTableFragment : Fragment(){
                             schedule(taskList)
                         }
                         loadUserProfile(loadedUser.name) { userImage ->
-                            myProfile(loadedUser.name, userImage)
+                            myProfile("나의 시간표", userImage)
                         }
                     }
                 }
+                binding.plusButton.isEnabled = true
             } else {
                 //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
                 //otherprofile, 그 유저이름의 시간표들 출력
@@ -186,6 +187,7 @@ class TimeTableFragment : Fragment(){
 
                     }
                 }
+                binding.plusButton.isEnabled = false
             }
         }
             val fragmentManager =
@@ -321,9 +323,9 @@ class TimeTableFragment : Fragment(){
 
                 // 시간표의 뷰 요소 설정
                 val start: TextView = customLayout.findViewById(R.id.start)
-                start.text = (taskStartTime / 100).toString()
+                start.text = (taskStartTime / 100).toString() + ":" + (taskStartTime % 100).toString().padStart(2, '0')
                 val end: TextView = customLayout.findViewById(R.id.end)
-                end.text = (taskEndTime / 100).toString()
+                end.text = (taskEndTime / 100).toString() + ":" + (taskEndTime % 100).toString().padStart(2, '0')
                 val name: TextView = customLayout.findViewById(R.id.name)
                 name.text = task.title
                 val place: TextView = customLayout.findViewById(R.id.place)
