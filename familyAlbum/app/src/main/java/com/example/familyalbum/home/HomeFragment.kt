@@ -133,7 +133,6 @@ class HomeFragment : Fragment() {
             intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
-
     }
 
     inner class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
