@@ -81,18 +81,24 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private var isInitLayoutDone = false // 초기화 작업이 완료되었는지를 나타내는 플래그
+
     override fun onResume() {
         super.onResume()
 
         val groupId = (activity as MainActivity).selectedGroupId
         val groupName = (activity as MainActivity).selectedGroupName
 
-        //공유 데이터 update
-        if (groupName != null && groupId != null) {
-            setData(groupId,groupName)
+        // 초기화 작업이 완료되지 않았으면 initLayout() 함수 호출
+        if (!isInitLayoutDone) {
+            initLayout()
+            isInitLayoutDone = true
         }
 
-        initLayout()
+        //공유 데이터 update
+        if (groupName != null && groupId != null) {
+            setData(groupId, groupName)
+        }
     }
 
     private fun setData(groupId: String,groupName: String) {
