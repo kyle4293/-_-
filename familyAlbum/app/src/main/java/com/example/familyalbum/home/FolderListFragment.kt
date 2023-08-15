@@ -52,8 +52,9 @@ class FolderListFragment(val groupId: String) : Fragment() {
                 for (document in documents) {
                     val folderName = document.getString("name")
                     val folderImages = document.get("images") as? List<String>
-                    if (folderName != null && folderImages != null) {
-                        folderList.add(Folder(document.id, folderName, folderImages))
+                    val folderDescription = document.getString("description")
+                    if (folderName != null && folderImages != null && folderDescription!=null) {
+                        folderList.add(Folder(document.id, folderName, folderDescription, folderImages))
                     }
                 }
                 folderAdapter.notifyDataSetChanged()
@@ -96,6 +97,7 @@ class FolderListFragment(val groupId: String) : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val folder = folderList[position]
             holder.binding.folderTitle.text = folder.name
+            holder.binding.folderDescription.text = folder.description
 
             // Load the first image of the folder as its thumbnail
             if (folder.images.isNotEmpty()) {
