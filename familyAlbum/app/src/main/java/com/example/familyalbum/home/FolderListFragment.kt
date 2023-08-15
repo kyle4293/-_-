@@ -72,6 +72,12 @@ class FolderListFragment(val groupId: String) : Fragment() {
                         val selectedFolder = folderList[position]
                         val mActivity = activity as MainActivity
                         val fragment = FolderGalleryFragment(groupId, selectedFolder.id)
+
+                        val args = Bundle()
+                        args.putString("groupId", groupId)
+                        args.putString("folderId", selectedFolder.id)
+                        fragment.arguments = args
+
                         mActivity.changeFragment(fragment)
                     }
                 }

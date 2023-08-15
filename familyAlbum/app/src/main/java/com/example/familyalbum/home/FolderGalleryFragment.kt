@@ -1,6 +1,8 @@
 package com.example.familyalbum.home
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,11 +35,19 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
 
         val folderId = arguments?.getString("folderId")
         val groupId = arguments?.getString("groupId")
+        Log.e(TAG, "0")
+
 
         if (folderId != null && groupId != null) {
+            Log.e(TAG, "1")
+
             loadAndDisplayFolderImages(groupId, folderId)
+            gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
+            binding.gridGallery.layoutManager = GridLayoutManager(requireContext(), 3) // 3 items per row
+            binding.gridGallery.adapter = gridGalleryAdapter
         }
     }
+
 
 
     private fun loadAndDisplayFolderImages(groupId: String, folderId: String) {
@@ -51,6 +61,7 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
                     val images = document.get("images") as? List<String>
                     if (images != null) {
                         galleryList.addAll(images)
+                        Log.e(TAG, galleryList.toString())
                         gridGalleryAdapter.notifyDataSetChanged()
                     }
                 }
