@@ -247,6 +247,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
                     intent.putExtra("groupName", groupName)
                     startActivity(intent)
                 }
+                itemView.setPadding(20, 20, 20, 20)
             }
         }
     }
