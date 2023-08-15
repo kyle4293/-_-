@@ -47,8 +47,11 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val selectedGroupName = arguments?.getString(ARG_GROUP_NAME)
-        binding.groupName.text = selectedGroupName
-
+        if(selectedGroupName != null){
+            binding.textviewIntro.text = selectedGroupName+"의 추억"
+        }else{
+            binding.groupName.text = "어플이름"
+        }
     }
 
 
@@ -83,9 +86,6 @@ class HomeFragment : Fragment() {
         val groupId = (activity as MainActivity).selectedGroupId
         val groupName = (activity as MainActivity).selectedGroupName
 
-        // 갱신된 그룹 이름을 UI에 표시
-        binding.groupName.text = groupName
-
         //공유 데이터 update
         if (groupName != null && groupId != null) {
             setData(groupId,groupName)
@@ -107,10 +107,11 @@ class HomeFragment : Fragment() {
         viewPager?.adapter = ViewPagerAdapter(requireActivity())
 
         val tabTitles = listOf<String>("folder","전체 사진보기")
-
+        val tabIcons = listOf(R.drawable.baseline_create_new_folder_24, R.drawable.icon_gallery)
         if (viewPager != null) {
             TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
                 tab.setText(tabTitles[position])
+                tab.setIcon(tabIcons[position])
             }.attach()
         }
 
@@ -118,7 +119,7 @@ class HomeFragment : Fragment() {
             clickUpload()
         }
 
-        binding.btnGroupSelect.setOnClickListener {
+        binding.layoutGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
             mActivity.changeFragment(GroupListFragment())
         }
