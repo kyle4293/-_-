@@ -83,18 +83,22 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == Activity.RESULT_OK) {
-            val selectedImageUris = data?.clipData ?: return
+            val selectedImageUris = data?.clipData
 
-            for (i in 0 until selectedImageUris.itemCount) {
-                val imageUri = selectedImageUris.getItemAt(i).uri
-                uploadImageToStorage(imageUri)
+            if (selectedImageUris != null) {
+                for (i in 0 until selectedImageUris.itemCount) {
+                    val imageUri = selectedImageUris.getItemAt(i).uri
+                    uploadImageToStorage(imageUri)
+                }
+            } else {
+                val imageUri = data?.data
+                if (imageUri != null) {
+                    uploadImageToStorage(imageUri)
+                }
             }
-
-            // After uploading all selected images, call the function to add them to the folder
-            val selectedImageUrls = galleryList.toList() // Assuming you've already added the URLs during upload
-            onAddImagesButtonClicked(selectedImageUrls)
         }
     }
+
 
     private fun uploadImageToStorage(imageUri: Uri) {
         val imageName = UUID.randomUUID().toString()
@@ -200,6 +204,8 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
                 galleryList.clear()
                 galleryList.addAll(imageUrls)
                 gridGalleryAdapter.notifyDataSetChanged()
+
+                onAddImagesButtonClicked(galleryList.toList())
             }
             .addOnFailureListener { exception ->
                 // Handle the error

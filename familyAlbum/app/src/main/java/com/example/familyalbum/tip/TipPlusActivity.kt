@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter
 import androidx.lifecycle.ViewModelProvider
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
-import com.example.familyalbum.SharedViewModel
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 import com.example.familyalbum.databinding.ActivityTipEditBinding
 import com.example.familyalbum.databinding.ActivityTipPlusBinding
@@ -17,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 class TipPlusActivity : AppCompatActivity() {
     lateinit var binding: ActivityTipPlusBinding
     lateinit var firestore: FirebaseFirestore
-    lateinit var sharedViewModel: SharedViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,9 +23,8 @@ class TipPlusActivity : AppCompatActivity() {
         binding = ActivityTipPlusBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedViewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
-
-        val currentGroupId = sharedViewModel.currentGroupID
+        val currentgroupName = intent.getStringExtra("groupName")
+        val currentGroupId = intent.getStringExtra("groupId")
         val tagspinner = binding.tagSpinner
 
         val tags = listOf("의","식","주")
@@ -45,7 +42,7 @@ class TipPlusActivity : AppCompatActivity() {
             val newTipContent = binding.inputTipContent.text.toString()
             val newTipTag = binding.tagSpinner.selectedItem.toString()
 
-            val newTip = Tip(newTipTitle, newTipTag, newTipContent, currentGroupId)
+            val newTip = Tip(newTipTitle, newTipTag, newTipContent, currentGroupId!!)
 
             //새로운 tip정보를 db에 추가
             firestore.collection("tips")
