@@ -100,11 +100,9 @@ class MainActivity : AppCompatActivity(){
         selectedGroupId = groupId
         selectedGroupName = groupName
 
+        // 홈 프래그먼트에 그룹 정보 전달
         val homeFragment = HomeFragment.newInstance(groupId, groupName)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_content, homeFragment)
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
+        changeFragment(homeFragment)
     }
 
 
