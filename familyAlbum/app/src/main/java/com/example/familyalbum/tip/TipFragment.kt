@@ -50,7 +50,7 @@ class TipFragment : Fragment() {
         val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
         val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
-        tipAdapter = TipAdapter(currentGroupID, emptyList())
+        tipAdapter = TipAdapter(currentGroupID, currentGroupName, emptyList())
 
         //********태그 필터*********
         binding.allbutton.setOnClickListener {
@@ -98,7 +98,7 @@ class TipFragment : Fragment() {
         val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
         val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
-        tipAdapter = TipAdapter(currentGroupID, emptyList())
+        tipAdapter = TipAdapter(currentGroupID, currentGroupName, emptyList())
         binding.tipRecyclerView.adapter = tipAdapter
 
         //firestore에서 데이터 가져오기
