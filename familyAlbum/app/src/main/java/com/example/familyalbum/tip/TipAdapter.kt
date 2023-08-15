@@ -10,7 +10,7 @@ import com.example.familyalbum.R
 import com.example.familyalbum.TipEditActivity
 import com.example.familyalbum.databinding.TipBinding
 
-class TipAdapter(private val currentGroupId: String, private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapter.ViewHolder>() {
+class TipAdapter(private val currentGroupId: String, private val currentGroupName: String, private var tipList: List<Tip>): RecyclerView.Adapter<TipAdapter.ViewHolder>() {
     inner class ViewHolder( val binding: TipBinding): RecyclerView.ViewHolder(binding.root){
         init{
             binding.editbutton.setOnClickListener {
@@ -20,6 +20,8 @@ class TipAdapter(private val currentGroupId: String, private var tipList: List<T
                     val tip = tipList[position]
                     val intent = Intent(context, TipEditActivity::class.java)
 
+                    intent.putExtra("groupId", currentGroupId)
+                    intent.putExtra("groupName", currentGroupName)
                     intent.putExtra("title", tip.title)
                     intent.putExtra("content", tip.content) // 이 역시 필요한 타입에 맞게 수정
                     intent.putExtra("tag", tip.tag)
