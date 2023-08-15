@@ -42,6 +42,9 @@ class TimeTableFragment : Fragment(){
     private var firestore = FirebaseFirestore.getInstance()
     private lateinit var fragmentContext: Context
 
+    private var currentGroupId: String? = null
+    private var currentGroupName: String? = null
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         fragmentContext = context
@@ -63,6 +66,9 @@ class TimeTableFragment : Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        currentGroupId =  (activity as MainActivity).selectedGroupId ?: ""
+        currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
         val currentUser = firebaseAuth.currentUser
         currentUser?.let { user ->
@@ -87,6 +93,8 @@ class TimeTableFragment : Fragment(){
         //추가버튼을 누르면
         binding.plusButton.setOnClickListener{
             val intent = Intent(activity, TaskPlusActivity::class.java)
+            intent.putExtra("groupId", currentGroupId)
+            intent.putExtra("groupName", currentGroupName)
             startActivity(intent)
         }
 
