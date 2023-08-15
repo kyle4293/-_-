@@ -167,13 +167,13 @@ class HomeFragment : Fragment() {
             return when (position) {
                 0 -> {
                     // Fragment for FolderList 보기
-                    if(groupId != null) FolderListFragment(groupId)
-                    else FolderListFragment("NO_GROUP")
+                    if(groupId != null) TotalGalleryFragment(groupId)
+                    else TotalGalleryFragment("NO_GROUP")
                 }
                 1 -> {
                     // Fragment for 전체 사진 보기
-                    if(groupId != null) TotalGalleryFragment(groupId)
-                    else TotalGalleryFragment("NO_GROUP")
+                    if(groupId != null) FolderListFragment(groupId)
+                    else FolderListFragment("NO_GROUP")
                 }
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }

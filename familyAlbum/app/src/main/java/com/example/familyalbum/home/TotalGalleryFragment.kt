@@ -1,6 +1,7 @@
 package com.example.familyalbum.home
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -105,6 +106,15 @@ class TotalGalleryFragment(val groupId: String) : Fragment() {
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+            init{
+                itemView.setOnClickListener {
+                    val uploadImageInfo = galleryList[position].imgsrc
+                    val intent = Intent(requireContext(), PhotoActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    startActivity(intent)
+                }
+            }
+
         }
     }
 
