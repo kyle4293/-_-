@@ -36,9 +36,11 @@ class FolderCreateActivity : AppCompatActivity() {
         binding.btnCreateFolder.setOnClickListener {
             val groupId = intent.getStringExtra("groupId")
             val folderName = binding.editFolderName.text.toString()
+            val folderDescription = binding.editFolderDescription.text.toString() // 추가
+
 
             if (!groupId.isNullOrEmpty() && folderName.isNotEmpty() && selectedImageUri != null) {
-                uploadImageAndCreateFolder(groupId, selectedImageUri!!)
+                uploadImageAndCreateFolder(groupId, selectedImageUri!!, folderDescription) // 수정
             } else {
                 // 예외 처리: 그룹 ID나 폴더 이름, 이미지가 없는 경우에 대한 처리
             }
@@ -52,7 +54,7 @@ class FolderCreateActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageAndCreateFolder(groupId: String, imageUri: Uri) {
+    private fun uploadImageAndCreateFolder(groupId: String, imageUri: Uri, folderDescription: String) {
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef = storageRef.child("images/${imageUri.lastPathSegment}")
 
@@ -68,19 +70,20 @@ class FolderCreateActivity : AppCompatActivity() {
                 val imageDownloadUrl = task.result.toString()
                 val folderName = binding.editFolderName.text.toString()
 
-                createFolderWithImage(groupId, folderName, imageDownloadUrl)
+                createFolderWithImage(groupId, folderName, imageDownloadUrl, folderDescription) // 수정
             } else {
                 // Handle the error
             }
         }
     }
 
-    private fun createFolderWithImage(groupId: String, folderName: String, imageUrl: String) {
+    private fun createFolderWithImage(groupId: String, folderName: String, imageUrl: String, folderDescription: String) {
         val groupDocRef = FirebaseFirestore.getInstance().collection("groups").document(groupId)
 
         val folderData = hashMapOf(
             "name" to folderName,
-            "images" to arrayListOf(imageUrl) // 이미지 URL 추가
+            "images" to arrayListOf(imageUrl), // 이미지 URL 추가
+            "description" to folderDescription
         )
 
         groupDocRef.collection("folders")

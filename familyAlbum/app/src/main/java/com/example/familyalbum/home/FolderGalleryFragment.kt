@@ -35,12 +35,9 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
 
         val folderId = arguments?.getString("folderId")
         val groupId = arguments?.getString("groupId")
-        Log.e(TAG, "0")
 
 
         if (folderId != null && groupId != null) {
-            Log.e(TAG, "1")
-
             loadAndDisplayFolderImages(groupId, folderId)
             gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
             binding.gridGallery.layoutManager = GridLayoutManager(requireContext(), 3) // 3 items per row
