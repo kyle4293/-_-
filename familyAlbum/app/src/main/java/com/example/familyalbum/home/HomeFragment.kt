@@ -49,6 +49,7 @@ class HomeFragment : Fragment() {
         val selectedGroupName = arguments?.getString(ARG_GROUP_NAME)
         if(selectedGroupName != null){
             binding.textviewIntro.text = selectedGroupName+"의 추억"
+            binding.textviewGroupName.text = selectedGroupName
         }else{
             binding.groupName.text = "어플이름"
         }
@@ -106,8 +107,8 @@ class HomeFragment : Fragment() {
         val viewPager = binding?.viewPager
         viewPager?.adapter = ViewPagerAdapter(requireActivity())
 
-        val tabTitles = listOf<String>("folder","전체 사진보기")
-        val tabIcons = listOf(R.drawable.baseline_create_new_folder_24, R.drawable.icon_gallery)
+        val tabTitles = listOf<String>("전체 사진", "폴더 목록")
+        val tabIcons = listOf(R.drawable.icon_gallery, R.drawable.baseline_create_new_folder_24)
         if (viewPager != null) {
             TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
                 tab.setText(tabTitles[position])
@@ -115,43 +116,24 @@ class HomeFragment : Fragment() {
             }.attach()
         }
 
-        binding.btnAddPhoto.setOnClickListener {
-            clickUpload()
-        }
-
         binding.layoutGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
             mActivity.changeFragment(GroupListFragment())
         }
 
-        binding.btnGallery.setOnClickListener {
+        binding.layoutImgUpload.setOnClickListener {
             imagePickerLauncher.launch("image/*")
             Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
 
         //폴더 생성 화면으로 이동.
-        binding.btnFolderCreate.setOnClickListener {
+        binding.layoutFolderCreate.setOnClickListener {
             val groupId = arguments?.getString(ARG_GROUP_ID)
             val intent = Intent(requireContext(), FolderCreateActivity::class.java)
             intent.putExtra("groupId", groupId)
             startActivity(intent)
         }
 
-    }
-
-    private fun clickUpload() {
-        //upload button animation function
-        if (isFabOpen) {
-            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 0f).apply { start() }
-            ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 0f).apply { start() }
-            binding.btnAddPhoto.setImageResource(R.drawable.baseline_camera_24)
-        } else {
-            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 200f).apply { start() }
-            ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 400f).apply { start() }
-            binding.btnAddPhoto.setImageResource(R.drawable.baseline_clear_24)
-        }
-
-        isFabOpen= !isFabOpen
     }
 
     inner class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
@@ -166,14 +148,14 @@ class HomeFragment : Fragment() {
 
             return when (position) {
                 0 -> {
-                    // Fragment for FolderList 보기
-                    if(groupId != null) FolderListFragment(groupId)
-                    else FolderListFragment("NO_GROUP")
-                }
-                1 -> {
                     // Fragment for 전체 사진 보기
                     if(groupId != null) TotalGalleryFragment(groupId)
                     else TotalGalleryFragment("NO_GROUP")
+                }
+                1 -> {
+                    // Fragment for FolderList 보기
+                    if(groupId != null) FolderListFragment(groupId)
+                    else FolderListFragment("NO_GROUP")
                 }
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }
