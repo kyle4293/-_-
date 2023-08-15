@@ -23,7 +23,6 @@ import java.io.IOException
 
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
-    private var isFabOpen = false
 
     private var selectedGroupId: String? = null
     private var selectedGroupName: String? = null
