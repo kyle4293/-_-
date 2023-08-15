@@ -24,7 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragment() {
+class FolderGalleryFragment(val groupId: String, val groupName: String, val folderId: String) : Fragment() {
     private lateinit var binding: FragmentFolderGalleryBinding
     private var galleryList: ArrayList<String> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
@@ -48,6 +48,7 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
 
         val folderId = arguments?.getString("folderId")
         val groupId = arguments?.getString("groupId")
+        val groupName = arguments?.getString("groupName")
 
 
         if (folderId != null && groupId != null) {
@@ -62,11 +63,13 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
         }
 
         binding.btnFolderModify.setOnClickListener {
-            //Modify Activity로 이동.
             val intent = Intent(requireContext(), FolderModifyActivity::class.java)
-//            intent.putExtra("folderID", )
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
+            intent.putExtra("folderId", folderId)
             startActivity(intent)
         }
+
     }
 
     private fun openImagePicker() {

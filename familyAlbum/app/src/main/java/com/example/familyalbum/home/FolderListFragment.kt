@@ -14,7 +14,7 @@ import com.example.familyalbum.databinding.FolderListViewBinding
 import com.example.familyalbum.databinding.FragmentFolderListBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FolderListFragment(val groupId: String) : Fragment() {
+class FolderListFragment(val groupId: String, val groupName: String) : Fragment() {
 
     private lateinit var folderAdapter: FolderListAdapter
     private lateinit var binding: FragmentFolderListBinding
@@ -72,10 +72,11 @@ class FolderListFragment(val groupId: String) : Fragment() {
                     if (position != RecyclerView.NO_POSITION) {
                         val selectedFolder = folderList[position]
                         val mActivity = activity as MainActivity
-                        val fragment = FolderGalleryFragment(groupId, selectedFolder.id)
+                        val fragment = FolderGalleryFragment(groupId, groupName, selectedFolder.id)
 
                         val args = Bundle()
                         args.putString("groupId", groupId)
+                        args.putString("groupName", groupName)
                         args.putString("folderId", selectedFolder.id)
                         fragment.arguments = args
 

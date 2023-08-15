@@ -28,6 +28,11 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (intent.hasExtra("groupId") && intent.hasExtra("groupName")) {
+            selectedGroupId = intent.getStringExtra("groupId")
+            selectedGroupName = intent.getStringExtra("groupName")
+            // 그룹 정보와 이름을 사용하여 화면 초기화 또는 처리
+        }
 
         val fromTask = intent.getStringExtra("fromTask")
         val fromTipEdit = intent.getStringExtra("fromTipEdit")
