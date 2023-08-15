@@ -21,7 +21,6 @@ class MainActivity : AppCompatActivity(){
 
     var selectedGroupId: String? = null
     var selectedGroupName: String? = null
-    val sharedViewModel: SharedViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

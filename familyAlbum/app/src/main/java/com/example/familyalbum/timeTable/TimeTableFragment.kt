@@ -129,8 +129,8 @@ class TimeTableFragment : Fragment(){
     fun showDialog() {
 
         //현재 그룹 이름
-        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
-        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+        val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
+        val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
