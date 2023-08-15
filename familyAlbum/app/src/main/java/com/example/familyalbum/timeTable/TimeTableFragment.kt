@@ -129,8 +129,8 @@ class TimeTableFragment : Fragment(){
     fun showDialog() {
 
         //현재 그룹 이름
-        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
-        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+        val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
+        val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
         firebaseAuth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
@@ -190,12 +190,12 @@ class TimeTableFragment : Fragment(){
                 binding.plusButton.isEnabled = false
             }
         }
-            val fragmentManager =
-                (binding.root.context as? AppCompatActivity)?.supportFragmentManager
-            fragmentManager?.let { manager ->
-                dialog.show(manager, "GroupDialog")
-            }
+        val fragmentManager =
+            (binding.root.context as? AppCompatActivity)?.supportFragmentManager
+        fragmentManager?.let { manager ->
+            dialog.show(manager, "GroupDialog")
         }
+    }
 
 
 
@@ -383,17 +383,17 @@ class TimeTableFragment : Fragment(){
                             }
                             isHandlingClickEvent = true // 작업 시작
 
-                        dialog.dismiss() // 다이얼로그 닫기
+                            dialog.dismiss() // 다이얼로그 닫기
 
-                        val intent = Intent(context, TaskEditActivity::class.java)
-                        intent.putExtra("startTime",task.startTime)
-                        intent.putExtra("endTime",task.endTime)
-                        intent.putExtra("title",task.title)
-                        intent.putExtra("place",task.place)
-                        intent.putExtra("dayOfWeek",task.dayOfWeek)
-                        startActivity(intent)
+                            val intent = Intent(context, TaskEditActivity::class.java)
+                            intent.putExtra("startTime",task.startTime)
+                            intent.putExtra("endTime",task.endTime)
+                            intent.putExtra("title",task.title)
+                            intent.putExtra("place",task.place)
+                            intent.putExtra("dayOfWeek",task.dayOfWeek)
+                            startActivity(intent)
 
-                    }
+                        }
 
                     alertDialogBuilder.show()
                 }

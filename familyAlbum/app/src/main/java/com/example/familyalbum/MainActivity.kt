@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity(){
 
     var selectedGroupId: String? = null
     var selectedGroupName: String? = null
-    val sharedViewModel: SharedViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +29,12 @@ class MainActivity : AppCompatActivity(){
         MyFirebaseMessagingService().getFirebaseToken()
 
         initDynamicLink()
+        
+        if (intent.hasExtra("groupId") && intent.hasExtra("groupName")) {
+            selectedGroupId = intent.getStringExtra("groupId")
+            selectedGroupName = intent.getStringExtra("groupName")
+            // 그룹 정보와 이름을 사용하여 화면 초기화 또는 처리
+        }
 
         val fromTask = intent.getStringExtra("fromTask")
         val fromTipEdit = intent.getStringExtra("fromTipEdit")
@@ -101,11 +106,9 @@ class MainActivity : AppCompatActivity(){
         selectedGroupId = groupId
         selectedGroupName = groupName
 
+        // 홈 프래그먼트에 그룹 정보 전달
         val homeFragment = HomeFragment.newInstance(groupId, groupName)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_content, homeFragment)
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
+        changeFragment(homeFragment)
     }
 
 

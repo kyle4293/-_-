@@ -7,7 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gray">#FFD9D9D9</color>
+    <color name="gray">#f5f6f8</color>
     <color name="light_pink">#FFFFE0E3</color>
     <color name="light_green">#FFB0FABE</color>
     <color name="light_blue">#FF6CC3FF</color>
@@ -23,5 +23,7 @@
     <color name="vintage_light_yellow">#fbf6e6</color>
     <color name="vintage_yellow">#fbc958</color>
     <color name="vintage_ivory">#e8e3e0</color>
+    <color name="font_brown">#554f37</color>
+    <color name="font_light_brown">#aa9e6e</color>
     <color name="background_color">#f4f4f4</color>
 </resources>

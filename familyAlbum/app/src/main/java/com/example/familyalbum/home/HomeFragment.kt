@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentHomeBinding
@@ -23,6 +24,14 @@ import java.io.IOException
 class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private var isFabOpen = false
+
+    private var selectedGroupId: String? = null
+    private var selectedGroupName: String? = null
+
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+    private lateinit var viewPager: ViewPager2
+
+
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
@@ -46,7 +55,12 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val selectedGroupName = arguments?.getString(ARG_GROUP_NAME)
+        viewPagerAdapter = ViewPagerAdapter(requireActivity())
+        viewPager.adapter = viewPagerAdapter
+
+        selectedGroupId = (activity as MainActivity).selectedGroupId
+        selectedGroupName = (activity as MainActivity).selectedGroupName
+
         if(selectedGroupName != null){
             binding.textviewIntro.text = selectedGroupName+"의 추억"
         }else{
@@ -59,8 +73,10 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        initLayout()
+
         return binding.root
     }
 
@@ -80,34 +96,38 @@ class HomeFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        val groupId = (activity as MainActivity).selectedGroupId
-        val groupName = (activity as MainActivity).selectedGroupName
 
-        //공유 데이터 update
-        if (groupName != null && groupId != null) {
-            setData(groupId,groupName)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(ARG_GROUP_ID, selectedGroupId)
+        outState.putString(ARG_GROUP_NAME, selectedGroupName)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            selectedGroupId = savedInstanceState.getString(ARG_GROUP_ID)
+            selectedGroupName = savedInstanceState.getString(ARG_GROUP_NAME)
+            updateGroupInfoInView(selectedGroupName) // 화면 갱신 메서드 호출
         }
-
-        initLayout()
     }
 
-    private fun setData(groupId: String,groupName: String) {
-        // 공유 데이터 설정
-        (activity as? MainActivity)?.sharedViewModel?.currentGroupID = groupId
-        (activity as? MainActivity)?.sharedViewModel?.currentGroupName = groupName
+    private fun updateGroupInfoInView(groupName: String?) {
+        binding.textviewIntro.text = groupName + "의 추억"
+        // 다른 UI 요소들도 업데이트
     }
+
 
     private fun initLayout() {
 
-        //viewPager adapter 연결, TapLayout 설정
-        val viewPager = binding?.viewPager
-        viewPager?.adapter = ViewPagerAdapter(requireActivity())
+        viewPager = binding.viewPager // viewPager 초기화 추가
 
-        val tabTitles = listOf<String>("folder","전체 사진보기")
-        val tabIcons = listOf(R.drawable.baseline_create_new_folder_24, R.drawable.icon_gallery)
+        viewPagerAdapter = ViewPagerAdapter(requireActivity())
+        viewPager.adapter = viewPagerAdapter // 어댑터 설정
+
+        val tabTitles = listOf<String>("전체 사진", "폴더 목록")
+        val tabIcons = listOf(R.drawable.icon_gallery, R.drawable.baseline_create_new_folder_24)
         if (viewPager != null) {
             TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
                 tab.setText(tabTitles[position])
@@ -115,43 +135,25 @@ class HomeFragment : Fragment() {
             }.attach()
         }
 
-        binding.btnAddPhoto.setOnClickListener {
-            clickUpload()
-        }
-
         binding.layoutGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
             mActivity.changeFragment(GroupListFragment())
         }
 
-        binding.btnGallery.setOnClickListener {
+        binding.layoutImgUpload.setOnClickListener {
             imagePickerLauncher.launch("image/*")
             Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
 
         //폴더 생성 화면으로 이동.
-        binding.btnFolderCreate.setOnClickListener {
+        binding.layoutFolderCreate.setOnClickListener {
             val groupId = arguments?.getString(ARG_GROUP_ID)
+            val groupName = arguments?.getString(ARG_GROUP_NAME)
             val intent = Intent(requireContext(), FolderCreateActivity::class.java)
             intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
             startActivity(intent)
         }
-
-    }
-
-    private fun clickUpload() {
-        //upload button animation function
-        if (isFabOpen) {
-            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 0f).apply { start() }
-            ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 0f).apply { start() }
-            binding.btnAddPhoto.setImageResource(R.drawable.baseline_camera_24)
-        } else {
-            ObjectAnimator.ofFloat(binding.btnFolderCreate, "translationX", 200f).apply { start() }
-            ObjectAnimator.ofFloat(binding.btnGallery, "translationX", 400f).apply { start() }
-            binding.btnAddPhoto.setImageResource(R.drawable.baseline_clear_24)
-        }
-
-        isFabOpen= !isFabOpen
     }
 
     inner class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
@@ -162,18 +164,19 @@ class HomeFragment : Fragment() {
         }
 
         override fun createFragment(position: Int): Fragment {
-            var groupId = arguments?.getString(ARG_GROUP_ID)
+            var groupId = selectedGroupId
+            var groupName = selectedGroupName
 
             return when (position) {
                 0 -> {
                     // Fragment for FolderList 보기
-                    if(groupId != null) FolderListFragment(groupId)
-                    else FolderListFragment("NO_GROUP")
+                    if(groupId != null && groupName!=null) TotalGalleryFragment(groupId)
+                    else TotalGalleryFragment("NO_GROUP")
                 }
                 1 -> {
                     // Fragment for 전체 사진 보기
-                    if(groupId != null) TotalGalleryFragment(groupId)
-                    else TotalGalleryFragment("NO_GROUP")
+                    if(groupId != null && groupName!=null) FolderListFragment(groupId, groupName)
+                    else FolderListFragment("NO_GROUP", "")
                 }
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }

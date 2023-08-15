@@ -10,9 +10,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <View
         android:layout_width="50dp"
-        android:layout_height="3dp"
+        android:layout_height="1dp"
         android:background="@drawable/vertical_divider"
-        android:backgroundTint="@color/cardview_dark_background"
+        android:backgroundTint="@color/font_light_brown"
         android:layout_gravity="center_vertical"
         android:layout_marginEnd="10dp"/>
 
@@ -21,14 +21,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2000년 00월 00일"
-        android:textSize="14sp"
-        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textColor="@color/font_light_brown"
         android:fontFamily="@font/lineseed_kr_rg"/>
 
     <View
         android:layout_width="50dp"
-        android:layout_height="3dp"
-        android:backgroundTint="@color/cardview_dark_background"
+        android:layout_height="1dp"
+        android:backgroundTint="@color/font_light_brown"
         android:background="@drawable/vertical_divider"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"/>
