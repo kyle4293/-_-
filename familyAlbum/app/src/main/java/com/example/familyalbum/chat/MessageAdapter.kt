@@ -91,7 +91,6 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val formattedDate1 = sdf.format(date1)
         val formattedDate2 = date2?.let { sdf.format(it) }
-        Log.e("testing", "same DAte!!!")
         return formattedDate1 == formattedDate2
     }
 
@@ -153,7 +152,6 @@ class MessageAdapter(val messageList: ArrayList<ChatItem>): RecyclerView.Adapter
 
             messageTime.text = formattedTime.toString()
             senderName.text = message.senderName
-            Log.e("test", message.senderName)
             val imageUri = Uri.parse(message.senderImg)
 
             Glide.with(itemView.context)
