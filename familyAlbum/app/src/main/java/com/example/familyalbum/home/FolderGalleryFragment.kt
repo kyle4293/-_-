@@ -11,6 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +23,7 @@ import com.example.familyalbum.databinding.FragmentFolderGalleryBinding
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +32,24 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
     private var galleryList: ArrayList<String> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
     private val storageReference = FirebaseStorage.getInstance().reference
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+//            val groupId = arguments?.getString(HomeFragment.ARG_GROUP_ID)
+            try {
+                if (!groupId.isNullOrEmpty()) {
+                    val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
+
+                    //confirm Activity로 이동
+                    val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    startActivity(intent)
+                }
+            } catch (e: IOException) {
+//                e.printStackTrace()
+            }
+        }
+    }
 
 
     companion object {
@@ -60,6 +81,8 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
         binding.btnAddImage.setOnClickListener {
             openImagePicker()
+//            imagePickerLauncher.launch("image/*")
+//            Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnFolderModify.setOnClickListener {
