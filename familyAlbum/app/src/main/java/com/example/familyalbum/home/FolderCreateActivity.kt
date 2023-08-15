@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivityFolderCreateBinding
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -35,12 +36,13 @@ class FolderCreateActivity : AppCompatActivity() {
 
         binding.btnCreateFolder.setOnClickListener {
             val groupId = intent.getStringExtra("groupId")
+            val groupName = intent.getStringExtra("groupName")
             val folderName = binding.editFolderName.text.toString()
             val folderDescription = binding.editFolderDescription.text.toString() // 추가
 
 
-            if (!groupId.isNullOrEmpty() && folderName.isNotEmpty() && selectedImageUri != null) {
-                uploadImageAndCreateFolder(groupId, selectedImageUri!!, folderDescription) // 수정
+            if (!groupId.isNullOrEmpty() && !groupName.isNullOrEmpty() && folderName.isNotEmpty() && selectedImageUri != null) {
+                uploadImageAndCreateFolder(groupId, groupName, selectedImageUri!!, folderDescription) // 수정
             } else {
                 // 예외 처리: 그룹 ID나 폴더 이름, 이미지가 없는 경우에 대한 처리
             }
@@ -54,7 +56,7 @@ class FolderCreateActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageAndCreateFolder(groupId: String, imageUri: Uri, folderDescription: String) {
+    private fun uploadImageAndCreateFolder(groupId: String, groupName: String, imageUri: Uri, folderDescription: String) {
         val storageRef = FirebaseStorage.getInstance().reference
         val imagesRef = storageRef.child("images/${imageUri.lastPathSegment}")
 
@@ -70,14 +72,14 @@ class FolderCreateActivity : AppCompatActivity() {
                 val imageDownloadUrl = task.result.toString()
                 val folderName = binding.editFolderName.text.toString()
 
-                createFolderWithImage(groupId, folderName, imageDownloadUrl, folderDescription) // 수정
+                createFolderWithImage(groupId, groupName, folderName, imageDownloadUrl, folderDescription) // 수정
             } else {
                 // Handle the error
             }
         }
     }
 
-    private fun createFolderWithImage(groupId: String, folderName: String, imageUrl: String, folderDescription: String) {
+    private fun createFolderWithImage(groupId: String, groupName: String, folderName: String, imageUrl: String, folderDescription: String) {
         val groupDocRef = FirebaseFirestore.getInstance().collection("groups").document(groupId)
 
         val folderData = hashMapOf(
@@ -90,8 +92,12 @@ class FolderCreateActivity : AppCompatActivity() {
             .add(folderData)
             .addOnSuccessListener { folderDocRef ->
                 Log.d(ContentValues.TAG, "Folder with image added with ID: ${folderDocRef.id}")
-
-                finish() // 폴더 생성 후 액티비티 종료
+                val intent = Intent(this, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("groupId", groupId) // 그룹 정보 전달
+                intent.putExtra("groupName", groupName) // 그룹 이름 전달
+                startActivity(intent)
+                finish()
             }
             .addOnFailureListener { e ->
                 Log.e(ContentValues.TAG, "Error adding folder with image", e)
