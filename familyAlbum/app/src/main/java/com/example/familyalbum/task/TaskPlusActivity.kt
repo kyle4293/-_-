@@ -22,6 +22,9 @@ class TaskPlusActivity : AppCompatActivity() {
         binding = ActivityTaskPlusBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val currentGroupName = intent.getStringExtra("groupName")
+        val currentGroupId = intent.getStringExtra("groupId")
+
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
@@ -198,8 +201,11 @@ class TaskPlusActivity : AppCompatActivity() {
             
             if(startTime.toInt() < endTime.toInt()) {
                 val intent = Intent(this, MainActivity::class.java)
-                intent.putExtra("fromTask", "fromTask")
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
+                intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
                 startActivity(intent)
+                finish()
             }else{
                 Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
             }
