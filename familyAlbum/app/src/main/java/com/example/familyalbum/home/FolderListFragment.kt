@@ -9,34 +9,27 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.familyalbum.MainActivity
+import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FolderListViewBinding
 import com.example.familyalbum.databinding.FragmentFolderListBinding
 import com.google.firebase.firestore.FirebaseFirestore
-
 
 class FolderListFragment(val groupId: String) : Fragment() {
 
     private lateinit var folderAdapter: FolderListAdapter
     private lateinit var binding: FragmentFolderListBinding
-    private var folderList: ArrayList<Gallery> = arrayListOf()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private var folderList: ArrayList<Folder> = arrayListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding = FragmentFolderListBinding.inflate(inflater, container, false)
-        return binding!!.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        folderList = ArrayList()
         folderAdapter = FolderListAdapter(this, folderList)
-
         initLayout()
     }
 
@@ -44,48 +37,45 @@ class FolderListFragment(val groupId: String) : Fragment() {
         binding.folderList.layoutManager = LinearLayoutManager(requireContext())
         binding.folderList.adapter = folderAdapter
 
-        if(groupId != "NO_GROUP"){
-            binding.textviewNogroup.visibility = View.GONE
-            loadAndDisplayGroupImages(groupId)
+        if (groupId != "NO_GROUP") {
+            loadAndDisplayGroupFolders(groupId)
         }
     }
 
-    private fun loadAndDisplayGroupImages(groupId: String) {
+    private fun loadAndDisplayGroupFolders(groupId: String) {
         val firestore = FirebaseFirestore.getInstance()
-        val imagesRef = firestore.collection("groups").document(groupId)
+        val groupFoldersRef = firestore.collection("groups").document(groupId)
+            .collection("folders")
 
-        imagesRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val images = document.get("images") as? List<String>
-                    if (images != null) {
-                        folderAdapter.setGalleryList(images)
+        groupFoldersRef.get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val folderName = document.getString("name")
+                    val folderImages = document.get("images") as? List<String>
+                    if (folderName != null && folderImages != null) {
+                        folderList.add(Folder(document.id, folderName, folderImages))
                     }
                 }
+                folderAdapter.notifyDataSetChanged()
             }
             .addOnFailureListener { exception ->
-                // 실패 시 처리 로직
+                // Handle the error
             }
     }
 
-    inner class FolderListAdapter(val fragment: Fragment, val folderList: ArrayList<Gallery>): RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
+    inner class FolderListAdapter(val fragment: Fragment, val folderList: ArrayList<Folder>) : RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
         inner class ViewHolder(val binding: FolderListViewBinding) : RecyclerView.ViewHolder(binding.root) {
             init {
                 binding.root.setOnClickListener {
                     val position = adapterPosition
                     if (position != RecyclerView.NO_POSITION) {
-                        // 클릭 이벤트 처리
-                        val mActivity = fragment.activity as MainActivity
-                        mActivity.changeFragment(FolderGalleryFragment(groupId, "NO_FOLDER"))
+                        val selectedFolder = folderList[position]
+                        val mActivity = activity as MainActivity
+                        val fragment = FolderGalleryFragment(groupId, selectedFolder.id)
+                        mActivity.changeFragment(fragment)
                     }
                 }
             }
-        }
-
-        fun setGalleryList(images: List<String>) {
-            folderList.clear()
-            folderList.addAll(images.map { Gallery(it, "") }) // 이미지 URL과 더미 날짜로 갤러리 객체 생성
-            notifyDataSetChanged()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -99,12 +89,14 @@ class FolderListFragment(val groupId: String) : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val folder = folderList[position]
-            //folder title, folder 대표이미지, folder 설명 binding 예정.
+            holder.binding.folderTitle.text = folder.name
 
-            Glide.with(holder.itemView.context)
-                .load(folder.imgsrc)
-                .into(holder.binding.folderPhoto)
+            // Load the first image of the folder as its thumbnail
+            if (folder.images.isNotEmpty()) {
+                Glide.with(holder.itemView.context)
+                    .load(folder.images[0])
+                    .into(holder.binding.folderPhoto)
+            }
         }
     }
-
 }
