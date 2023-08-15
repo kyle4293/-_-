@@ -42,6 +42,8 @@ class HomeFragment : Fragment() {
                     //confirm Activity로 이동
                     val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
                     intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("groupId", selectedGroupId)
+                    intent.putExtra("groupName", selectedGroupName)
                     startActivity(intent)
                 }
             } catch (e: IOException) {
@@ -169,8 +171,8 @@ class HomeFragment : Fragment() {
             return when (position) {
                 0 -> {
                     // Fragment for FolderList 보기
-                    if(groupId != null && groupName!=null) TotalGalleryFragment(groupId)
-                    else TotalGalleryFragment("NO_GROUP")
+                    if(groupId != null && groupName!=null) TotalGalleryFragment(groupId, groupName)
+                    else TotalGalleryFragment("NO_GROUP", "")
                 }
                 1 -> {
                     // Fragment for 전체 사진 보기

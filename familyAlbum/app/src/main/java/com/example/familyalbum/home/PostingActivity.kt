@@ -17,6 +17,8 @@ import java.util.*
 class PostingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPostingBinding
+    private var groupId: String? = null
+    private var groupName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +29,10 @@ class PostingActivity : AppCompatActivity() {
 
     private fun initLayout() {
         val uploadImageInfo = intent.getSerializableExtra("imageInfo") as? ArrayList<String>
-        val groupId = uploadImageInfo?.get(0)
+//        val groupId = uploadImageInfo?.get(0)
         val uri = uploadImageInfo?.get(1)
+        groupId = intent.getStringExtra("groupId")
+        groupName = intent.getStringExtra("groupName")
 
         val imageUri = Uri.parse(uri)
         if (!uri.isNullOrEmpty()) {
@@ -39,7 +43,7 @@ class PostingActivity : AppCompatActivity() {
 
         binding.btnUpload.setOnClickListener {
             if(!uri.isNullOrEmpty() && !groupId.isNullOrEmpty()){
-                uploadPhoto(imageUri, groupId)
+                uploadPhoto(imageUri, groupId!!)
             }
         }
     }
@@ -53,9 +57,8 @@ class PostingActivity : AppCompatActivity() {
             .addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val downloadUrl = uri.toString()
-                    val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
                     // 업로드된 사진 정보를 그룹 정보에 저장
-                    updateGroupWithImageInfo(groupId, downloadUrl, currentDate)
+                    updateGroupWithImageInfo(groupId, groupName!!, downloadUrl)
                 }
             }
             .addOnFailureListener { exception ->
@@ -63,7 +66,7 @@ class PostingActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateGroupWithImageInfo(groupId: String, imageUrl: String, uploadDate: String) {
+    private fun updateGroupWithImageInfo(groupId: String, groupName: String, imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
         val groupRef = firestore.collection("groups").document(groupId)
 
@@ -80,6 +83,9 @@ class PostingActivity : AppCompatActivity() {
                                 Toast.makeText(this, "Image 업로드 완료", Toast.LENGTH_SHORT).show()
 
                                 val intent = Intent(this, MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.putExtra("groupId", groupId) // 그룹 정보 전달
+                                intent.putExtra("groupName", groupName) // 그룹 이름 전달
                                 startActivity(intent)
                                 // 업데이트 성공 처리
                             }

@@ -80,7 +80,7 @@ class TimeTableFragment : Fragment(){
                     schedule(taskList)
                 }
                 loadUserProfile(loadedUser.name) { userImage ->
-                    myProfile("나의 시간표", userImage)
+                    myProfile("나", userImage)
                 }
             }
         }
@@ -115,7 +115,7 @@ class TimeTableFragment : Fragment(){
     }
 
     private fun myProfile(userName: String?, userImage: String?) {
-        binding.textView.text = if (userName.isNullOrEmpty()) "나의 시간표" else "$userName 의 시간표"
+        binding.textView.text = if (userName.isNullOrEmpty()) "나" else "$userName 의 시간표"
         userImage?.let {
             // Use Glide to load and display profile image
             Glide.with(fragmentContext)
@@ -171,7 +171,7 @@ class TimeTableFragment : Fragment(){
                             schedule(taskList)
                         }
                         loadUserProfile(loadedUser.name) { userImage ->
-                            myProfile("나의 시간표", userImage)
+                            myProfile("나", userImage)
                         }
                     }
                 }

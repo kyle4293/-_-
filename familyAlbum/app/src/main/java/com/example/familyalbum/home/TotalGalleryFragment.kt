@@ -20,7 +20,7 @@ import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentTotalGalleryBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
-class TotalGalleryFragment(val groupId: String) : Fragment() {
+class TotalGalleryFragment(val groupId: String, val groupName: String) : Fragment() {
 
     private lateinit var binding: FragmentTotalGalleryBinding
     private var galleryList: ArrayList<Gallery> = arrayListOf()
@@ -121,6 +121,9 @@ class TotalGalleryFragment(val groupId: String) : Fragment() {
                 itemView.setOnClickListener {
                     val uploadImageInfo = galleryList[position].imgsrc
                     val intent = Intent(requireContext(), PhotoActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("groupId", groupId)
+                    intent.putExtra("groupName", groupName)
                     intent.putExtra("imageInfo", uploadImageInfo)
                     startActivity(intent)
                 }
