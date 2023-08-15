@@ -24,7 +24,7 @@ import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragment() {
+class FolderGalleryFragment(val groupId: String, val groupName: String, val folderId: String) : Fragment() {
     private lateinit var binding: FragmentFolderGalleryBinding
     private var galleryList: ArrayList<String> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
@@ -48,6 +48,7 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
 
         val folderId = arguments?.getString("folderId")
         val groupId = arguments?.getString("groupId")
+        val groupName = arguments?.getString("groupName")
 
 
         if (folderId != null && groupId != null) {
@@ -62,11 +63,13 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
         }
 
         binding.btnFolderModify.setOnClickListener {
-            //Modify Activity로 이동.
             val intent = Intent(requireContext(), FolderModifyActivity::class.java)
-//            intent.putExtra("folderID", )
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
+            intent.putExtra("folderId", folderId)
             startActivity(intent)
         }
+
     }
 
     private fun openImagePicker() {
@@ -80,18 +83,22 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == REQUEST_IMAGE_PICK && resultCode == Activity.RESULT_OK) {
-            val selectedImageUris = data?.clipData ?: return
+            val selectedImageUris = data?.clipData
 
-            for (i in 0 until selectedImageUris.itemCount) {
-                val imageUri = selectedImageUris.getItemAt(i).uri
-                uploadImageToStorage(imageUri)
+            if (selectedImageUris != null) {
+                for (i in 0 until selectedImageUris.itemCount) {
+                    val imageUri = selectedImageUris.getItemAt(i).uri
+                    uploadImageToStorage(imageUri)
+                }
+            } else {
+                val imageUri = data?.data
+                if (imageUri != null) {
+                    uploadImageToStorage(imageUri)
+                }
             }
-
-            // After uploading all selected images, call the function to add them to the folder
-            val selectedImageUrls = galleryList.toList() // Assuming you've already added the URLs during upload
-            onAddImagesButtonClicked(selectedImageUrls)
         }
     }
+
 
     private fun uploadImageToStorage(imageUri: Uri) {
         val imageName = UUID.randomUUID().toString()
@@ -197,6 +204,8 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
                 galleryList.clear()
                 galleryList.addAll(imageUrls)
                 gridGalleryAdapter.notifyDataSetChanged()
+
+                onAddImagesButtonClicked(galleryList.toList())
             }
             .addOnFailureListener { exception ->
                 // Handle the error

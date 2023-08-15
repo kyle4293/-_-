@@ -148,8 +148,10 @@ class HomeFragment : Fragment() {
         //폴더 생성 화면으로 이동.
         binding.layoutFolderCreate.setOnClickListener {
             val groupId = arguments?.getString(ARG_GROUP_ID)
+            val groupName = arguments?.getString(ARG_GROUP_NAME)
             val intent = Intent(requireContext(), FolderCreateActivity::class.java)
             intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
             startActivity(intent)
         }
     }
@@ -163,17 +165,18 @@ class HomeFragment : Fragment() {
 
         override fun createFragment(position: Int): Fragment {
             var groupId = selectedGroupId
+            var groupName = selectedGroupName
 
             return when (position) {
                 0 -> {
                     // Fragment for FolderList 보기
-                    if(groupId != null) TotalGalleryFragment(groupId)
+                    if(groupId != null && groupName!=null) TotalGalleryFragment(groupId)
                     else TotalGalleryFragment("NO_GROUP")
                 }
                 1 -> {
                     // Fragment for 전체 사진 보기
-                    if(groupId != null) FolderListFragment(groupId)
-                    else FolderListFragment("NO_GROUP")
+                    if(groupId != null && groupName!=null) FolderListFragment(groupId, groupName)
+                    else FolderListFragment("NO_GROUP", "")
                 }
                 else -> throw IllegalArgumentException("Invalid position: $position")
             }
