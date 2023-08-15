@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentFolderGalleryBinding
 import com.google.firebase.firestore.FieldValue
@@ -108,6 +109,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
                 imageRef.downloadUrl.addOnSuccessListener { imageUrl ->
                     // 이미지 업로드가 완료되면 해당 이미지 URL을 파이어베이스 데이터베이스에 추가
                     addImageToFolder(imageUrl.toString())
+                    updateGroupWithImageInfo(groupId, imageUrl.toString())
                 }
             }
             .addOnFailureListener { exception ->
@@ -127,6 +129,39 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             }
             .addOnFailureListener { exception ->
                 // 데이터베이스 업데이트 실패 시 처리
+            }
+    }
+
+
+    private fun updateGroupWithImageInfo(groupId: String, imageUrl: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val groupRef = firestore.collection("groups").document(groupId)
+
+        groupRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val images = documentSnapshot.get("images") as? List<String> ?: emptyList()
+                    images.toMutableList().apply {
+                        add(imageUrl)
+                    }.let { updatedImages ->
+                        // 업로드된 사진 URL을 그룹 정보에 저장
+                        groupRef.update("images", updatedImages)
+                            .addOnSuccessListener {
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.putExtra("groupId", groupId) // 그룹 정보 전달
+                                intent.putExtra("groupName", groupName) // 그룹 이름 전달
+                                startActivity(intent)
+                                // 업데이트 성공 처리
+                            }
+                            .addOnFailureListener { exception ->
+                                // 업데이트 실패 처리
+                            }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 문서 가져오기 실패 처리
             }
     }
 

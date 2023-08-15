@@ -11,6 +11,9 @@ import com.example.familyalbum.databinding.ActivityPhotoConfirmBinding
 
 class PhotoConfirmActivity : AppCompatActivity() {
     lateinit var binding: ActivityPhotoConfirmBinding
+    private var groupId: String? = null
+    private var groupName: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPhotoConfirmBinding.inflate(layoutInflater)
@@ -19,7 +22,8 @@ class PhotoConfirmActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
-
+        groupId = intent.getStringExtra("groupId")
+        groupName = intent.getStringExtra("groupName")
         val uploadImageInfo = intent.getSerializableExtra("imageInfo") as? ArrayList<String>
         val imageUrl = uploadImageInfo?.get(1)
 
@@ -39,6 +43,8 @@ class PhotoConfirmActivity : AppCompatActivity() {
             //confirm Activity로 이동
             val intent = Intent(this, PostingActivity::class.java)
             intent.putExtra("imageInfo", uploadImageInfo)
+            intent.putExtra("groupId", groupId)
+            intent.putExtra("groupName", groupName)
             startActivity(intent)
         }
     }
