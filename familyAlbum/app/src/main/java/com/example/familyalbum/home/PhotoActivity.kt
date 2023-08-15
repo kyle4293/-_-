@@ -31,6 +31,7 @@ class PhotoActivity : AppCompatActivity() {
         val imageUri = Uri.parse(imageInfo)
         val groupId = intent.getStringExtra("groupId")
         val groupName = intent.getStringExtra("groupName")
+        val folderId = intent.getStringExtra("folderId")
 
 
         Glide.with(this)
@@ -42,23 +43,25 @@ class PhotoActivity : AppCompatActivity() {
         }
 
         binding.btnDelete.setOnClickListener {
-            deletePhoto(groupId!!, groupName!!, imageUri.toString())
+            deleteImageFromFolder(groupId!!, folderId!!, groupName!!, imageUri.toString())
         }
     }
 
-    private fun deletePhoto(groupId: String, groupName: String, imageUri: String) {
+    private fun deleteImageFromFolder(groupId: String, folderId: String, groupName: String, imageUri: String) {
         val firestore = FirebaseFirestore.getInstance()
+        val folderRef = firestore.collection("groups").document(groupId)
+            .collection("folders").document(folderId)
 
-        if (groupId != null) {
-            val groupRef = firestore.collection("groups").document(groupId)
+        folderRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val images = document.get("images") as? List<String>
+                    if (images != null) {
+                        val updatedImages = images.toMutableList().apply {
+                            remove(imageUri)
+                        }
 
-            groupRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val images = documentSnapshot.get("images") as? List<String> ?: emptyList()
-                        val updatedImages = images.filterNot { it == imageUri }
-
-                        groupRef.update("images", updatedImages)
+                        folderRef.update("images", updatedImages)
                             .addOnSuccessListener {
                                 val intent = Intent(this, MainActivity::class.java)
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -67,14 +70,15 @@ class PhotoActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }
-                            .addOnFailureListener {
-                                // 이미지 정보 업데이트 실패
+                            .addOnFailureListener { exception ->
+                                // Handle the update failure
                             }
                     }
                 }
-                .addOnFailureListener {
-                    // 그룹 정보 가져오기 실패
-                }
-        }
+            }
+            .addOnFailureListener { exception ->
+                // Handle the error
+            }
     }
+
 }

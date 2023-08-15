@@ -108,13 +108,14 @@ class TotalGalleryFragment(val groupId: String, val groupName: String) : Fragmen
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
             init{
                 itemView.setOnClickListener {
-                    val uploadImageInfo = galleryList[position].imgsrc
-                    val intent = Intent(requireContext(), PhotoActivity::class.java)
-                    intent.putExtra("imageInfo", uploadImageInfo)
-                    intent.putExtra("groupId", groupId)
-                    intent.putExtra("groupName", groupName)
-                    intent.putExtra("imageInfo", uploadImageInfo)
-                    startActivity(intent)
+//                    val uploadImageInfo = galleryList[position].imgsrc
+//                    val intent = Intent(requireContext(), PhotoActivity::class.java)
+//                    intent.putExtra("imageInfo", uploadImageInfo)
+//                    intent.putExtra("groupId", groupId)
+//                    intent.putExtra("groupName", groupName)
+//                    intent.putExtra("imageInfo", uploadImageInfo)
+//                    startActivity(intent)
+                    //기능 삭제
                 }
             }
 
