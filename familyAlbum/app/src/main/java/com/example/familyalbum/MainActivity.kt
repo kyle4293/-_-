@@ -1,10 +1,7 @@
 package com.example.familyalbum
 
-import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -29,6 +26,10 @@ class MainActivity : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //FCM설정, Token값 가져오기
+        MyFirebaseMessagingService().getFirebaseToken()
+
+        initDynamicLink()
 
         val fromTask = intent.getStringExtra("fromTask")
         val fromTipEdit = intent.getStringExtra("fromTipEdit")
@@ -113,6 +114,18 @@ class MainActivity : AppCompatActivity(){
             .replace(R.id.main_content, fragment)
             .addToBackStack(null) // 이 부분을 추가하여 백 스택에 추가합니다.
             .commitAllowingStateLoss()
+    }
+
+    private fun initDynamicLink() {
+        val dynamicLinkData = intent.extras
+        if (dynamicLinkData != null) {
+            var dataStr = "DynamicLink 수신받은 값\n"
+            for (key in dynamicLinkData.keySet()) {
+                dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
+            }
+
+            binding.tvToken.text = dataStr
+        }
     }
 
 }
