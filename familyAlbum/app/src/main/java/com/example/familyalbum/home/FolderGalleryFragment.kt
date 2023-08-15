@@ -242,6 +242,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
                     val intent = Intent(requireContext(), PhotoActivity::class.java)
                     intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("folderId", folderId)
                     intent.putExtra("groupId", groupId)
                     intent.putExtra("groupName", groupName)
                     startActivity(intent)
