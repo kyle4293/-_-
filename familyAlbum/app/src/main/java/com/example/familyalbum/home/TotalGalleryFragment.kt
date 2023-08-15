@@ -2,16 +2,18 @@ package com.example.familyalbum.home
 
 import android.content.ContentValues.TAG
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.familyalbum.R
@@ -20,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class TotalGalleryFragment(val groupId: String) : Fragment() {
 
-    private lateinit var binding:FragmentTotalGalleryBinding
+    private lateinit var binding: FragmentTotalGalleryBinding
     private var galleryList: ArrayList<Gallery> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
 
@@ -41,12 +43,14 @@ class TotalGalleryFragment(val groupId: String) : Fragment() {
         galleryList = ArrayList()
         gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
         initLayout()
-
     }
 
     private fun initLayout() {
         binding!!.gridGallery.adapter = gridGalleryAdapter
-        binding!!.gridGallery.layoutManager = GridLayoutManager(activity, 3)
+
+        val staggeredGridLayoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+        staggeredGridLayoutManager.gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        binding!!.gridGallery.layoutManager = staggeredGridLayoutManager
 
         if(groupId != "NO_GROUP"){
             binding.textviewNogroup.visibility = View.GONE
@@ -73,13 +77,16 @@ class TotalGalleryFragment(val groupId: String) : Fragment() {
     }
 
 
-
     inner class GridRecyclerViewAdapter(val galleryList: ArrayList<Gallery>) : RecyclerView.Adapter<GridRecyclerViewAdapter.CustomViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.gallery_grid_view, parent, false)
             var width = resources.displayMetrics.widthPixels / 3
-            view.layoutParams = LinearLayoutCompat.LayoutParams(width, width)
+
+            val layoutParams = StaggeredGridLayoutManager.LayoutParams(width, ViewGroup.LayoutParams.WRAP_CONTENT)
+            view.layoutParams = layoutParams
+
+//            view.layoutParams = LinearLayoutCompat.LayoutParams(width, width)
             return CustomViewHolder(view)
         }
 
@@ -89,14 +96,18 @@ class TotalGalleryFragment(val groupId: String) : Fragment() {
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             val photo = galleryList[position]
-            val imageView = holder.itemView.findViewById<ImageView>(R.id.imageView)
+            val imageView = holder.itemView.findViewById<ImageView>(R.id.gridImageView)
 
-            Glide.with(holder.itemView.context)
-                .load(photo.imgsrc)
-                .placeholder(R.drawable.baseline_arrow_drop_down_24) // Add a placeholder drawable
-                .apply(RequestOptions().centerCrop())
-                .error(R.drawable.baseline_camera_24)
-                .into(imageView)
+//            Log.e("TAG", position.toString() + "uri!!!"+photo.imgsrc.toString())
+
+            if (!photo.imgsrc.isNullOrEmpty()) {
+                Glide.with(holder.itemView.context)
+                    .load(photo.imgsrc)
+                    .placeholder(R.drawable.baseline_arrow_drop_down_24)
+                    .apply(RequestOptions().centerCrop())
+                    .error(R.drawable.baseline_camera_24)
+                    .into(imageView)
+            }
         }
 
         fun setGalleryList(images: List<String>) {

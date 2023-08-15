@@ -160,7 +160,7 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             val imageUrl = galleryList[position]
-            val imageView = holder.itemView.findViewById<ImageView>(R.id.imageView)
+            val imageView = holder.itemView.findViewById<ImageView>(R.id.gridImageView)
 
             Glide.with(holder.itemView.context)
                 .load(imageUrl)
