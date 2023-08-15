@@ -60,6 +60,13 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
         binding.btnAddImage.setOnClickListener {
             openImagePicker()
         }
+
+        binding.btnFolderModify.setOnClickListener {
+            //Modify Activity로 이동.
+            val intent = Intent(requireContext(), FolderModifyActivity::class.java)
+//            intent.putExtra("folderID", )
+            startActivity(intent)
+        }
     }
 
     private fun openImagePicker() {
@@ -164,6 +171,15 @@ class FolderGalleryFragment(val groupId: String, val folderId: String) : Fragmen
         }
 
         inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            init{
+                itemView.setOnClickListener {
+                    val uploadImageInfo = galleryList[position]
+
+                    val intent = Intent(requireContext(), PhotoActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    startActivity(intent)
+                }
+            }
         }
     }
 
