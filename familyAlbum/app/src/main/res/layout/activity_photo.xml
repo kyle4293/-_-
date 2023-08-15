@@ -60,6 +60,14 @@
         app:layout_constraintEnd_toEndOf="@id/photo_frame"/>
 
     <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/icon_pencil"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="30dp"/>
+
+    <ImageView
         android:id="@+id/btn_delete"
         android:layout_width="60dp"
         android:layout_height="60dp"

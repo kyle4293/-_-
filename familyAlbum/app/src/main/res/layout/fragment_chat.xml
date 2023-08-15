@@ -26,7 +26,7 @@
             android:text="Group Name"
             android:fontFamily="@font/lineseed_kr_rg"
             android:textColor="@color/black"
-            android:textSize="25sp" />
+            android:textSize="24sp" />
 
     </LinearLayout>
 
