@@ -19,7 +19,8 @@ class TipFragment : Fragment() {
     private lateinit var tipAdapter: TipAdapter
     private lateinit var binding: FragmentTipBinding
     private var tipList: List<DocumentSnapshot> = emptyList()
-
+    private var currentGroupId: String? = null
+    private var currentGroupName: String? = null
 
 
     override fun onCreateView(
@@ -32,20 +33,24 @@ class TipFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentGroupId =  (activity as MainActivity).selectedGroupId ?: ""
+        currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
         init()
     }
 
     private fun init() {
         binding.tipPlusButton.setOnClickListener {
             val intent = Intent(context, TipPlusActivity::class.java)
+            intent.putExtra("groupId", currentGroupId)
+            intent.putExtra("groupName", currentGroupName)
             startActivity(intent)
         }
 
         //현재 그룹 이름
-        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
-        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+        val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
+        val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
-        tipAdapter = TipAdapter(currentGroupID, emptyList())
+        tipAdapter = TipAdapter(currentGroupID, currentGroupName, emptyList())
 
         //********태그 필터*********
         binding.allbutton.setOnClickListener {
@@ -90,10 +95,10 @@ class TipFragment : Fragment() {
         binding.tipRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         //현재 그룹 이름
-        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
-        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+        val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
+        val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
-        tipAdapter = TipAdapter(currentGroupID, emptyList())
+        tipAdapter = TipAdapter(currentGroupID, currentGroupName, emptyList())
         binding.tipRecyclerView.adapter = tipAdapter
 
         //firestore에서 데이터 가져오기
@@ -115,8 +120,8 @@ class TipFragment : Fragment() {
 
     private fun loadTipsByTag(tag: String) {
         //현재 그룹 이름
-        val currentGroupID =  (activity as? MainActivity)?.sharedViewModel?.currentGroupID ?: ""
-        val currentGroupName = (activity as? MainActivity)?.sharedViewModel?.currentGroupName ?: ""
+        val currentGroupID =  (activity as MainActivity).selectedGroupId ?: ""
+        val currentGroupName = (activity as MainActivity).selectedGroupName ?: ""
 
         val db = FirebaseFirestore.getInstance()
         val tipsCollection = db.collection("tips")

@@ -22,6 +22,9 @@ class TipEditActivity : AppCompatActivity() {
         binding = ActivityTipEditBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val currentGroupId = intent.getStringExtra("groupId")
+        val currentGroupName = intent.getStringExtra("groupName")
+
         //요 밑 세가지가 수정 전 tip 정보
         val title = intent.getStringExtra("title")
         val content = intent.getStringExtra("content")
@@ -58,6 +61,7 @@ class TipEditActivity : AppCompatActivity() {
             }
         }
 
+        //수정
         binding.button2.setOnClickListener {
             //여기서 DB작업을 해주면 됩니다
 
@@ -80,6 +84,8 @@ class TipEditActivity : AppCompatActivity() {
                     //finish()
                     val intent = Intent(this, MainActivity::class.java)
                     intent.putExtra("fromTipEdit", "fromTipEdit")
+                    intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
+                    intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
                     startActivity(intent)
                 }
                 .addOnFailureListener { e ->
@@ -105,6 +111,9 @@ class TipEditActivity : AppCompatActivity() {
                             //finish()
                             val intent = Intent(this, MainActivity::class.java)
                             intent.putExtra("fromTipEdit", "fromTipEdit")
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                            intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
+                            intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
                             startActivity(intent)
                         }
                         .addOnFailureListener { e ->
