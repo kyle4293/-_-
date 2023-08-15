@@ -87,6 +87,7 @@ class FolderCreateActivity : AppCompatActivity() {
             .add(folderData)
             .addOnSuccessListener { folderDocRef ->
                 Log.d(ContentValues.TAG, "Folder with image added with ID: ${folderDocRef.id}")
+
                 finish() // 폴더 생성 후 액티비티 종료
             }
             .addOnFailureListener { e ->
