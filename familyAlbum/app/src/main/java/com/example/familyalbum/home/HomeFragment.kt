@@ -43,6 +43,8 @@ class HomeFragment : Fragment() {
                     //confirm Activity로 이동
                     val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
                     intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("groupId", selectedGroupId)
+                    intent.putExtra("groupName", selectedGroupName)
                     startActivity(intent)
                 }
             } catch (e: IOException) {
