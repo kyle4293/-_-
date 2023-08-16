@@ -30,27 +30,9 @@ import kotlin.collections.ArrayList
 
 class FolderGalleryFragment(val groupId: String, val groupName: String, val folderId: String, val folderName: String) : Fragment() {
     private lateinit var binding: FragmentFolderGalleryBinding
-    private var galleryList: ArrayList<String> = arrayListOf()
+    private val galleryMap: MutableMap<String, String> = mutableMapOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
     private val storageReference = FirebaseStorage.getInstance().reference
-
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        if (uri != null) {
-//            val groupId = arguments?.getString(HomeFragment.ARG_GROUP_ID)
-            try {
-                if (!groupId.isNullOrEmpty()) {
-                    val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
-
-                    //confirm Activity로 이동
-                    val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
-                    intent.putExtra("imageInfo", uploadImageInfo)
-                    startActivity(intent)
-                }
-            } catch (e: IOException) {
-//                e.printStackTrace()
-            }
-        }
-    }
 
 
     companion object {
@@ -75,15 +57,15 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
         val folderDescription = arguments?.getString("folderDescription")
 
 
-
         if (folderId != null && groupId != null) {
             loadAndDisplayFolderImages(groupId, folderId)
-            gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
-            binding.gridGallery.layoutManager = GridLayoutManager(requireContext(), 3) // 3 items per row
+            gridGalleryAdapter = GridRecyclerViewAdapter(emptyList()) // 초기에는 빈 리스트를 사용
+            binding.gridGallery.layoutManager =
+                GridLayoutManager(requireContext(), 3) // 3 items per row
             binding.gridGallery.adapter = gridGalleryAdapter
             binding.textviewFolderName.text = folderName
-//            binding.textviewFolderInfo.text = folderDescription
         }
+
 
         binding.btnAddImage.setOnClickListener {
             openImagePicker()
@@ -117,26 +99,26 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             if (selectedImageUris != null) {
                 for (i in 0 until selectedImageUris.itemCount) {
                     val imageUri = selectedImageUris.getItemAt(i).uri
-                    uploadImageToStorage(imageUri)
+                    uploadImageToStorage(imageUri, "")
                 }
             } else {
                 val imageUri = data?.data
                 if (imageUri != null) {
-                    uploadImageToStorage(imageUri)
+                    uploadImageToStorage(imageUri, "")
                 }
             }
         }
     }
 
 
-    private fun uploadImageToStorage(imageUri: Uri) {
+    private fun uploadImageToStorage(imageUri: Uri, description: String) {
         val imageName = UUID.randomUUID().toString()
         val imageRef = storageReference.child("images/$imageName")
         imageRef.putFile(imageUri)
             .addOnSuccessListener {
                 imageRef.downloadUrl.addOnSuccessListener { imageUrl ->
-                    // 이미지 업로드가 완료되면 해당 이미지 URL을 파이어베이스 데이터베이스에 추가
-                    addImageToFolder(imageUrl.toString())
+                    // 이미지 업로드가 완료되면 해당 이미지 정보를 파이어베이스 데이터베이스에 추가
+                    addImageToFolder(imageUrl.toString(), description)
                     updateGroupWithImageInfo(groupId, imageUrl.toString())
                 }
             }
@@ -145,21 +127,37 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             }
     }
 
-    private fun addImageToFolder(imageUrl: String) {
+    private fun addImageToFolder(imageUrl: String, description: String) {
         val firestore = FirebaseFirestore.getInstance()
         val folderRef = firestore.collection("groups").document(groupId)
             .collection("folders").document(folderId)
 
-        folderRef.update("images", FieldValue.arrayUnion(imageUrl))
-            .addOnSuccessListener {
-                galleryList.add(imageUrl)
-                gridGalleryAdapter.notifyDataSetChanged()
+        folderRef.get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val images = document.get("images") as? List<Map<String, String>>
+
+                    val newImage = mapOf(
+                        "url" to imageUrl,
+                        "description" to description
+                    )
+
+                    val updatedImages = images?.toMutableList()?.apply { add(newImage) }
+                        ?: mutableListOf(newImage)
+
+                    folderRef.update("images", updatedImages)
+                        .addOnSuccessListener {
+                            gridGalleryAdapter.addImage(newImage) // 어댑터에 이미지 추가
+                        }
+                        .addOnFailureListener { exception ->
+                            // 데이터베이스 업데이트 실패 시 처리
+                        }
+                }
             }
             .addOnFailureListener { exception ->
-                // 데이터베이스 업데이트 실패 시 처리
+                // Handle the error
             }
     }
-
 
     private fun updateGroupWithImageInfo(groupId: String, imageUrl: String) {
         val firestore = FirebaseFirestore.getInstance()
@@ -202,11 +200,16 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
         folderRef.get()
             .addOnSuccessListener { document ->
                 if (document.exists()) {
-                    val images = document.get("images") as? List<String>
+                    val images = document.get("images") as? List<Map<String, String>>
+
                     if (images != null) {
-                        galleryList.addAll(images)
-                        Log.e(TAG, galleryList.toString())
-                        gridGalleryAdapter.notifyDataSetChanged()
+                        val imageMapList = images.map { imageMap ->
+                            val imageUrl = imageMap["url"] ?: ""
+                            val description = imageMap["description"] ?: ""
+                            mapOf("url" to imageUrl, "description" to description)
+                        }
+
+                        gridGalleryAdapter.setImageList(imageMapList)
                     }
                 }
             }
@@ -215,22 +218,36 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             }
     }
 
-    inner class GridRecyclerViewAdapter(val galleryList: ArrayList<String>) : RecyclerView.Adapter<GridRecyclerViewAdapter.CustomViewHolder>() {
+
+    inner class GridRecyclerViewAdapter(private var imageList: List<Map<String, String>>) :
+        RecyclerView.Adapter<GridRecyclerViewAdapter.CustomViewHolder>() {
+
+        fun setImageList(images: List<Map<String, String>>) {
+            imageList = images
+            notifyDataSetChanged()
+        }
+
+        fun addImage(image: Map<String, String>) {
+            imageList = imageList.toMutableList().apply { add(image) }
+            notifyDataSetChanged()
+        }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.gallery_grid_view, parent, false)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.gallery_grid_view, parent, false)
             var width = resources.displayMetrics.widthPixels / 3
             view.layoutParams = LinearLayoutCompat.LayoutParams(width, width)
             return CustomViewHolder(view)
         }
 
         override fun getItemCount(): Int {
-            return galleryList.size
+            return imageList.size
         }
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
-            val imageUrl = galleryList[position]
+            val imageUrl = imageList[position]["url"]
             val imageView = holder.itemView.findViewById<ImageView>(R.id.imageView)
+            val description = imageList[position]["description"] ?: ""
 
             Glide.with(holder.itemView.context)
                 .load(imageUrl)
@@ -238,56 +255,20 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
                 .apply(RequestOptions().centerCrop())
                 .error(R.drawable.baseline_camera_24)
                 .into(imageView)
+
+            holder.itemView.setOnClickListener {
+                val intent = Intent(requireContext(), PhotoActivity::class.java)
+                intent.putExtra("imageInfo", imageUrl)
+                intent.putExtra("folderId", folderId)
+                intent.putExtra("groupId", groupId)
+                intent.putExtra("groupName", groupName)
+                intent.putExtra("description", description) // 설명도 전달
+                startActivity(intent)
+            }
+
+            holder.itemView.setPadding(20, 20, 20, 20)
         }
 
-        inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            init{
-                itemView.setOnClickListener {
-                    val uploadImageInfo = galleryList[position]
-
-                    val intent = Intent(requireContext(), PhotoActivity::class.java)
-                    intent.putExtra("imageInfo", uploadImageInfo)
-                    intent.putExtra("folderId", folderId)
-                    intent.putExtra("groupId", groupId)
-                    intent.putExtra("groupName", groupName)
-                    startActivity(intent)
-                }
-                itemView.setPadding(20, 20, 20, 20)
-            }
-        }
-    }
-
-    // This function is called when the user adds images to the folder
-    private fun addImagesToFolder(imageUrls: List<String>) {
-        // Update the folder's images in Firebase
-        val firestore = FirebaseFirestore.getInstance()
-        val folderRef = firestore.collection("groups").document(groupId)
-            .collection("folders").document(folderId)
-
-        // Update the images field with the new image URLs
-        folderRef.update("images", imageUrls)
-            .addOnSuccessListener {
-                // Successfully updated the images
-                galleryList.clear()
-                galleryList.addAll(imageUrls)
-                gridGalleryAdapter.notifyDataSetChanged()
-
-                onAddImagesButtonClicked(galleryList.toList())
-            }
-            .addOnFailureListener { exception ->
-                // Handle the error
-            }
-    }
-
-    // Example usage when the user adds images to the folder
-    private fun onAddImagesButtonClicked(selectedImageUrls: List<String>) {
-        // Get the current images in the folder
-        val currentImages = galleryList.toList()
-
-        // Add the selected images to the current images list
-        val newImages = currentImages + selectedImageUrls
-
-        // Update the folder with the new image list
-        addImagesToFolder(newImages)
+        inner class CustomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
     }
 }
