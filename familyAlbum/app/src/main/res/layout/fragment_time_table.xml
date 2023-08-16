@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".timeTable.TimeTableFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
@@ -29,11 +29,11 @@
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="5dp"
             android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/lineseed_kr_bd"
             android:text="시간표"
             android:textColor="@color/black"
-            android:fontFamily="@font/lineseed_kr_bd"
             android:textSize="24sp" />
 
 
@@ -42,25 +42,27 @@
             android:layout_width="100dp"
             android:layout_height="35dp"
             android:layout_gravity="bottom"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/chatting_bottom"
+            android:elevation="3dp"
             android:gravity="center"
             android:orientation="horizontal"
-            android:layout_marginBottom="5dp"
-            android:background = "@drawable/chatting_bottom"
-            android:elevation="3dp"
             tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:text="일정 추가"
                 android:fontFamily="@font/lineseed_kr_rg"
-                android:textColor="@color/font_lightgray"/>
+                android:text="일정 추가"
+                android:textColor="@color/font_lightgray" />
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:tint="@color/font_lightgray"
                 android:layout_marginStart="5dp"
-                android:src="@drawable/baseline_add_24"/>
+                android:src="@drawable/baseline_add_24"
+                app:tint="@color/font_lightgray" />
         </LinearLayout>
 
     </LinearLayout>
@@ -68,18 +70,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
-        android:text="프로필 사진을 눌러 가족들의 시간표도 확인해보세요"
         android:fontFamily="@font/lineseed_kr_rg"
-        android:layout_marginStart="20dp"/>
+        android:text="프로필 사진을 눌러 가족들의 시간표도 확인해보세요"
+        android:textSize="14sp" />
 
 
     <TableLayout
         android:id="@+id/timetable"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_margin="10dp"
+        android:layout_weight="1"
         android:background="@drawable/tipbox"
         android:divider="@android:color/darker_gray"
         android:elevation="10dp"
@@ -183,92 +186,97 @@
             android:background="@drawable/horizontal_divider" />
 
         <!-- Rows for each time slot. Here's an example for 9:00 -->
-        <TableRow
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            tools:ignore="SpeakableTextPresentCheck">
 
-            <FrameLayout
-                android:id="@+id/monView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <FrameLayout
+                    android:id="@+id/monView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
 
-            <FrameLayout
-                android:id="@+id/tueView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+                <FrameLayout
+                    android:id="@+id/tueView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
-            <FrameLayout
-                android:id="@+id/wedView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+                <FrameLayout
+                    android:id="@+id/wedView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
-            <FrameLayout
-                android:id="@+id/thuView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+                <FrameLayout
+                    android:id="@+id/thuView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
-            <FrameLayout
-                android:id="@+id/friView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+                <FrameLayout
+                    android:id="@+id/friView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
-            <FrameLayout
-                android:id="@+id/satView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
+                <FrameLayout
+                    android:id="@+id/satView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
 
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/vertical_divider" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/vertical_divider" />
 
-            <FrameLayout
-                android:id="@+id/sunView"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </TableRow>
-
+                <FrameLayout
+                    android:id="@+id/sunView"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center" />
+            </TableRow>
+        </ScrollView>
         <!-- 위와 같은 방식으로 필요한 시간대를 추가하세요. -->
 
     </TableLayout>

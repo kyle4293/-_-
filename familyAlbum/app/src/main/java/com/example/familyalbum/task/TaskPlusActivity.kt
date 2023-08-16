@@ -200,10 +200,12 @@ class TaskPlusActivity : AppCompatActivity() {
                 }
             
             if(startTime.toInt() < endTime.toInt()) {
+
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
                 intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
+                intent.putExtra("fromTask", "fromTask")
                 startActivity(intent)
                 finish()
             }else{
