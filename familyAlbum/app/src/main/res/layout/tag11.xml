@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/button9"
+    android:layout_width="55dp"
+    android:layout_height="35dp"
+    android:layout_margin="5dp"
+    android:elevation="3dp"
+    android:layout_gravity="center_vertical"
+    android:orientation="horizontal"
+    android:background="@drawable/tag1">
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="center"
+        android:src="@drawable/icon_tshirt"
+        android:layout_marginStart="10dp"
+        app:tint="#94803e" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="5dp"
+        android:layout_marginStart="3dp"
+        android:background="@drawable/tag1"
+        android:text="의"
+        android:fontFamily="@font/lineseed_kr_bd"
+        android:textColor="#94803e"
+        android:textSize="15sp"/>
+</LinearLayout>
