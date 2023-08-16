@@ -15,9 +15,7 @@
  ‘기억’ 어플은 이러한 사회적 변화와 SNS에 익숙한 MZ세대의 라이프스타일을 반영하여, 가족 간에 원활한 소통을 돕고 소중한 순간을 잊지 않고 기록할 수 있는 플랫폼을 제공합니다. 
 <br/>
 <br/>
-
-![기억](https://github.com/kyle4293/K-RicePower/assets/87288266/78601fa7-916f-4ad3-adfd-0e889adb16c2)
-
+![기억-2](https://github.com/kyle4293/K-RicePower/assets/87288266/a490a335-c9ee-4b24-9716-6fc44f001841)
 
 ## ⚙️ Built With
 - #### **IDE** : <img src="https://img.shields.io/badge/Android Studio-3DDC84?style=flat&logo=Android Studio&logoColor=white"/>
