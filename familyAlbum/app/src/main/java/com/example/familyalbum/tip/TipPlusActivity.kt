@@ -1,5 +1,6 @@
 package com.example.familyalbum.tip
 
+import android.R
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,14 +9,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
 import android.widget.ArrayAdapter
 import androidx.core.app.NotificationCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.familyalbum.MainActivity
-import com.example.familyalbum.R
-import com.example.familyalbum.databinding.ActivityTaskPlusBinding
-import com.example.familyalbum.databinding.ActivityTipEditBinding
 import com.example.familyalbum.databinding.ActivityTipPlusBinding
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -61,6 +57,9 @@ class TipPlusActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
                     intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
+                    if (currentGroupName != null) {
+                        notifyTipChanged(currentGroupId, currentGroupName)
+                    }
                     startActivity(intent)
                     finish()
                 }
@@ -86,12 +85,12 @@ class TipPlusActivity : AppCompatActivity() {
         intent.putExtra("groupId", groupId) // 그룹 정보 전달
         intent.putExtra("groupName", groupName) // 그룹 이름 전달
 
-        val pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE)
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(notificationTitle)
             .setContentText(notificationContent)
-//            .setSmallIcon(R.drawable.ic_notification) // 푸시 알림 아이콘
+            .setSmallIcon(R.drawable.ic_dialog_info) // 푸시 알림 아이콘
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 
