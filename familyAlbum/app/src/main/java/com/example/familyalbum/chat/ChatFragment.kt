@@ -21,6 +21,7 @@ class ChatFragment : Fragment() {
     private lateinit var binding: FragmentChatBinding
     private lateinit var currentUserID: String
     private lateinit var chatRoomId: String
+    private var groupId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,7 +34,8 @@ class ChatFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val groupId = (activity as MainActivity).selectedGroupId
+        groupId = (activity as MainActivity).selectedGroupId
+
         chatRoomId = "group_$groupId"
 
         currentUserID = FirebaseAuth.getInstance().currentUser?.uid ?: ""
@@ -119,6 +121,10 @@ class ChatFragment : Fragment() {
 
                                 // 새로운 메시지가 추가되었으므로 스크롤을 아래로 이동
                                 binding.chatRecyclerView.scrollToPosition(messageAdapter.itemCount - 1)
+
+                                if (userId != currentUserID && senderName != null) {
+                                    sendPushNotificationToGroup(userId, senderName, messageText)
+                                }
                             }
                     }
                 }
@@ -143,5 +149,32 @@ class ChatFragment : Fragment() {
                     // 그룹 이름을 가져오는 데 실패한 경우 처리
                 }
         }
+    }
+
+    private fun sendPushNotificationToGroup(senderId: String, senderName: String, messageText: String) {
+        val groupId = groupId
+
+        // 그룹 내의 각 사용자 토큰 가져오기 및 푸시 알림 보내기
+        if (groupId != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("groups")
+                .document(groupId)
+                .collection("members")
+                .get()
+                .addOnSuccessListener { querySnapshot ->
+                    for (document in querySnapshot) {
+                        val memberId = document.getString("userId")
+                        val targetToken = document.getString("token")
+                        if (!targetToken.isNullOrEmpty() && memberId != senderId) {
+                            //발신자가 아닌 사용자에게 푸시 알림 보내기
+                            sendPushNotification(targetToken, senderName, messageText)
+                        }
+                    }
+                }
+        }
+    }
+
+    private fun sendPushNotification(targetToken: String, senderName: String, messageText: String) {
+
     }
 }
