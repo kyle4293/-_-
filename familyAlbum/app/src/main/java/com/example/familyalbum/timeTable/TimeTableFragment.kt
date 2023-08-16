@@ -430,6 +430,8 @@ class TimeTableFragment : Fragment(){
                                 dialog.dismiss() // 다이얼로그 닫기
 
                                 val intent = Intent(context, TaskEditActivity::class.java)
+                                intent.putExtra("groupId", currentGroupId)
+                                intent.putExtra("groupName", currentGroupName)
                                 intent.putExtra("startTime", task.startTime)
                                 intent.putExtra("endTime", task.endTime)
                                 intent.putExtra("title", task.title)
