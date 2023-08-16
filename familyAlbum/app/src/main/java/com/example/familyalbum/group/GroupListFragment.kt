@@ -50,8 +50,6 @@ class GroupListFragment : Fragment() {
     }
 
     private fun init() {
-        val dummyGroupList = ArrayList<Group>()
-
         viewModel = ViewModelProvider(this).get(CreateGroupViewModel::class.java)
 
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid

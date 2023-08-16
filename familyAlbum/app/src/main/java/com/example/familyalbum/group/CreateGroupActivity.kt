@@ -24,6 +24,7 @@ class CreateGroupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateGroupBinding
     private lateinit var viewModel: CreateGroupViewModel
+
     var REQUEST_CONFIRM = 0
 
 
@@ -41,7 +42,7 @@ class CreateGroupActivity : AppCompatActivity() {
         viewModel.groupCreationSuccess.observe(this, Observer { isSuccess ->
             if (isSuccess) {
                 Toast.makeText(this, "Succeeded in creating group", Toast.LENGTH_SHORT).show()
-                joinAndLoadMain(viewModel.groupJoinId.value.toString())
+                joinAndLoadMain(viewModel.groupJoinId.value.toString(), viewModel.groupJoinName.value.toString())
             } else {
                 // 그룹 생성 실패 시 처리
                 Toast.makeText(this, "Failed to create group", Toast.LENGTH_SHORT).show()
@@ -63,20 +64,20 @@ class CreateGroupActivity : AppCompatActivity() {
         }
     }
 
-    private fun joinAndLoadMain(groupId: String) {
+    private fun joinAndLoadMain(groupId: String, groupName: String) {
         val firestore = FirebaseFirestore.getInstance()
         val groupRef = firestore.collection("groups").document(groupId)
         groupRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
-                    val groupName = documentSnapshot.getString("groupName")
                     if (groupName != null) {
+                        val mActivity = MainActivity()
+                        mActivity.changeFragmentWithGroup(groupId, groupName)
                         val intent = Intent(this, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("groupId", groupId) // 그룹 정보 전달
                         intent.putExtra("groupName", groupName) // 그룹 이름 전달
                         startActivity(intent)
-                        finish()
                     } else {
                     }
                 } else {

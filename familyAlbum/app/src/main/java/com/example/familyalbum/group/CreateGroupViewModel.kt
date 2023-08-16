@@ -31,6 +31,10 @@ class CreateGroupViewModel : ViewModel() {
     val groupJoinId: LiveData<String>
         get() = _groupJoinId
 
+    private val _groupJoinName = MutableLiveData<String>()
+    val groupJoinName: LiveData<String>
+        get() = _groupJoinName
+
 
     fun joinGroup(groupId: String) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -91,6 +95,7 @@ class CreateGroupViewModel : ViewModel() {
                 .addOnSuccessListener { documentReference ->
                     val groupId = documentReference.id
                     _groupJoinId.value = groupId
+                    _groupJoinName.value = name!!
                     // 유저의 그룹 목록에 추가
                     val userGroup = mapOf("groupId" to groupId, "groupName" to name)
                     firestore.collection("users")
