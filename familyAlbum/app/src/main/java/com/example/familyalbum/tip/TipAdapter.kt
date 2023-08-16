@@ -2,6 +2,7 @@ package com.example.familyalbum.tip
 
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
@@ -36,11 +37,26 @@ class TipAdapter(private val currentGroupId: String, private val currentGroupNam
             showPopupMenu(it,position)
         }
         holder.binding.tipTitle.text = tip.title
-        holder.binding.tag.text = tip.tag
+//        holder.binding.tag.text = tip.tag
         when (tip.tag) {
-            "의" -> holder.binding.tag.setBackgroundResource(R.drawable.tag1)
-            "식" -> holder.binding.tag.setBackgroundResource(R.drawable.tag2)
-            "주" -> holder.binding.tag.setBackgroundResource(R.drawable.tag3)
+            "의" -> {
+                holder.binding.tag.setBackgroundResource(R.drawable.tag1)
+                holder.binding.tagName.text = "의"
+                holder.binding.tagName.setTextColor(Color.parseColor("#94803e"))
+                holder.binding.tagIcon.setImageResource(R.drawable.icon_tshirt)
+            }
+            "식" -> {
+                holder.binding.tag.setBackgroundResource(R.drawable.tag2)
+                holder.binding.tagName.text = "식"
+                holder.binding.tagName.setTextColor(Color.parseColor("#856155"))
+                holder.binding.tagIcon.setImageResource(R.drawable.icon_food)
+            }
+            "주" -> {
+                holder.binding.tag.setBackgroundResource(R.drawable.tag3)
+                holder.binding.tagName.text ="주"
+                holder.binding.tagName.setTextColor(Color.parseColor("#6b5f58"))
+                holder.binding.tagIcon.setImageResource(R.drawable.icon_home_filter)
+            }
         }
         holder.binding.tipContent.text = tip.content
 

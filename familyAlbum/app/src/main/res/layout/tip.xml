@@ -21,21 +21,37 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:id="@+id/tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:elevation="3dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/tag1"
-            android:backgroundTintMode="multiply"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:text="태그"
-            android:textSize="14sp" />
+            android:orientation="horizontal"
+            android:background="@drawable/tag1">
+            <ImageView
+                android:id="@+id/tag_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_tshirt"
+                app:tint="#94803e"
+                android:layout_marginStart="10dp"/>
+            <TextView
+                android:id="@+id/tag_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="3dp"
+                android:text="의"
+                android:fontFamily="@font/lineseed_kr_bd"
+                android:textColor="#94803e"
+                android:textSize="15sp"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
 
 
         <TextView
@@ -56,8 +72,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/dots"
-            android:visibility="visible"
-            app:tint="@color/cardview_dark_background"
+            app:tint="@color/font_lightgray"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     </LinearLayout>

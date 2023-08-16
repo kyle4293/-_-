@@ -93,6 +93,9 @@ class TipEditActivity : AppCompatActivity() {
                     intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
                     intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
                     startActivity(intent)
+                    if (currentGroupId != null && currentGroupName != null) {
+                        notifyTipChanged(currentGroupId, currentGroupName)
+                    }
                 }
                 .addOnFailureListener { e ->
                     // 수정 실패 시 처리
@@ -116,12 +119,12 @@ class TipEditActivity : AppCompatActivity() {
         intent.putExtra("groupId", groupId) // 그룹 정보 전달
         intent.putExtra("groupName", groupName) // 그룹 이름 전달
 
-        val pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT)
+        val pendingIntent = PendingIntent.getActivity(this, notificationId, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE)
 
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(notificationTitle)
             .setContentText(notificationContent)
-//            .setSmallIcon(R.drawable.ic_notification) // 푸시 알림 아이콘
+            .setSmallIcon(R.drawable.ic_dialog_info) // 푸시 알림 아이콘
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 

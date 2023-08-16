@@ -54,49 +54,117 @@
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
             android:orientation="horizontal">
-            <androidx.appcompat.widget.AppCompatButton
+
+            <LinearLayout
                 android:id="@+id/allbutton"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/tag0"
-                android:text="전체"
-                android:textColor="@color/black"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_margin="5dp"
+                android:elevation="3dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:background="@drawable/tag0">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="3dp"
+                    android:text="전체"
+                    android:fontFamily="@font/lineseed_kr_bd"
+                    android:textColor="#696969"
+                    android:textSize="15sp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <LinearLayout
                 android:id="@+id/button9"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_margin="5dp"
+                android:elevation="3dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/tag1"
-                android:text="의"
-                android:textColor="@color/black"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:orientation="horizontal"
+                android:background="@drawable/tag1">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_tshirt"
+                    app:tint="#94803e"
+                    android:layout_marginStart="10dp"/>
 
-            <androidx.appcompat.widget.AppCompatButton
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="3dp"
+                    android:background="@drawable/tag1"
+                    android:text="의"
+                    android:fontFamily="@font/lineseed_kr_bd"
+                    android:textColor="#94803e"
+                    android:textSize="15sp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/button10"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:elevation="3dp"
+                android:layout_margin="5dp"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="5dp"
-                android:background="@drawable/tag2"
-                android:text="식"
-                android:textColor="@color/black"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:orientation="horizontal"
+                android:background="@drawable/tag2">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_food"
+                    app:tint="#856155"
+                    android:layout_marginStart="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="3dp"
+                    android:text="식"
+                    android:fontFamily="@font/lineseed_kr_bd"
+                    android:textColor="#856155"
+                    android:textSize="15sp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatButton
+            <LinearLayout
                 android:id="@+id/button11"
-                android:layout_width="50dp"
-                android:layout_height="30dp"
+                android:layout_width="55dp"
+                android:layout_height="35dp"
+                android:layout_margin="5dp"
+                android:elevation="3dp"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/tag3"
-                android:text="주"
-                android:textColor="@color/black"
-                tools:ignore="TouchTargetSizeCheck" />
+                android:orientation="horizontal"
+                android:background="@drawable/tag3">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/icon_home_filter"
+                    app:tint="#6b5f58"
+                    android:layout_marginStart="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="3dp"
+                    android:text="주"
+                    android:fontFamily="@font/lineseed_kr_bd"
+                    android:textColor="#6b5f58"
+                    android:textSize="15sp"
+                    tools:ignore="TouchTargetSizeCheck" />
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
