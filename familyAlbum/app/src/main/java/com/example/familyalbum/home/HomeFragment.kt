@@ -110,8 +110,8 @@ class HomeFragment : Fragment() {
 
         //폴더 생성 화면으로 이동.
         binding.layoutFolderCreate.setOnClickListener {
-            val groupId = arguments?.getString(ARG_GROUP_ID)
-            val groupName = arguments?.getString(ARG_GROUP_NAME)
+            val groupId = selectedGroupId
+            val groupName = selectedGroupName
             val intent = Intent(requireContext(), FolderCreateActivity::class.java)
             intent.putExtra("groupId", groupId)
             intent.putExtra("groupName", groupName)

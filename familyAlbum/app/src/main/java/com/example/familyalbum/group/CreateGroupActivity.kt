@@ -67,12 +67,13 @@ class CreateGroupActivity : AppCompatActivity() {
     private fun joinAndLoadMain(groupId: String, groupName: String) {
         val firestore = FirebaseFirestore.getInstance()
         val groupRef = firestore.collection("groups").document(groupId)
+        Log.e(TAG, groupId)
+        Log.e(TAG, groupName)
+
         groupRef.get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     if (groupName != null) {
-                        val mActivity = MainActivity()
-                        mActivity.changeFragmentWithGroup(groupId, groupName)
                         val intent = Intent(this, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                         intent.putExtra("groupId", groupId) // 그룹 정보 전달
