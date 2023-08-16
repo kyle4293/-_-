@@ -72,12 +72,14 @@ class FolderListFragment(val groupId: String, val groupName: String) : Fragment(
                     if (position != RecyclerView.NO_POSITION) {
                         val selectedFolder = folderList[position]
                         val mActivity = activity as MainActivity
-                        val fragment = FolderGalleryFragment(groupId, groupName, selectedFolder.id)
+                        val fragment = FolderGalleryFragment(groupId, groupName, selectedFolder.id, selectedFolder.name)
 
                         val args = Bundle()
                         args.putString("groupId", groupId)
                         args.putString("groupName", groupName)
                         args.putString("folderId", selectedFolder.id)
+                        args.putString("folderName", selectedFolder.name)
+                        args.putString("folderDescription", selectedFolder.description)
                         fragment.arguments = args
 
                         mActivity.changeFragment(fragment)
