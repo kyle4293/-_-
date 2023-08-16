@@ -89,13 +89,15 @@ class CreateGroupViewModel : ViewModel() {
                 "groupName" to name,
                 "members" to listOf(currentUserUid)
             )
+            _groupJoinName.value = name.toString()
+
 
             firestore.collection("groups")
                 .add(newGroup)
                 .addOnSuccessListener { documentReference ->
                     val groupId = documentReference.id
                     _groupJoinId.value = groupId
-                    _groupJoinName.value = name!!
+
                     // 유저의 그룹 목록에 추가
                     val userGroup = mapOf("groupId" to groupId, "groupName" to name)
                     firestore.collection("users")
