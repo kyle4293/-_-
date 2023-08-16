@@ -60,7 +60,7 @@
         app:layout_constraintEnd_toEndOf="@id/photo_frame"/>
 
     <ImageView
-        android:id="@+id/btn_photo_modify"
+        android:id="@+id/btn_photo_write"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:src="@drawable/icon_pencil"

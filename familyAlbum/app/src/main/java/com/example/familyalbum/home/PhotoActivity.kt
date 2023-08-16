@@ -42,6 +42,10 @@ class PhotoActivity : AppCompatActivity() {
             finish()
         }
 
+        binding.btnPhotoWrite.setOnClickListener {
+            // 사진설명 적기
+       }
+
         binding.btnDelete.setOnClickListener {
             deleteImageFromFolder(groupId!!, folderId!!, groupName!!, imageUri.toString())
         }
