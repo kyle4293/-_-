@@ -54,6 +54,7 @@ class TipPlusActivity : AppCompatActivity() {
                     // 추가 성공 시 처리
                     //finish() // 예를 들어, 현재 화면을 종료하거나 다른 처리 가능
                     val intent = Intent(this, MainActivity::class.java)
+                    intent.putExtra("fromTipEdit","fromTipEdit")
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
                     intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
