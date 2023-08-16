@@ -82,16 +82,19 @@ class FolderCreateActivity : AppCompatActivity() {
     private fun createFolderWithImage(groupId: String, groupName: String, folderName: String, imageUrl: String, folderDescription: String) {
         val groupDocRef = FirebaseFirestore.getInstance().collection("groups").document(groupId)
 
-        val folderData = hashMapOf(
-            "name" to folderName,
-            "images" to arrayListOf(imageUrl), // 이미지 URL 추가
-            "description" to folderDescription
+        val imageInfo = mapOf(
+            "url" to imageUrl,
+            "description" to ""
         )
 
+
         groupDocRef.collection("folders")
-            .add(folderData)
+            .add(hashMapOf(
+                "name" to folderName,
+                "images" to arrayListOf(imageInfo),
+                "description" to folderDescription
+            ))
             .addOnSuccessListener { folderDocRef ->
-                Log.d(ContentValues.TAG, "Folder with image added with ID: ${folderDocRef.id}")
                 val intent = Intent(this, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                 intent.putExtra("groupId", groupId) // 그룹 정보 전달
