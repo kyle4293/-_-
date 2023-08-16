@@ -21,6 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginStart="20dp"
+        android:fontFamily="@font/lineseed_kr_rg"
+        android:textColor="@color/font_darkgray"
         android:text="member Name"
         android:textSize="15sp" />
 
