@@ -27,13 +27,13 @@
 
 
 
-## License
+## :loudspeaker: License
 없음.
 <br>
 <br>
 
 
-## References 
+## :loudspeaker: References 
 없음.
 <br>
 <br>
@@ -43,7 +43,7 @@
 이메일,Github 링크, 역할) 정보를 기입
 <br>
 ### K-RicePower
-한국인은_밥심
+한국인은_밥심:rice:
  - 기획, 백엔드 개발  : 최창규(팀장) - 
  - 디자인, 프론트 개발 : 최유빈 - 
  - 기획, 백엔드 개발 : 김범준 - 
