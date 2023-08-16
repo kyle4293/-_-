@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/basic_rectangle"
+    android:backgroundTint="@color/font_darkgray"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".home.TotalGalleryFragment">
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/main_group">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/grid_gallery"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main_group"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:background="@drawable/footer_gallery"
+        android:background="@drawable/header_chat"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
@@ -35,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/lineseed_kr_bd"
             android:text="폴더 이름"
             android:textColor="@color/font_brown"
@@ -43,32 +31,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textview_folder_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:text="폴더 설명"
-            android:textColor="@color/font_light_brown"
-            android:textSize="15sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textview_folder_name" />
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/btn_folder_modify"
-            android:layout_width="90dp"
-            android:layout_height="80dp"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="20dp"
             android:background="@drawable/button_background"
             android:elevation="5dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_add_image"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/textview_folder_name">
 
             <TextView
                 android:id="@+id/textview_folder_create"
@@ -84,11 +58,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/icon_folder"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textview_folder_create" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -124,4 +99,21 @@
                 app:layout_constraintTop_toBottomOf="@id/textview_photo_upload" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@id/main_group">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/grid_gallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

@@ -10,6 +10,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_title"
         android:layout_width="match_parent"
+        android:elevation="5dp"
+        android:background="@drawable/header_chat"
         android:layout_height="70dp">
 
         <TextView
@@ -17,25 +19,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20dp"
-            android:text="잔소리 백과"
+            android:text="\t잔소리 백과"
+            android:gravity="center_vertical"
             android:fontFamily="@font/lineseed_kr_bd"
             android:textColor="@color/black"
             android:textSize="20sp"
+            android:drawableLeft="@drawable/icon_speak"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#D9D9D9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -48,7 +41,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="잔소리백과는 어쩌고 작성하는 곳입니다"
+            android:text="우리 가족만의 생활 꿀팁을 작성해보세요!"
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"

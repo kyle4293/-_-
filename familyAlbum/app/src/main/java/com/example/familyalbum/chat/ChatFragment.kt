@@ -137,7 +137,7 @@ class ChatFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { documentSnapshot ->
                     val groupName = documentSnapshot.getString("groupName")
-                    binding.groupName.text = groupName
+                    binding.groupName.text = "\t"+ groupName
                 }
                 .addOnFailureListener { exception ->
                     // 그룹 이름을 가져오는 데 실패한 경우 처리
