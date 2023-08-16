@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="스케줄 수정"
+            android:text="스케줄 추가"
             android:textSize="24sp"
             android:textColor="@color/font_darkgray"
             android:fontFamily="@font/lineseed_kr_bd"
@@ -64,7 +64,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="일주일 시간표의 스케줄을 수정하세요"
+            android:text="일주일 시간표의 스케줄을 추가하세요"
             android:textSize="14sp"
             android:textColor="@color/font_darkgray"
             android:fontFamily="@font/lineseed_kr_rg"/>

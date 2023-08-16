@@ -91,7 +91,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun updateGroupInfoInView(groupName: String?) {
-        binding.textviewIntro.text = groupName + "의 추억"
+        binding.textviewIntro.text = groupName + "의 기억"
         // 다른 UI 요소들도 업데이트
     }
 
