@@ -111,6 +111,7 @@
                 android:textColorHint="@color/font_lighter_gray"
                 android:inputType="text"
                 android:background="@null"
+                android:fontFamily="@font/lineseed_kr_rg"
                 tools:ignore="TouchTargetSizeCheck" />
         </LinearLayout>
 
@@ -285,8 +286,8 @@
                 android:inputType="textMultiLine"
                 android:padding="10dp"
                 android:textSize="14sp"
+                android:fontFamily="@font/lineseed_kr_rg"
                 tools:ignore="SpeakableTextPresentCheck" />
-
         </LinearLayout>
 
     </LinearLayout>

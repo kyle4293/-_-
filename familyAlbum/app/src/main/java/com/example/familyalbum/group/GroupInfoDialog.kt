@@ -39,7 +39,6 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
             .setPositiveButton("확인", null)
 
         return dialogBuilder.create()
-
     }
 
     private fun initLayout() {
