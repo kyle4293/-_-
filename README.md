@@ -93,4 +93,7 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 - 프로필 조회
 - 프로필 변경(프로필 이미지)
 - 회원 탈퇴
-- 로그아웃 
+- 로그아웃
+
+
+![Footer](https://capsule-render.vercel.app/api?type=waving&color=auto&height=150&section=footer)
