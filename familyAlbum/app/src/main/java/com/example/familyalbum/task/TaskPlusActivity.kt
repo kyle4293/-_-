@@ -32,6 +32,12 @@ class TaskPlusActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
+        binding.back.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fromTask", "fromTask")
+            startActivity(intent)
+        }
+
         lateinit var startHour: String
         lateinit var startMin: String
         lateinit var endHour: String

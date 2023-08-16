@@ -30,12 +30,15 @@ class PhotoActivity : AppCompatActivity() {
     }
 
     private fun initLayout() {
-        val imageInfo = intent.getStringExtra("imageInfo")
-        val imageUri = Uri.parse(imageInfo)
+        val imageUrl = intent.getStringExtra("imageUrl")
+        val imageUri = Uri.parse(imageUrl)
+        val imageDescription = intent.getStringExtra("imageDescription")
         val groupId = intent.getStringExtra("groupId")
         val groupName = intent.getStringExtra("groupName")
         val folderId = intent.getStringExtra("folderId")
 
+
+        binding.photoText.text = imageDescription
 
         Glide.with(this)
             .load(imageUri)
@@ -47,7 +50,7 @@ class PhotoActivity : AppCompatActivity() {
 
         binding.btnPhotoWrite.setOnClickListener {
             // 사진설명 적기
-            showDescriptionDialog(imageUri.toString())
+            showDescriptionDialog(imageUri.toString(), imageDescription)
         }
 
         binding.btnDelete.setOnClickListener {
@@ -55,54 +58,56 @@ class PhotoActivity : AppCompatActivity() {
         }
     }
 
-    private fun showDescriptionDialog(imageUri: String) {
+    private fun showDescriptionDialog(imageUri: String, currentDescription: String?) {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Add Description")
+        builder.setTitle("사진 설명")
 
         val input = EditText(this)
-        input.hint = "Enter image description"
+        input.setText(currentDescription)
+        input.hint = "사진에 대한 설명을 적어주세요."
         builder.setView(input)
 
-        builder.setPositiveButton("Save") { dialog: DialogInterface, _: Int ->
-            val description = input.text.toString()
-            if (description.isNotEmpty()) {
+        builder.setPositiveButton("저장") { dialog: DialogInterface, _: Int ->
+            val newDescription = input.text.toString()
+            if (newDescription.isNotEmpty()) {
                 val groupId = intent.getStringExtra("groupId")
                 val folderId = intent.getStringExtra("folderId")
-                saveImageWithDescription(groupId, folderId, imageUri, description)
+                updateImageDescription(groupId, folderId, imageUri, newDescription)
             }
             dialog.dismiss()
         }
 
-        builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int ->
+        builder.setNegativeButton("취소") { dialog: DialogInterface, _: Int ->
             dialog.cancel()
         }
 
         val dialog = builder.create()
         dialog.show()
     }
-    private fun saveImageWithDescription(groupId: String?, folderId: String?, imageUri: String, description: String) {
+
+    private fun updateImageDescription(groupId: String?, folderId: String?, imageUri: String, newDescription: String) {
         val firestore = FirebaseFirestore.getInstance()
 
         if (groupId != null && folderId != null) {
             val folderRef = firestore.collection("groups").document(groupId)
                 .collection("folders").document(folderId)
 
-            val newImage = hashMapOf(
-                "url" to imageUri,
-                "description" to description
-            )
-
             folderRef.get()
                 .addOnSuccessListener { document ->
                     if (document.exists()) {
                         val images = document.get("images") as? List<Map<String, String>>
 
-                        val updatedImages = images?.toMutableList()?.apply { add(newImage) }
-                            ?: mutableListOf(newImage)
+                        val updatedImages = images?.map { image ->
+                            if (image["url"] == imageUri) {
+                                mapOf("url" to imageUri, "description" to newDescription)
+                            } else {
+                                image
+                            }
+                        }
 
                         folderRef.update("images", updatedImages)
                             .addOnSuccessListener {
-                                binding.photoText.text = description // 이미지 설명 표시
+                                binding.photoText.text = newDescription // 이미지 설명 표시
                             }
                             .addOnFailureListener {
                                 // Handle the update failure
@@ -117,17 +122,17 @@ class PhotoActivity : AppCompatActivity() {
 
     private fun deleteImageFromFolder(groupId: String, folderId: String, groupName: String, imageUri: String) {
         val firestore = FirebaseFirestore.getInstance()
-        val folderRef = firestore.collection("groups").document(groupId)
-            .collection("folders").document(folderId)
 
-        folderRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val images = document.get("images") as? List<String>
-                    if (images != null) {
-                        val updatedImages = images.toMutableList().apply {
-                            remove(imageUri)
-                        }
+        if (groupId.isNotEmpty() && folderId.isNotEmpty()) {
+            val folderRef = firestore.collection("groups").document(groupId)
+                .collection("folders").document(folderId)
+
+            folderRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val images = document.get("images") as? List<Map<String, String>>
+
+                        val updatedImages = images?.filter { it["url"] != imageUri }
 
                         folderRef.update("images", updatedImages)
                             .addOnSuccessListener {
@@ -138,15 +143,16 @@ class PhotoActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }
-                            .addOnFailureListener { exception ->
+                            .addOnFailureListener {
                                 // Handle the update failure
                             }
                     }
                 }
-            }
-            .addOnFailureListener { exception ->
-                // Handle the error
-            }
+                .addOnFailureListener { exception ->
+                    // Handle the error
+                }
+        }
     }
+
 
 }
