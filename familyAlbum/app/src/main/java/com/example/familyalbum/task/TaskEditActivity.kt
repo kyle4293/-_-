@@ -33,6 +33,8 @@ class TaskEditActivity : AppCompatActivity() {
         binding.back.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra("fromTask", "fromTask")
+            intent.putExtra("groupId", currentGroupId)
+            intent.putExtra("groupName", currentGroupName)
             startActivity(intent)
         }
 
