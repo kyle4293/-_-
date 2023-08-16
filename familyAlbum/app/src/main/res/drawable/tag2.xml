@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/light_green"/> <!-- 색상 변경 가능 -->
+    <solid android:color="@color/vintage_light_pink"/> <!-- 색상 변경 가능 -->
     <corners android:radius="12dp"/>
 </shape>

@@ -129,11 +129,6 @@ class HomeFragment : Fragment() {
             mActivity.changeFragment(GroupListFragment())
         }
 
-        binding.layoutImgUpload.setOnClickListener {
-            imagePickerLauncher.launch("image/*")
-            Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
-        }
-
         //폴더 생성 화면으로 이동.
         binding.layoutFolderCreate.setOnClickListener {
             val groupId = arguments?.getString(ARG_GROUP_ID)
