@@ -117,17 +117,17 @@ class PhotoActivity : AppCompatActivity() {
 
     private fun deleteImageFromFolder(groupId: String, folderId: String, groupName: String, imageUri: String) {
         val firestore = FirebaseFirestore.getInstance()
-        val folderRef = firestore.collection("groups").document(groupId)
-            .collection("folders").document(folderId)
 
-        folderRef.get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val images = document.get("images") as? List<String>
-                    if (images != null) {
-                        val updatedImages = images.toMutableList().apply {
-                            remove(imageUri)
-                        }
+        if (groupId.isNotEmpty() && folderId.isNotEmpty()) {
+            val folderRef = firestore.collection("groups").document(groupId)
+                .collection("folders").document(folderId)
+
+            folderRef.get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        val images = document.get("images") as? List<Map<String, String>>
+
+                        val updatedImages = images?.filter { it["url"] != imageUri }
 
                         folderRef.update("images", updatedImages)
                             .addOnSuccessListener {
@@ -138,15 +138,16 @@ class PhotoActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             }
-                            .addOnFailureListener { exception ->
+                            .addOnFailureListener {
                                 // Handle the update failure
                             }
                     }
                 }
-            }
-            .addOnFailureListener { exception ->
-                // Handle the error
-            }
+                .addOnFailureListener { exception ->
+                    // Handle the error
+                }
+        }
     }
+
 
 }
