@@ -11,7 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_marginBottom="50dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         android:background="@drawable/header_chat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,17 +22,13 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:text="Profile"
-            android:textColor="#0C201E"
+            android:text="프로필"
+            android:textColor="@color/black"
             android:textSize="20sp"
+            android:fontFamily="@font/lineseed_kr_bd"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
-
-
+            app:layout_constraintTop_toTopOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -44,7 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayout"
+        app:layout_constraintBottom_toTopOf="@+id/linear_layout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -76,11 +72,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileImageView"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="30dp"
             android:text="이름"
-            android:textColor="#0C201E"
+            android:textColor="@color/font_darkgray"
+            android:fontFamily="@font/lineseed_kr_bd"
             android:layout_gravity="center"
-            android:textSize="25sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/profile_email"
@@ -92,78 +89,87 @@
             android:paddingTop="10dp"
             android:text="이메일"
             android:layout_gravity="center"
-            android:textColor="#0C201E"
+            android:fontFamily="@font/lineseed_kr_rg"
+            android:textColor="@color/font_darkgray"
             android:textSize="18sp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="30dp"
-        android:text="계정관리"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
-        app:layout_constraintStart_toStartOf="parent" />
-
-
     <LinearLayout
-        android:id="@+id/linearLayout2"
+        android:id="@+id/linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayout"
-        >
+        android:background="@drawable/main_background"
+        android:backgroundTint="@color/background_color"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_profile_modify"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="10dp"
-            android:drawableLeft="@drawable/baseline_account_circle_24"
-            android:backgroundTint="@color/white"
-            android:gravity="left"
-            android:stateListAnimator="@null"
-            android:text="\t\t\t프로필 변경"
-            android:textColor="#0C201E"
-            android:textSize="16sp"/>
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="30dp"
+            android:text="계정 관리"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:fontFamily="@font/lineseed_kr_bd"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:id="@+id/btn_profile4"
+        <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:gravity="left"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:layout_marginBottom="10dp"
-            android:drawableLeft="@drawable/baseline_logout_24"
-            android:stateListAnimator="@null"
-            android:text="\t\t\t회원탈퇴"
-            android:textColor="#0C201E"
-            android:textSize="16sp" />
-        <Button
-            android:id="@+id/signOutBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/white"
-            android:layout_marginStart="40dp"
-            android:layout_marginEnd="40dp"
-            android:drawableLeft="@drawable/baseline_cancel_24"
-            android:gravity="left"
-            android:stateListAnimator="@null"
-            android:text="\t\t\t로그아웃"
-            android:textColor="#0C201E"
-            android:textSize="16sp" />
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="100dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_profile_modify"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/baseline_account_circle_24"
+                android:backgroundTint="@color/background_color"
+                android:gravity="left"
+                android:stateListAnimator="@null"
+                android:text="\t\t\t프로필 변경"
+                android:textColor="#0C201E"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/btn_profile4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/background_color"
+                android:gravity="left"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="10dp"
+                android:drawableLeft="@drawable/baseline_logout_24"
+                android:stateListAnimator="@null"
+                android:text="\t\t\t회원탈퇴"
+                android:textColor="#0C201E"
+                android:textSize="16sp" />
+            <Button
+                android:id="@+id/signOutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/background_color"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:drawableLeft="@drawable/baseline_cancel_24"
+                android:gravity="left"
+                android:stateListAnimator="@null"
+                android:text="\t\t\t로그아웃"
+                android:textColor="#0C201E"
+                android:textSize="16sp" />
+        </LinearLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

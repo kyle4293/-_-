@@ -37,21 +37,27 @@
         android:gravity="center"
         android:layout_weight="0.4">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
+            android:background="@drawable/fill_stroke"
             android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
             android:layout_weight="1"
-            android:text="cancel" />
+            android:text="cancel"
+            android:textColor="@color/white"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
+            android:background="@drawable/fill_stroke"
+            android:layout_marginEnd="30dp"
+            android:layout_marginStart="30dp"
             android:layout_weight="1"
-            android:text="confirm" />
+            android:text="confirm"
+            android:textColor="@color/white"/>
     </LinearLayout>
 
 
