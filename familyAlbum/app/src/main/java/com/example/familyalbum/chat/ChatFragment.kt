@@ -1,9 +1,17 @@
 package com.example.familyalbum.chat
 
+import android.R
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.NotificationCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.familyalbum.MainActivity
@@ -164,17 +172,43 @@ class ChatFragment : Fragment() {
                 .addOnSuccessListener { querySnapshot ->
                     for (document in querySnapshot) {
                         val memberId = document.getString("userId")
-                        val targetToken = document.getString("token")
-                        if (!targetToken.isNullOrEmpty() && memberId != senderId) {
+                        if (memberId != senderId) {
                             //발신자가 아닌 사용자에게 푸시 알림 보내기
-                            sendPushNotification(targetToken, senderName, messageText)
+                            sendPushNotification(senderName, messageText)
                         }
                     }
                 }
         }
     }
 
-    private fun sendPushNotification(targetToken: String, senderName: String, messageText: String) {
+    private fun sendPushNotification(senderName: String, messageText: String) {
+        val notificationTitle = "새로운 메시지가 도착했습니다."
+        val notificationContent = "$senderName: $messageText" // 발신자 이름과 메시지 내용 표시
 
+        val channelId = "chat_channel_id" // 푸시 알림을 위한 채널 ID
+        val notificationId = System.currentTimeMillis().toInt() // 알림 고유 ID
+
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        val pendingIntent = PendingIntent.getActivity(requireContext(), notificationId, intent, PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE)
+
+        val notificationBuilder = NotificationCompat.Builder(requireContext(), channelId)
+            .setContentTitle(notificationTitle)
+            .setContentText(notificationContent)
+            .setSmallIcon(R.drawable.ic_dialog_info) // 푸시 알림 아이콘
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = requireContext().getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // 오레오 버전 이후에는 채널이 필요
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "Chat Notifications", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // 알림 발송
+        notificationManager.notify(notificationId, notificationBuilder.build())
     }
 }
