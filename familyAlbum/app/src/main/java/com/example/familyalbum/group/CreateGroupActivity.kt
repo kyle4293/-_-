@@ -24,24 +24,9 @@ class CreateGroupActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCreateGroupBinding
     private lateinit var viewModel: CreateGroupViewModel
-    private var imageUri: Uri? = null
     var REQUEST_CONFIRM = 0
 
 
-    private val imagePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            if (uri != null) {
-                imageUri = uri
-                try {
-                    //confirm Activity로 이동
-                    val intent = Intent(this, ProfileConfirmActivity::class.java)
-                    intent.putExtra("imageUrl", imageUri.toString())
-                    startActivityForResult(intent, REQUEST_CONFIRM)
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,20 +60,6 @@ class CreateGroupActivity : AppCompatActivity() {
         binding.btnCreateGroup.setOnClickListener {
             // 그룹 생성 버튼 클릭 시 ViewModel의 함수 호출
             viewModel.onCreateGroupButtonClick()
-        }
-
-        binding.groupImg.setOnClickListener {
-            imagePickerLauncher.launch("image/*")
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CONFIRM && resultCode == RESULT_OK) {
-            Glide.with(this)
-                .load(imageUri)
-                .into(binding.groupImg)
         }
     }
 

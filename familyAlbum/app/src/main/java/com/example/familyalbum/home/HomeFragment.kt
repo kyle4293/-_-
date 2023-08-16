@@ -30,28 +30,6 @@ class HomeFragment : Fragment() {
     private lateinit var viewPager: ViewPager2
 
 
-
-    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-        if (uri != null) {
-            val groupId = arguments?.getString(ARG_GROUP_ID)
-            try {
-                if (!groupId.isNullOrEmpty()) {
-                    val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
-
-                    //confirm Activity로 이동
-                    val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
-                    intent.putExtra("imageInfo", uploadImageInfo)
-                    intent.putExtra("groupId", selectedGroupId)
-                    intent.putExtra("groupName", selectedGroupName)
-                    startActivity(intent)
-                }
-            } catch (e: IOException) {
-//                e.printStackTrace()
-            }
-        }
-    }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -63,6 +41,7 @@ class HomeFragment : Fragment() {
 
         if(selectedGroupName != null){
             binding.textviewIntro.text = selectedGroupName+"의 추억"
+            binding.iconFamily
         }else{
 //            binding.groupName.text = "어플이름"
         }
