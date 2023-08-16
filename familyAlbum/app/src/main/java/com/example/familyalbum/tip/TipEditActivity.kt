@@ -67,6 +67,13 @@ class TipEditActivity : AppCompatActivity() {
             }
         }
 
+        binding.back.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fromTipEdit","fromTipEdit")
+            intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
+            intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
+            startActivity(intent)
+        }
         //수정
         binding.button2.setOnClickListener {
             //여기서 DB작업을 해주면 됩니다
