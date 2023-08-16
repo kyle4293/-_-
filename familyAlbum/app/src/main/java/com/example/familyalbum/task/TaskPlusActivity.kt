@@ -1,15 +1,18 @@
 package com.example.familyalbum.task
 
+import android.content.ContentValues
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.ActivityTaskPlusBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -17,6 +20,7 @@ class TaskPlusActivity : AppCompatActivity() {
     lateinit var binding: ActivityTaskPlusBinding
     lateinit var firestore: FirebaseFirestore
     lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTaskPlusBinding.inflate(layoutInflater)
@@ -163,8 +167,8 @@ class TaskPlusActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
             val taskName = binding.inputTaskName.text.toString()
             val taskPlace = binding.inputTaskPlace.text.toString()
-            val startTime = "${startHour}${startMin}"
-            val endTime = "${endHour}${endMin}"
+            val newStartTime = "${startHour}${startMin}"
+            val newEndTime = "${endHour}${endMin}"
 
             when(week){
                 "월" -> week = "mon"
@@ -178,37 +182,73 @@ class TaskPlusActivity : AppCompatActivity() {
 
             val userName = auth.currentUser?.displayName
 
-            val newTask = Task(
-                dayOfWeek = week,
-                endTime = endTime,
-                place = taskPlace,
-                startTime = startTime,
-                title = taskName,
-                userName = userName ?: "" // 사용자 이름이 없으면 빈 문자열로 설정
-            )
-
             // 요기서 DB에 task 추가
-            firestore.collection("tasks")
-                .add(newTask)
-                .addOnSuccessListener {
-                    // 추가 성공 시 처리
+            if (newStartTime.toInt() < newEndTime.toInt()) {
+                // 겹치는 일정 확인
+                val query = firestore.collection("tasks")
+                    .whereEqualTo("userName", userName)
+                    .whereEqualTo("dayOfWeek", week)
 
+                query.get().addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val overlappingTasks = mutableListOf<DocumentSnapshot>()
+
+                        for (document in task.result!!) {
+                            val startTime = document.getString("startTime")
+                            val endTime = document.getString("endTime")
+
+                            if (startTime != null && endTime != null && isTimeOverlapping(
+                                    newStartTime,
+                                    newEndTime,
+                                    startTime,
+                                    endTime
+                                )
+                            ) {
+                                overlappingTasks.add(document)
+                            }
+                        }
+
+                        if (overlappingTasks.isEmpty()) {
+                            val newTask = Task(
+                                dayOfWeek = week,
+                                endTime = newEndTime,
+                                place = taskPlace,
+                                startTime = newStartTime,
+                                title = taskName,
+                                userName = userName ?: "" // 사용자 이름이 없으면 빈 문자열로 설정
+                            )
+
+                            firestore.collection("tasks")
+                                .add(newTask)
+                                .addOnSuccessListener {
+                                    // 수정 성공 시 처리
+                                    val intent = Intent(this, MainActivity::class.java)
+                                    intent.putExtra("fromTask", "fromTask")
+                                    startActivity(intent)
+                                }
+                                .addOnFailureListener { e ->
+                                    // 수정 실패 시 처리
+                                    Log.e(ContentValues.TAG, "Error updating document", e)
+                                }
+                        } else {
+                            Toast.makeText(this, "시간이 겹치는 다른 일정이 있습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this, "일정을 불러오는 데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
                 }
-                .addOnFailureListener { e ->
-                    // 추가 실패 시 처리
-                    // 예를 들어, 에러 메시지 출력 등
-                }
-            
-            if(startTime.toInt() < endTime.toInt()) {
-                val intent = Intent(this, MainActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
-                intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
-                startActivity(intent)
-                finish()
-            }else{
-                Toast.makeText(this, "시작과 종료 시간을 잘못입력하셨습니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "시작 시간이 종료 시간보다 큽니다.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun isTimeOverlapping(start1: String, end1: String, start2: String, end2: String): Boolean {
+        val startTime1 = start1.toInt()
+        val endTime1 = end1.toInt()
+        val startTime2 = start2.toInt()
+        val endTime2 = end2.toInt()
+
+        return startTime1 < endTime2 && endTime1 > startTime2
     }
 }

@@ -43,6 +43,8 @@ class HomeFragment : Fragment() {
                     //confirm Activity로 이동
                     val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
                     intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("groupId", selectedGroupId)
+                    intent.putExtra("groupName", selectedGroupName)
                     startActivity(intent)
                 }
             } catch (e: IOException) {
@@ -96,8 +98,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(ARG_GROUP_ID, selectedGroupId)
@@ -122,18 +122,9 @@ class HomeFragment : Fragment() {
     private fun initLayout() {
 
         viewPager = binding.viewPager // viewPager 초기화 추가
-
         viewPagerAdapter = ViewPagerAdapter(requireActivity())
         viewPager.adapter = viewPagerAdapter // 어댑터 설정
 
-        val tabTitles = listOf<String>("전체 사진", "폴더 목록")
-        val tabIcons = listOf(R.drawable.icon_gallery, R.drawable.baseline_create_new_folder_24)
-        if (viewPager != null) {
-            TabLayoutMediator(binding!!.tabLayout, viewPager) { tab, position ->
-                tab.setText(tabTitles[position])
-                tab.setIcon(tabIcons[position])
-            }.attach()
-        }
 
         binding.layoutGroupSelect.setOnClickListener {
             val mActivity = activity as MainActivity
@@ -157,29 +148,20 @@ class HomeFragment : Fragment() {
     }
 
     inner class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
-        //tab layout 선택에 따라 viewPager 부분에 다른 fragment binding
-
         override fun getItemCount(): Int {
-            return 2
+            return 1
         }
+        //tab layout 선택에 따라 viewPager 부분에 다른 fragment binding
 
         override fun createFragment(position: Int): Fragment {
             var groupId = selectedGroupId
             var groupName = selectedGroupName
 
-            return when (position) {
-                0 -> {
-                    // Fragment for FolderList 보기
-                    if(groupId != null && groupName!=null) TotalGalleryFragment(groupId)
-                    else TotalGalleryFragment("NO_GROUP")
-                }
-                1 -> {
-                    // Fragment for 전체 사진 보기
-                    if(groupId != null && groupName!=null) FolderListFragment(groupId, groupName)
-                    else FolderListFragment("NO_GROUP", "")
-                }
-                else -> throw IllegalArgumentException("Invalid position: $position")
-            }
+            // Fragment for 전체 사진 보기
+            if(groupId != null && groupName!=null)
+                return FolderListFragment(groupId, groupName)
+            else
+                return FolderListFragment("NO_GROUP", "")
         }
     }
 }

@@ -29,6 +29,7 @@
             android:layout_width="50dp"
             android:layout_height="30dp"
             android:layout_gravity="center_vertical"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@drawable/tag0"
             android:text="전체"
@@ -73,10 +74,13 @@
 
             <ImageButton
                 android:id="@+id/tipPlusButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@android:style/Widget.ImageButton"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
                 android:layout_gravity="right"
-                android:src="@drawable/baseline_add_24"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/writing"
                 tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
         </FrameLayout>
 

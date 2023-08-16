@@ -28,6 +28,7 @@ import com.example.familyalbum.task.Task
 import com.example.familyalbum.task.TaskEditActivity
 import com.example.familyalbum.task.TaskPlusActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
@@ -44,6 +45,9 @@ class TimeTableFragment : Fragment(){
 
     private var currentGroupId: String? = null
     private var currentGroupName: String? = null
+
+
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -81,13 +85,17 @@ class TimeTableFragment : Fragment(){
                 }
                 loadUserProfile(loadedUser.name) { userImage ->
                     myProfile("나", userImage)
+
                 }
             }
         }
 
         //프로필 이미지를 선택하면
+
         binding.imageView.setOnClickListener {
-            showDialog()
+            if (currentGroupId != "") {
+                showDialog()
+            }
         }
 
         //추가버튼을 누르면
@@ -176,6 +184,7 @@ class TimeTableFragment : Fragment(){
                     }
                 }
                 binding.plusButton.isEnabled = true
+                binding.plusButton.visibility = View.VISIBLE
             } else {
                 //selectedUserName 이 현재 사용자의 이름과 같지 않을 때
                 //otherprofile, 그 유저이름의 시간표들 출력
@@ -196,6 +205,7 @@ class TimeTableFragment : Fragment(){
                     }
                 }
                 binding.plusButton.isEnabled = false
+                binding.plusButton.visibility = View.INVISIBLE
             }
         }
         val fragmentManager =
@@ -338,70 +348,87 @@ class TimeTableFragment : Fragment(){
                 name.text = task.title
                 val place: TextView = customLayout.findViewById(R.id.place)
                 place.text = task.place
+                
+                lateinit var week: String
+                when(dayIndex){
+                    0 -> week = "월"
+                    1 -> week = "화"
+                    2 -> week = "수"
+                    3 -> week = "목"
+                    4 -> week = "금"
+                    5 -> week = "토"
+                    6 -> week = "일"
+                }
 
                 var currentUserId = ""
                 if (currentUser != null) {
                     currentUserId = currentUser.uid
                 }
 
+
                 customLayout.setOnClickListener {
                     val alertDialogBuilder = AlertDialog.Builder(requireContext())
                     alertDialogBuilder.setTitle("스케줄 상세정보")
-                    alertDialogBuilder.setMessage("${start.text},${end.text},${name.text},${place.text}")
+                    alertDialogBuilder.setMessage("\n 이름: ${name.text}\n\n 시간: ${week}요일 ${start.text} ~ ${end.text}\n\n 장소: ${place.text} \n")
                     var isHandlingClickEvent = false
 
-                    alertDialogBuilder.setPositiveButton("삭제", DialogInterface.OnClickListener { dialog, which ->
-                        if (isHandlingClickEvent) {
-                            return@OnClickListener // 이미 다른 작업을 처리 중인 경우 무시
-                        }
-                        isHandlingClickEvent = true // 작업 시작
+                    if(binding.plusButton.visibility == View.VISIBLE) {
+                        alertDialogBuilder.setPositiveButton(
+                            "삭제",
+                            DialogInterface.OnClickListener { dialog, which ->
+                                if (isHandlingClickEvent) {
+                                    return@OnClickListener // 이미 다른 작업을 처리 중인 경우 무시
+                                }
+                                isHandlingClickEvent = true // 작업 시작
 
-                        //요기서 db도 삭제해야함니다
-                        val tasksCollection = firestore.collection("tasks")
-                        loadCurrentUser(currentUserId) { loadedUser ->
-                            val currentUserName = loadedUser.name
-                            tasksCollection.whereEqualTo("userName", currentUserName)
-                                .whereEqualTo("title", task.title)
-                                .get()
-                                .addOnSuccessListener { querySnapshot ->
-                                    for (documentSnapshot in querySnapshot.documents) {
-                                        tasksCollection.document(documentSnapshot.id).delete()
-                                            .addOnSuccessListener {
-                                                // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
-                                                parentView.removeView(customLayout)
-                                                parentView.invalidate()
+                                //요기서 db도 삭제해야함니다
+                                val tasksCollection = firestore.collection("tasks")
+                                loadCurrentUser(currentUserId) { loadedUser ->
+                                    val currentUserName = loadedUser.name
+                                    tasksCollection.whereEqualTo("userName", currentUserName)
+                                        .whereEqualTo("title", task.title)
+                                        .get()
+                                        .addOnSuccessListener { querySnapshot ->
+                                            for (documentSnapshot in querySnapshot.documents) {
+                                                tasksCollection.document(documentSnapshot.id)
+                                                    .delete()
+                                                    .addOnSuccessListener {
+                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                        parentView.removeView(customLayout)
+                                                        parentView.invalidate()
 //                                                dialog.dismiss() // 다이얼로그 닫기
+                                                    }
+                                                    .addOnFailureListener { exception ->
+                                                        // 삭제 실패 시 처리
+                                                    }
                                             }
-                                            .addOnFailureListener { exception ->
-                                                // 삭제 실패 시 처리
-                                            }
-                                    }
+                                        }
+                                        .addOnFailureListener { exception ->
+                                            // 조회 실패 시 처리
+                                        }
                                 }
-                                .addOnFailureListener { exception ->
-                                    // 조회 실패 시 처리
-                                }
-                        }
-                        isHandlingClickEvent = false
-                        dialog.dismiss()
-                    })
-                        .setNegativeButton("수정") { dialog, _ ->
+                                isHandlingClickEvent = false
+                                dialog.dismiss()
+                            })
+                            .setNegativeButton("수정") { dialog, _ ->
 
-                            if (isHandlingClickEvent) {
-                                return@setNegativeButton // 이미 다른 작업을 처리 중인 경우 무시
+                                if (isHandlingClickEvent) {
+                                    return@setNegativeButton // 이미 다른 작업을 처리 중인 경우 무시
+                                }
+                                isHandlingClickEvent = true // 작업 시작
+
+                                dialog.dismiss() // 다이얼로그 닫기
+
+                                val intent = Intent(context, TaskEditActivity::class.java)
+                                intent.putExtra("startTime", task.startTime)
+                                intent.putExtra("endTime", task.endTime)
+                                intent.putExtra("title", task.title)
+                                intent.putExtra("place", task.place)
+                                intent.putExtra("dayOfWeek", task.dayOfWeek)
+                                startActivity(intent)
+
                             }
-                            isHandlingClickEvent = true // 작업 시작
-
-                            dialog.dismiss() // 다이얼로그 닫기
-
-                            val intent = Intent(context, TaskEditActivity::class.java)
-                            intent.putExtra("startTime",task.startTime)
-                            intent.putExtra("endTime",task.endTime)
-                            intent.putExtra("title",task.title)
-                            intent.putExtra("place",task.place)
-                            intent.putExtra("dayOfWeek",task.dayOfWeek)
-                            startActivity(intent)
-
-                        }
+                    }
 
                     alertDialogBuilder.show()
                 }

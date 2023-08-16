@@ -126,8 +126,6 @@ class MainActivity : AppCompatActivity(){
             for (key in dynamicLinkData.keySet()) {
                 dataStr += "key: $key / value: ${dynamicLinkData.getString(key)}\n"
             }
-
-            binding.tvToken.text = dataStr
         }
     }
 

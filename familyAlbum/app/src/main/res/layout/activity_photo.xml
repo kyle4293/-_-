@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/brown_paper"
     tools:context=".home.PostingActivity">
 
 
@@ -12,50 +13,59 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/baseline_arrow_back_ios_new_24"
-        android:layout_margin="20dp"
+        android:layout_margin="30dp"
+        app:tint="@color/font_brown"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <ImageView
         android:id="@+id/photo_frame"
-        android:layout_width="300dp"
-        android:layout_height="400dp"
-        android:src="@drawable/chatting_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:src="@drawable/polaroid_frame_fill"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="20dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="40dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <ImageView
         android:id="@+id/photo_view"
-        android:layout_width="300dp"
+        android:layout_width="250dp"
         android:layout_height="300dp"
-        android:padding="20dp"
         app:layout_constraintTop_toTopOf="@id/photo_frame"
         app:layout_constraintStart_toStartOf="@id/photo_frame"
         app:layout_constraintEnd_toEndOf="@id/photo_frame"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/testimg"/>
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/testimg"
+        android:scaleType="centerInside"
+        android:background="@drawable/basic_rectangle"
+        android:backgroundTint="@color/vintage_ivory"/>
 
     <TextView
         android:id="@+id/photo_text"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:hint="여기에 텍스트를 입력하세요."
+        android:hint="2023. 08. 16  건대 해커톤에서"
+        android:textSize="25sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:fontFamily="@font/handwriting_naver"
         app:layout_constraintTop_toBottomOf="@id/photo_view"
         app:layout_constraintStart_toStartOf="@id/photo_frame"
-        app:layout_constraintEnd_toEndOf="@id/photo_frame"
-        app:layout_constraintBottom_toBottomOf="@id/photo_frame"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="20dp"
+        android:paddingStart="5dp"
+        app:layout_constraintEnd_toEndOf="@id/photo_frame"/>
 
     <ImageView
         android:id="@+id/btn_delete"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:src="@drawable/icon_trash"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/icon_delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="20dp"/>
-
+        android:layout_margin="30dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

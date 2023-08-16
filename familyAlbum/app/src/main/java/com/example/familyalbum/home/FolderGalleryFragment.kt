@@ -11,16 +11,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.familyalbum.MainActivity
 import com.example.familyalbum.R
 import com.example.familyalbum.databinding.FragmentFolderGalleryBinding
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +33,24 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
     private var galleryList: ArrayList<String> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
     private val storageReference = FirebaseStorage.getInstance().reference
+
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+//            val groupId = arguments?.getString(HomeFragment.ARG_GROUP_ID)
+            try {
+                if (!groupId.isNullOrEmpty()) {
+                    val uploadImageInfo = arrayListOf<String>(groupId, uri.toString())
+
+                    //confirm Activity로 이동
+                    val intent = Intent(requireContext(), PhotoConfirmActivity::class.java)
+                    intent.putExtra("imageInfo", uploadImageInfo)
+                    startActivity(intent)
+                }
+            } catch (e: IOException) {
+//                e.printStackTrace()
+            }
+        }
+    }
 
 
     companion object {
@@ -60,6 +82,8 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
         binding.btnAddImage.setOnClickListener {
             openImagePicker()
+//            imagePickerLauncher.launch("image/*")
+//            Toast.makeText(requireContext(), "open gallery", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnFolderModify.setOnClickListener {
@@ -108,6 +132,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
                 imageRef.downloadUrl.addOnSuccessListener { imageUrl ->
                     // 이미지 업로드가 완료되면 해당 이미지 URL을 파이어베이스 데이터베이스에 추가
                     addImageToFolder(imageUrl.toString())
+                    updateGroupWithImageInfo(groupId, imageUrl.toString())
                 }
             }
             .addOnFailureListener { exception ->
@@ -127,6 +152,39 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             }
             .addOnFailureListener { exception ->
                 // 데이터베이스 업데이트 실패 시 처리
+            }
+    }
+
+
+    private fun updateGroupWithImageInfo(groupId: String, imageUrl: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val groupRef = firestore.collection("groups").document(groupId)
+
+        groupRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val images = documentSnapshot.get("images") as? List<String> ?: emptyList()
+                    images.toMutableList().apply {
+                        add(imageUrl)
+                    }.let { updatedImages ->
+                        // 업로드된 사진 URL을 그룹 정보에 저장
+                        groupRef.update("images", updatedImages)
+                            .addOnSuccessListener {
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.putExtra("groupId", groupId) // 그룹 정보 전달
+                                intent.putExtra("groupName", groupName) // 그룹 이름 전달
+                                startActivity(intent)
+                                // 업데이트 성공 처리
+                            }
+                            .addOnFailureListener { exception ->
+                                // 업데이트 실패 처리
+                            }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+                // 문서 가져오기 실패 처리
             }
     }
 
@@ -184,8 +242,12 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
                     val intent = Intent(requireContext(), PhotoActivity::class.java)
                     intent.putExtra("imageInfo", uploadImageInfo)
+                    intent.putExtra("folderId", folderId)
+                    intent.putExtra("groupId", groupId)
+                    intent.putExtra("groupName", groupName)
                     startActivity(intent)
                 }
+                itemView.setPadding(20, 20, 20, 20)
             }
         }
     }
