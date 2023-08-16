@@ -1,6 +1,7 @@
 package com.example.familyalbum.home
 
 import android.app.Activity
+import android.content.ClipData
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
@@ -33,6 +34,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
     private val galleryMap: MutableMap<String, String> = mutableMapOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
     private val storageReference = FirebaseStorage.getInstance().reference
+    private var uploadedImageCount = 0
 
 
     companion object {
@@ -97,35 +99,46 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             val selectedImageUris = data?.clipData
 
             if (selectedImageUris != null) {
+                uploadedImageCount = 0 // 업로드된 이미지 개수 초기화
+
                 for (i in 0 until selectedImageUris.itemCount) {
                     val imageUri = selectedImageUris.getItemAt(i).uri
-                    uploadImageToStorage(imageUri, "")
+                    uploadImageToStorage(imageUri, "", selectedImageUris)
                 }
             } else {
                 val imageUri = data?.data
                 if (imageUri != null) {
-                    uploadImageToStorage(imageUri, "")
+                    uploadedImageCount = 0 // 업로드된 이미지 개수 초기화
+                    uploadImageToStorage(imageUri, "", null)
                 }
             }
         }
     }
 
 
-    private fun uploadImageToStorage(imageUri: Uri, description: String) {
+    private fun uploadImageToStorage(imageUri: Uri, description: String, selectedImageUris: ClipData?) {
         val imageName = UUID.randomUUID().toString()
         val imageRef = storageReference.child("images/$imageName")
         imageRef.putFile(imageUri)
-            .addOnSuccessListener {
+            .addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { imageUrl ->
                     // 이미지 업로드가 완료되면 해당 이미지 정보를 파이어베이스 데이터베이스에 추가
                     addImageToFolder(imageUrl.toString(), description)
-                    updateGroupWithImageInfo(groupId, imageUrl.toString())
+
+                    uploadedImageCount++
+
+                    // 모든 이미지 업로드가 완료되었을 때 updateGroupWithImageInfo 함수 호출
+                    if (uploadedImageCount == selectedImageUris?.itemCount ?: 1) {
+                        updateGroupWithImageInfo(groupId, imageUrl.toString())
+                    }
                 }
             }
             .addOnFailureListener { exception ->
                 // 이미지 업로드 실패 시 처리
             }
     }
+
+
 
     private fun addImageToFolder(imageUrl: String, description: String) {
         val firestore = FirebaseFirestore.getInstance()
