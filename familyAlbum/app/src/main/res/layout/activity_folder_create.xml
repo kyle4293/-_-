@@ -8,151 +8,188 @@
     android:orientation="vertical"
     tools:context=".home.FolderCreateActivity">
 
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/baseline_arrow_back_ios_new_24"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="10dp"
         android:layout_gravity="center">
-
         <ImageView
-            android:id="@id/btn_back"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/baseline_arrow_back_ios_new_24"
-            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/title_icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/icon_albums"
+            app:tint="@color/font_darkgray"
+            android:layout_marginStart="10dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
 
-
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnCreateFolder"
-            android:layout_width="60dp"
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="완료"
-            android:elevation="5dp"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:background="@drawable/chatting_bottom"
-            android:src="@drawable/baseline_arrow_back_ios_new_24"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="폴더 생성"
+            android:textSize="24sp"
+            android:textColor="@color/font_darkgray"
+            android:fontFamily="@font/lineseed_kr_bd"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/title_icon"
+            android:layout_marginStart="10dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/icon_albums"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/textView8"
-        android:layout_marginEnd="10dp"/>
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="폴더 생성"
-        android:textSize="24sp"
-        android:textColor="@color/font_darkgray"
-        android:fontFamily="@font/lineseed_kr_bd"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/font_lightgray"
         android:text="우리 가족과 함께한 시간을 폴더로 만들어보세요."
-        app:layout_constraintTop_toBottomOf="@id/textview_layout_title"
-        app:layout_constraintStart_toStartOf="@id/textview_layout_title"/>
+        android:layout_marginStart="40dp"/>
 
     <LinearLayout
-        android:id="@+id/layout_folder_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/textview_layout_title"
-        android:layout_marginTop="140dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/textview_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:textColor="@color/black"
-            android:text="폴더 이름"/>
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/editFolderName"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:hint="폴더 이름을 입력하세요"/>
+        <LinearLayout
+            android:id="@+id/layout_folder_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:elevation="3dp"
+            android:background="@drawable/fill_stroke">
+            <TextView
+                android:id="@+id/textview_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:textColor="@color/black"
+                android:text="폴더 이름"/>
+
+            <EditText
+                android:id="@+id/editFolderName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:ems="10"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:hint="폴더 이름을 입력하세요"
+                android:textColorHint="@color/font_lighter_gray"
+                android:inputType="text"
+                android:background="@null"
+                tools:ignore="TouchTargetSizeCheck"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_folder_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:elevation="3dp"
+            android:background="@drawable/fill_stroke">
+            <TextView
+                android:id="@+id/textview_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:textColor="@color/black"
+                android:text="폴더 설명"/>
+
+            <EditText
+                android:id="@+id/editFolderDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:ems="10"
+                android:hint="ex) 2023.07.17 건대 해커톤"
+                android:textColorHint="@color/font_lighter_gray"
+                android:inputType="text"
+                android:background="@null"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_folder_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical"
+            android:elevation="3dp"
+            android:background="@drawable/fill_stroke">
+            <TextView
+                android:id="@+id/textview_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/lineseed_kr_rg"
+                android:textColor="@color/black"
+                android:text="사진 선택"/>
+
+            <ImageView
+                android:id="@+id/folder_img"
+                android:layout_gravity="center"
+                android:layout_width="200dp"
+                android:layout_height="150dp"
+                android:src="@drawable/baseline_add_a_photo_24" />
+        </LinearLayout>
+
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/layout_folder_description"
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnCreateFolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layout_folder_name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/textview_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:textColor="@color/black"
-            android:text="폴더 설명"/>
-
-        <EditText
-            android:id="@+id/editFolderDescription"
-            android:layout_width="250dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:hint="ex) 2022.03.04, 동생과 함께" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_folder_image"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/layout_folder_description"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginTop="30dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/textview_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:textColor="@color/black"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:text="사진 선택 "/>
-
-        <ImageView
-            android:id="@+id/folder_img"
-            android:layout_width="200dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="20dp"
-            android:src="@drawable/baseline_add_a_photo_24"/>
-    </LinearLayout>
-
-
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/fill_btn"
+        android:elevation="5dp"
+        android:fontFamily="@font/lineseed_kr_rg"
+        android:text="생성하기"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:gravity="center"
+        tools:ignore="TouchTargetSizeCheck"/>
 </LinearLayout>

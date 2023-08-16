@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:orientation="horizontal"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/group_img"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="20dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        app:tint="@color/vintage_yellow"
         android:src="@drawable/baseline_groups_24"
         android:elevation="5dp"
         android:padding="10dp"/>
@@ -20,24 +24,26 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="Group Name"
+        android:fontFamily="@font/lineseed_kr_rg"
         android:layout_weight="0.6"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:layout_gravity="center" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_inform_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:background="@drawable/chatting_bottom"
-        android:backgroundTint="@color/gray"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
         android:layout_marginEnd="30dp"
+        android:background="@drawable/chatting_bottom"
+        android:backgroundTint="@color/vintage_light_yellow"
         android:drawableRight="@drawable/baseline_arrow_forward_ios_24"
         android:drawableTint="@color/cardview_dark_background"
-        android:text="조회"
-        android:textSize="15sp"
-        android:elevation="10dp"
-        android:textColor="@color/black"
+        android:elevation="3dp"
         android:fontFamily="@font/lineseed_kr_rg"
-        android:layout_gravity="center"/>
+        android:padding="5dp"
+        android:text="조회"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        tools:ignore="TouchTargetSizeCheck" />
 </LinearLayout>
