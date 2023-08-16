@@ -1,14 +1,15 @@
 package com.example.familyalbum.tip
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.example.familyalbum.MainActivity
 import com.example.familyalbum.databinding.FragmentTipBinding
 import com.google.firebase.firestore.DocumentSnapshot
@@ -100,6 +101,29 @@ class TipFragment : Fragment() {
 
         tipAdapter = TipAdapter(currentGroupID, currentGroupName, emptyList())
         binding.tipRecyclerView.adapter = tipAdapter
+        binding.tipRecyclerView.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                val action = e.action
+                when (action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        // Disallow RecyclerView to intercept touch events.
+                        rv.requestDisallowInterceptTouchEvent(true)
+                    }
+                }
+                return false
+            }
+
+            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                // Implement if needed
+
+            }
+
+            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                // Implement if needed
+            }
+        })
+
+
 
         //firestore에서 데이터 가져오기
         val db = FirebaseFirestore.getInstance()
