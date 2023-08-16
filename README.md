@@ -6,7 +6,7 @@
   <a href="https://github.com/othneildrew/Best-README-Template">
     <img src="logo.png" alt="Logo" width="200" height="240">
   </a>
-  <h3 align="center">기억: 쌓여가는 우리 가족의 추억</h3>
+  <h3 align="center">기억: 쌓여가는 우리 가족의 추억보관함</h3>
 </div>
 
 
