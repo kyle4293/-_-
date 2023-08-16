@@ -82,7 +82,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             binding.gridGallery.layoutManager = GridLayoutManager(requireContext(), 3) // 3 items per row
             binding.gridGallery.adapter = gridGalleryAdapter
             binding.textviewFolderName.text = folderName
-            binding.textviewFolderInfo.text = folderDescription
+//            binding.textviewFolderInfo.text = folderDescription
         }
 
         binding.btnAddImage.setOnClickListener {

@@ -64,7 +64,7 @@ class HomeFragment : Fragment() {
         if(selectedGroupName != null){
             binding.textviewIntro.text = selectedGroupName+"의 추억"
         }else{
-            binding.groupName.text = "어플이름"
+//            binding.groupName.text = "어플이름"
         }
     }
 
