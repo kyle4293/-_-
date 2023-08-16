@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#fffcfe" /> <!-- 흰색 바탕 -->
+    <solid android:color="@color/background_color" /> <!-- 흰색 바탕 -->
     <corners android:radius="20dp" /> <!-- 둥근 사각형의 반지름 -->
 </shape>
