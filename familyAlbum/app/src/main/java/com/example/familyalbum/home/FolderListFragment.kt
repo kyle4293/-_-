@@ -51,10 +51,21 @@ class FolderListFragment(val groupId: String, val groupName: String) : Fragment(
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val folderName = document.getString("name")
-                    val folderImages = document.get("images") as? List<String>
+                    val folderListFromFirestore = document.get("images") as? List<Map<String, String>>
                     val folderDescription = document.getString("description")
-                    if (folderName != null && folderImages != null && folderDescription!=null) {
-                        folderList.add(Folder(document.id, folderName, folderDescription, folderImages))
+
+                    if (folderName != null && folderListFromFirestore != null && folderDescription != null) {
+                        val imageMapList = folderListFromFirestore.mapNotNull { imageMap ->
+                            val imageUrl = imageMap["url"]
+                            val description = imageMap["description"]
+                            if (imageUrl != null && description != null) {
+                                ImageInfo(imageUrl, description)
+                            } else {
+                                null
+                            }
+                        }
+
+                        folderList.add(Folder(document.id, folderName, folderDescription, imageMapList))
                     }
                 }
                 folderAdapter.notifyDataSetChanged()
@@ -64,8 +75,10 @@ class FolderListFragment(val groupId: String, val groupName: String) : Fragment(
             }
     }
 
-    inner class FolderListAdapter(val fragment: Fragment, val folderList: ArrayList<Folder>) : RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
-        inner class ViewHolder(val binding: FolderListViewBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class FolderListAdapter(val fragment: Fragment, val folderList: ArrayList<Folder>) :
+        RecyclerView.Adapter<FolderListAdapter.ViewHolder>() {
+        inner class ViewHolder(val binding: FolderListViewBinding) :
+            RecyclerView.ViewHolder(binding.root) {
             init {
                 binding.root.setOnClickListener {
                     val position = adapterPosition
@@ -102,12 +115,15 @@ class FolderListFragment(val groupId: String, val groupName: String) : Fragment(
             holder.binding.folderTitle.text = folder.name
             holder.binding.folderDescription.text = folder.description
 
-            // Load the first image of the folder as its thumbnail
-            if (folder.images.isNotEmpty()) {
+            // Use the imageList from the Folder object
+            if (folder.imageList.isNotEmpty()) {
+                val imageUrl = folder.imageList.first().url // Access the URL from the first ImageInfo object
                 Glide.with(holder.itemView.context)
-                    .load(folder.images[0])
+                    .load(imageUrl)
                     .into(holder.binding.folderPhoto)
             }
+
         }
+
     }
 }

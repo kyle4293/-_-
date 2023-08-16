@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.familyalbum.MainActivity
@@ -36,9 +37,14 @@ class LoginActivity : AppCompatActivity() {
         binding.loginBtn.setOnClickListener {
             val email = binding.emailEdit.text.toString()
             val password = binding.passwordEdit.text.toString()
-            signInWithEmail(email, password)
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            if (!email.isNullOrEmpty() && !password.isNullOrEmpty()){
+                signInWithEmail(email, password)
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+            }
+            else {
+                Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.signup.setOnClickListener {
