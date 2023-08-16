@@ -145,8 +145,8 @@ class TipEditActivity : AppCompatActivity() {
 
     private fun notifyTipChanged(groupId: String, groupName: String) {
         // 푸시 알림을 발송하는 로직 작성
-        val notificationTitle = "새로운 팁이 추가되었습니다."
-        val notificationContent = "그룹 '$groupName' 에서 새로운 팁을 확인해보세요."
+        val notificationTitle = "팁이 수정되었습니다."
+        val notificationContent = "그룹 '$groupName' 에서 수정된 팁을 확인해보세요."
 
         // 알림 생성을 위한 설정
         val channelId = "tip_channel_id" // 푸시 알림을 위한 채널 ID
