@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="그룹 목록"
+                android:text="그룹 생성"
                 android:textSize="24sp"
                 android:textColor="@color/font_darkgray"
                 android:fontFamily="@font/lineseed_kr_bd"
