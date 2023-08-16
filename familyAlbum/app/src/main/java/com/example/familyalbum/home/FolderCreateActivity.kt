@@ -1,6 +1,7 @@
 package com.example.familyalbum.home
 
 import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -39,6 +40,9 @@ class FolderCreateActivity : AppCompatActivity() {
             val groupName = intent.getStringExtra("groupName")
             val folderName = binding.editFolderName.text.toString()
             val folderDescription = binding.editFolderDescription.text.toString() // 추가
+            Log.e(TAG, groupName.toString())
+            Log.e(TAG, groupId.toString())
+
 
 
             if (!groupId.isNullOrEmpty() && !groupName.isNullOrEmpty() && folderName.isNotEmpty() && selectedImageUri != null) {

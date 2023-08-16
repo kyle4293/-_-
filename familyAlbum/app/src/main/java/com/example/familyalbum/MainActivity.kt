@@ -1,7 +1,10 @@
 package com.example.familyalbum
 
+import android.content.ContentValues
+import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -35,6 +38,8 @@ class MainActivity : AppCompatActivity(){
             selectedGroupId = intent.getStringExtra("groupId")
             selectedGroupName = intent.getStringExtra("groupName")
             // 그룹 정보와 이름을 사용하여 화면 초기화 또는 처리
+            Log.e(TAG, selectedGroupId.toString())
+            Log.e(TAG, selectedGroupName.toString())
         }
 
         val fromTask = intent.getStringExtra("fromTask")
@@ -108,7 +113,7 @@ class MainActivity : AppCompatActivity(){
         selectedGroupName = groupName
 
         // 홈 프래그먼트에 그룹 정보 전달
-        val homeFragment = HomeFragment.newInstance(groupId, groupName)
+        val homeFragment = HomeFragment.newInstance(selectedGroupId.toString(), selectedGroupName.toString())
         changeFragment(homeFragment)
     }
 
