@@ -26,4 +26,8 @@
     <color name="font_brown">#554f37</color>
     <color name="font_light_brown">#aa9e6e</color>
     <color name="background_color">#f4f4f4</color>
+    <color name="tag_yellow">#94803e</color>
+    <color name="tag_red">#856155</color>
+    <color name="tag_ivory">#6b5f58</color>
+    <color name="font_lighter_gray">#706e69</color>
 </resources>

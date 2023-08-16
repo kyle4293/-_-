@@ -67,6 +67,13 @@ class TipEditActivity : AppCompatActivity() {
             }
         }
 
+        binding.back.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("fromTipEdit","fromTipEdit")
+            intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
+            intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
+            startActivity(intent)
+        }
         //수정
         binding.button2.setOnClickListener {
             //여기서 DB작업을 해주면 됩니다
@@ -103,44 +110,6 @@ class TipEditActivity : AppCompatActivity() {
                 }
         }
 
-        //삭제
-        binding.button3.setOnClickListener {
-            val builder = AlertDialog.Builder(this)
-            builder.setTitle("잔소리 삭제")
-            builder.setMessage("삭제버튼 누르면 모든 가족들에게도 삭제됩니다. 정말로 삭제하시겠습니까?")
-            builder.setPositiveButton("삭제") { dialog, which ->
-                if (::tipId.isInitialized) {
-                    // tipId가 초기화된 경우에만 삭제 로직 실행
-                    val tipDocRef = firestore.collection("tips").document(tipId)
-
-                    tipDocRef.delete()
-                        .addOnSuccessListener {
-                            // 삭제 성공 시 처리
-                            // 예를 들어, 삭제 후 홈 화면으로 이동하는 등의 처리 가능
-                            //finish()
-                            val intent = Intent(this, MainActivity::class.java)
-                            intent.putExtra("fromTipEdit", "fromTipEdit")
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            intent.putExtra("groupId", currentGroupId) // 그룹 정보 전달
-                            intent.putExtra("groupName", currentGroupName) // 그룹 이름 전달
-                            startActivity(intent)
-                        }
-                        .addOnFailureListener { e ->
-                            // 삭제 실패 시 처리
-                            Log.e(TAG, "Error deleting document", e)
-                        }
-                } else {
-                    Log.e(TAG, "tipId is not initialized")
-                }
-                // 원래의 tip정보로 db를 찾은다음, 그 db삭제
-
-            }
-            builder.setNegativeButton("취소") { dialog, which ->
-                // "취소" 버튼 클릭 시 처리
-            }
-            val dialog = builder.create()
-            dialog.show()
-        }
     }
 
     private fun notifyTipChanged(groupId: String, groupName: String) {

@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import com.example.familyalbum.chat.ChatFragment
 import com.example.familyalbum.databinding.ActivityMainBinding
+import com.example.familyalbum.group.GroupListFragment
 import com.example.familyalbum.home.HomeFragment
 import com.example.familyalbum.profile.ProfileFragment
 import com.example.familyalbum.timeTable.TimeTableFragment
@@ -111,6 +112,13 @@ class MainActivity : AppCompatActivity(){
         changeFragment(homeFragment)
     }
 
+    fun changeFragmentToGroupList() {
+        val fragment = GroupListFragment()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.icon_family, fragment) // R.id.fragmentContainer는 프래그먼트를 표시할 레이아웃의 ID입니다.
+            .addToBackStack(null)
+            .commit()
+    }
 
     fun changeFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()

@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/tipbox"
-    android:orientation="vertical"
-    android:elevation="5dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp"
+    android:layout_height="200dp"
     android:layout_marginStart="30dp"
-    android:layout_marginEnd="30dp">
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="30dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/tipbox"
+    android:elevation="5dp"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -21,21 +21,37 @@
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
 
-        <TextView
+        <LinearLayout
             android:id="@+id/tag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:layout_margin="5dp"
+            android:elevation="3dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/tag1"
-            android:backgroundTintMode="multiply"
-            android:text="태그"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="5dp"
-            android:textSize="14sp"
-            android:fontFamily="@font/lineseed_kr_rg"/>
+            android:orientation="horizontal"
+            android:background="@drawable/tag1">
+            <ImageView
+                android:id="@+id/tag_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_tshirt"
+                app:tint="#94803e"
+                android:layout_marginStart="10dp"/>
+            <TextView
+                android:id="@+id/tag_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="5dp"
+                android:layout_marginStart="3dp"
+                android:text="의"
+                android:fontFamily="@font/lineseed_kr_bd"
+                android:textColor="#94803e"
+                android:textSize="15sp"
+                tools:ignore="TouchTargetSizeCheck" />
+        </LinearLayout>
+
 
 
         <TextView
@@ -43,12 +59,12 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:fontFamily="@font/lineseed_kr_rg"
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:text="제목"
-            android:textSize="16sp"
             android:textColor="@color/cardview_dark_background"
-            android:fontFamily="@font/lineseed_kr_rg"/>
+            android:textSize="16sp" />
 
         <ImageView
             android:id="@+id/editbutton"
@@ -56,8 +72,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/dots"
-            android:visibility="gone"
-            app:tint="@color/cardview_dark_background"
+            app:tint="@color/font_lightgray"
             tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
 
     </LinearLayout>
@@ -67,26 +82,41 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#D9D9D9"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:padding="10dp">
+        android:descendantFocusability="blocksDescendants"
+        >
 
-        <TextView
-            android:id="@+id/tipContent"
+        <androidx.core.widget.NestedScrollView
+
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:text="제발 나와주세요..."
-            android:lineSpacingExtra="10dp"
-            android:fontFamily="@font/lineseed_kr_rg"
-            android:textSize="14sp" />
+            android:layout_height="match_parent"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:scrollbarSize="6dp"
+            android:scrollbarStyle="insideOverlay"
+            android:scrollbars="vertical"
+            android:verticalScrollbarPosition="right">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tipContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:fontFamily="@font/lineseed_kr_rg"
+                    android:lineSpacingExtra="10dp"
+                    android:text="제발 나와주세요..."
+                    android:textSize="14sp" />
+            </FrameLayout>
+        </androidx.core.widget.NestedScrollView>
     </FrameLayout>
 
 </LinearLayout>

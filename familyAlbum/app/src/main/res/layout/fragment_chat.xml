@@ -63,13 +63,6 @@
                 android:layout_weight="90"
                 android:hint=" 메세지를 입력하세요."
                 android:paddingStart="10dp"/>
-            <ImageView
-                android:id="@+id/goToEmoji"
-                android:padding="10dp"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="5dp"
-                android:src="@drawable/smile_emoji" />
 
             <ImageView
                 android:id="@+id/sendBtn"
