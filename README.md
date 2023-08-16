@@ -36,7 +36,6 @@
 <br>
 
 ## 🧑‍🤝‍🧑 Contributors  
-<br>
 ### 한국인은_밥심:rice:
 #### 👦 최창규(Changgyu Choi) 
 프로젝트 총괄, 백엔드 개발 <br/>
