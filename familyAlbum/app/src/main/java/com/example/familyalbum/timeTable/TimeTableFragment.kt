@@ -1,5 +1,6 @@
 package com.example.familyalbum.timeTable
 
+import android.app.Dialog
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
@@ -380,33 +381,42 @@ class TimeTableFragment : Fragment(){
                                     return@OnClickListener // 이미 다른 작업을 처리 중인 경우 무시
                                 }
                                 isHandlingClickEvent = true // 작업 시작
-
-                                //요기서 db도 삭제해야함니다
-                                val tasksCollection = firestore.collection("tasks")
-                                loadCurrentUser(currentUserId) { loadedUser ->
-                                    val currentUserName = loadedUser.name
-                                    tasksCollection.whereEqualTo("userName", currentUserName)
-                                        .whereEqualTo("title", task.title)
-                                        .get()
-                                        .addOnSuccessListener { querySnapshot ->
-                                            for (documentSnapshot in querySnapshot.documents) {
-                                                tasksCollection.document(documentSnapshot.id)
-                                                    .delete()
-                                                    .addOnSuccessListener {
-                                                        // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
-                                                        parentView.removeView(customLayout)
-                                                        parentView.invalidate()
+                                val deleteDialogBuilder = AlertDialog.Builder(requireContext())
+                                deleteDialogBuilder.setMessage("\n스케줄을 정말로 삭제하시겠습니까?\n")
+                                    .setPositiveButton("삭제"){ dialog, _ ->
+                                        //요기서 db도 삭제해야함니다
+                                        val tasksCollection = firestore.collection("tasks")
+                                        loadCurrentUser(currentUserId) { loadedUser ->
+                                            val currentUserName = loadedUser.name
+                                            tasksCollection.whereEqualTo("userName", currentUserName)
+                                                .whereEqualTo("title", task.title)
+                                                .get()
+                                                .addOnSuccessListener { querySnapshot ->
+                                                    for (documentSnapshot in querySnapshot.documents) {
+                                                        tasksCollection.document(documentSnapshot.id)
+                                                            .delete()
+                                                            .addOnSuccessListener {
+                                                                // 성공적으로 삭제한 경우, 화면에서도 해당 뷰 제거
+                                                                parentView.removeView(customLayout)
+                                                                parentView.invalidate()
 //                                                dialog.dismiss() // 다이얼로그 닫기
+                                                            }
+                                                            .addOnFailureListener { exception ->
+                                                                // 삭제 실패 시 처리
+                                                            }
                                                     }
-                                                    .addOnFailureListener { exception ->
-                                                        // 삭제 실패 시 처리
-                                                    }
-                                            }
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    // 조회 실패 시 처리
+                                                }
                                         }
-                                        .addOnFailureListener { exception ->
-                                            // 조회 실패 시 처리
-                                        }
-                                }
+                                    }
+                                    .setNegativeButton("취소"){ dialog, _ ->
+
+                                    }
+                                deleteDialogBuilder.show()
+
+
                                 isHandlingClickEvent = false
                                 dialog.dismiss()
                             })
@@ -429,7 +439,6 @@ class TimeTableFragment : Fragment(){
 
                             }
                     }
-
                     alertDialogBuilder.show()
                 }
                 parentView.addView(customLayout)  // 인플레이션 된 사용자 정의 레이아웃을 부모 뷰에 추가
