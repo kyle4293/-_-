@@ -50,9 +50,7 @@
  - 디자인, 프론트 개발 : 민하은 - 
 <br>
 
-
 ## Contact
-
 Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
 Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
 
