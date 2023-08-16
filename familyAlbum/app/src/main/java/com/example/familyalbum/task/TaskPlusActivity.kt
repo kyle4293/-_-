@@ -229,6 +229,8 @@ class TaskPlusActivity : AppCompatActivity() {
                                 .addOnSuccessListener {
                                     // 수정 성공 시 처리
                                     val intent = Intent(this, MainActivity::class.java)
+                                    intent.putExtra("groupId", currentGroupId)
+                                    intent.putExtra("groupName", currentGroupName)
                                     intent.putExtra("fromTask", "fromTask")
                                     startActivity(intent)
                                 }
