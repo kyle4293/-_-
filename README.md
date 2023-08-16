@@ -1,6 +1,4 @@
 ![header](https://capsule-render.vercel.app/api?type=waving&color=auto&height=150&section=header&fontSize=60)
-
-
 <!-- PROJECT LOGO -->
 <div align="center">
   <a href="https://github.com/othneildrew/Best-README-Template">
@@ -18,6 +16,7 @@
 <br/>
 <br/>
 
+![기억](https://github.com/kyle4293/K-RicePower/assets/87288266/78601fa7-916f-4ad3-adfd-0e889adb16c2)
 
 
 ## ⚙️ Built With
