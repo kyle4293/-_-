@@ -1,5 +1,6 @@
 package com.example.familyalbum.home
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -28,6 +29,7 @@ class PhotoConfirmActivity : AppCompatActivity() {
         val imageUrl = uploadImageInfo?.get(1)
 
         if (!imageUrl.isNullOrEmpty()) {
+            Log.e(TAG, imageUrl)
             val imageUri = Uri.parse(imageUrl)
             Glide.with(this)
                 .load(imageUri)

@@ -28,7 +28,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FolderGalleryFragment(val groupId: String, val groupName: String, val folderId: String) : Fragment() {
+class FolderGalleryFragment(val groupId: String, val groupName: String, val folderId: String, val folderName: String) : Fragment() {
     private lateinit var binding: FragmentFolderGalleryBinding
     private var galleryList: ArrayList<String> = arrayListOf()
     private lateinit var gridGalleryAdapter: GridRecyclerViewAdapter
@@ -71,6 +71,9 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
         val folderId = arguments?.getString("folderId")
         val groupId = arguments?.getString("groupId")
         val groupName = arguments?.getString("groupName")
+        val folderName = arguments?.getString("folderName")
+        val folderDescription = arguments?.getString("folderDescription")
+
 
 
         if (folderId != null && groupId != null) {
@@ -78,6 +81,8 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
             gridGalleryAdapter = GridRecyclerViewAdapter(galleryList)
             binding.gridGallery.layoutManager = GridLayoutManager(requireContext(), 3) // 3 items per row
             binding.gridGallery.adapter = gridGalleryAdapter
+            binding.textviewFolderName.text = folderName
+            binding.textviewFolderInfo.text = folderDescription
         }
 
         binding.btnAddImage.setOnClickListener {
