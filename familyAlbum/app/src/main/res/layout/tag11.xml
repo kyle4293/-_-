@@ -2,7 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/button9"
+    android:id="@+id/tag1Button"
     android:layout_width="55dp"
     android:layout_height="35dp"
     android:layout_margin="5dp"

@@ -72,18 +72,18 @@ class TipFragment : Fragment() {
             }
         }
 
-        binding.button9.setOnClickListener {
+        binding.tag1Button.setOnClickListener {
             //의 => 태그가 "의"인 것만 데이터 가져오기
             loadTipsByTag("의")
         }
 
-        binding.button10.setOnClickListener {
+        binding.tag2Button.setOnClickListener {
             //식
             loadTipsByTag("식")
 
         }
 
-        binding.button11.setOnClickListener {
+        binding.tag3Button.setOnClickListener {
             //주
             loadTipsByTag("주")
 
