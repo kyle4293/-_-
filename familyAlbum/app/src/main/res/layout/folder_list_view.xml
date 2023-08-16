@@ -23,8 +23,9 @@
         app:layout_constraintStart_toStartOf="@id/folder_photo"
         app:layout_constraintEnd_toEndOf="@id/folder_photo"
         app:layout_constraintBottom_toBottomOf="@id/folder_photo"
-        android:textSize="30sp"
+        android:textSize="25sp"
         android:text="Folder Title"
+        android:fontFamily="@font/lineseed_kr_bd"
         android:layout_marginBottom="20dp"
         android:textColor="@color/white"
         android:textStyle="bold"/>
@@ -36,8 +37,9 @@
         app:layout_constraintTop_toBottomOf="@id/folder_title"
         app:layout_constraintStart_toStartOf="@id/folder_photo"
         app:layout_constraintEnd_toEndOf="@id/folder_photo"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:text="folder description"
+        android:fontFamily="@font/lineseed_kr_rg"
         android:textColor="@color/white"
         android:textStyle="bold"/>
 

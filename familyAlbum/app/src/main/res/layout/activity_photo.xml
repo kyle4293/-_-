@@ -47,7 +47,7 @@
         android:id="@+id/photo_text"
         android:layout_width="250dp"
         android:layout_height="50dp"
-        android:hint="2023. 08. 16  건대 해커톤에서"
+        android:hint="2023. 07. 17  건대 해커톤에서"
         android:textSize="25sp"
         android:textColor="@color/black"
         android:textStyle="bold"
