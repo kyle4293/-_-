@@ -36,8 +36,6 @@
 <br>
 
 ## 🧑‍🤝‍🧑 Contributors  
-해당 프로젝트 참가 인원들에 대한 (이름, 영문이름, 
-이메일,Github 링크, 역할) 정보를 기입
 <br>
 ### 한국인은_밥심:rice:
 #### 👦 최창규(Changgyu Choi) 
