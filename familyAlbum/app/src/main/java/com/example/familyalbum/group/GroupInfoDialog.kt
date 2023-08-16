@@ -36,10 +36,8 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
 
         val dialogBuilder = MaterialAlertDialogBuilder(requireContext())
             .setView(binding?.root)
-            .setPositiveButton("확인", null)
 
         return dialogBuilder.create()
-
     }
 
     private fun initLayout() {
@@ -47,6 +45,10 @@ class GroupInfoDialog(private val group: Group) : DialogFragment(){
         binding?.groupId?.text = group.groupId
         binding?.memberRecyclerview?.layoutManager = LinearLayoutManager(requireContext())
         binding?.memberRecyclerview?.adapter = memberAdapter
+
+        binding?.btnConfirm?.setOnClickListener {
+            dismiss()
+        }
 
         binding?.btnDeleteGroup?.setOnClickListener {
             deleteGroup(group.groupId, group.groupName)

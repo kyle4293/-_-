@@ -246,6 +246,7 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
         override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
             val imageUrl = imageList[position]["url"]
+            val imageDescription = imageList[position]["description"]
             val imageView = holder.itemView.findViewById<ImageView>(R.id.imageView)
             val description = imageList[position]["description"] ?: ""
 
@@ -258,7 +259,8 @@ class FolderGalleryFragment(val groupId: String, val groupName: String, val fold
 
             holder.itemView.setOnClickListener {
                 val intent = Intent(requireContext(), PhotoActivity::class.java)
-                intent.putExtra("imageInfo", imageUrl)
+                intent.putExtra("imageUrl", imageUrl)
+                intent.putExtra("imageDescription", imageDescription)
                 intent.putExtra("folderId", folderId)
                 intent.putExtra("groupId", groupId)
                 intent.putExtra("groupName", groupName)
