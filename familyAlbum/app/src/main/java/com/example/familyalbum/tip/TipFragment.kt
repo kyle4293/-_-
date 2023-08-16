@@ -139,4 +139,19 @@ class TipFragment : Fragment() {
             tipAdapter.updateData(tipList)
         }
     }
+
+//    private fun notifyTipChanged() {
+//        val notificationTitle = "새로운 잔소리가 등록되었습니다!"
+//        val notificationBody = "그룹 '$currentGroupName'의 새로운 잔소리를 확인하세요"
+//
+//        //푸시 알림 전송
+//        val notificationData = hashMapOf(
+//            "title" to notificationTitle,
+//            "body" to notificationBody
+//        )
+//
+//        val db = FirebaseFirestore.getInstance()
+//        val notificationCollection = db.collection("notifications")
+//
+//    }
 }
